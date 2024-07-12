@@ -43,6 +43,9 @@ const corsOptions = {
           "https://facottrywebsite.vercel.app",
           "https://facottry-analytics.onrender.com",
           "https://client-sdk.vercel.app",
+          "https://facottry-netflix.vercel.app",
+          "https://facottry-hotstar.vercel.app",
+          "https://facottry-ecommerce.vercel.app",
         ]
       : [
           "http://localhost:3000",
