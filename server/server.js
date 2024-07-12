@@ -41,6 +41,7 @@ const corsOptions = {
           "http://localhost:8000",
           "http://localhost:5173",
           "https://facottrywebsite.vercel.app",
+          "https://facottry-analytics.onrender.com",
           "https://client-sdk.vercel.app",
         ]
       : [
