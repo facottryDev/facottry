@@ -52,13 +52,14 @@ const CreateMappings = (props: Props) => {
         }
 
         if (!data.projectID) return alert('No active project found!');
+        const id = toast.loading("Updating Mappings...")
 
         try {
             await axios_config.post('/create-mapping', data);
-            toast.success('Mapping created successfully');
+            toast.update(id, { render: "Mapping created successfully", type: "success", isLoading: false, autoClose: 2000 });
         } catch (error: any) {
             console.log(error)
-            toast.error(error.response.data.message || 'An error occurred while creating mapping')
+            toast.update(id, { render: `${error.response.data.message}`, type: "error", isLoading: false, autoClose: 2000 });
         }
     }
 

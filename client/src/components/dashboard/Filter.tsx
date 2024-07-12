@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 
 type Props = {}
 
-
 const Filter = ({ }: Props) => {
     const [activeFilter, setActiveFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter]);
     const activeProject = userStore(state => state.activeProject);
@@ -75,12 +74,12 @@ const Filter = ({ }: Props) => {
                                 <div key={index} className="flex items-center justify-between">
                                     <label className="mr-4 font-semibold">{key}:</label>
                                     <Select
-                                        closeMenuOnSelect={true}
+                                        closeMenuOnSelect={false}
                                         components={animatedComponents}
                                         isMulti
                                         options={options}
                                         name={key}
-                                        className="min-w-[200px] sm:min-w-[300px] lg:min-w-[400px]"
+                                        className="min-w-[200px] max-w-[200px] sm:min-w-[300px] sm:max-w-[300px] lg:min-w-[400px] lg:max-w-[400px]"
                                         onChange={handleChange}
                                         defaultValue={defaultValue}
                                         isDisabled={isFilterEditable}
