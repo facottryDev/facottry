@@ -38,7 +38,7 @@ const BasicDetails = (props: Props) => {
             </div>
 
             <div className="flex flex-col">
-                <form className="p-5 bg-white border rounded-lg" onSubmit={updateProjectDetails}>
+                <form className="p-5 bg-white border" onSubmit={updateProjectDetails}>
                     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         <div className="sm:col-span-3">
                             <label htmlFor="projectID" className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
