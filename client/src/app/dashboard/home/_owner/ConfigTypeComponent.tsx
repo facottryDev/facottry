@@ -12,8 +12,6 @@ const ConfigTypeComponent = (props: Props) => {
     const [AddConfigTypeModal, setAddConfigTypeModal] = useState(false);
     const [activeProject, setActiveProject, setProjects] = userStore(state => [state.activeProject, state.setActiveProject, state.setProjects]);
 
-    console.log(activeProject?.configTypes)
-
     const refreshAdmin = async () => {
         const adminResponse = await axios_admin.get('/get-admin');
         const { projects } = adminResponse.data;
