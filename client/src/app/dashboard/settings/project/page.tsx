@@ -57,7 +57,7 @@ const ProjectSettings = (props: Props) => {
                             </button>
                         )}
 
-                        <h1 className="text-2xl font-bold">Playground</h1>
+                        <h1 className="text-2xl font-bold">Manage Project</h1>
 
 
                     </div>
