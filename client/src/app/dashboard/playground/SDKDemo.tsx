@@ -23,7 +23,7 @@ export const SDKDemo = (props: Props) => {
 
             setActiveMapping(mapping.data.mappings);
         } catch (error: any) {
-            console.log(error);
+            console.log(error.response.data);
         }
     }
 
@@ -40,9 +40,10 @@ export const SDKDemo = (props: Props) => {
             {/* JSON viewer */}
             <div className="w-full border rounded-md mt-8">
                 <h1 className="text-lg font-bold text-center my-4">JSON Response</h1>
-
                 <JSONTree data={activeMapping} />
             </div>
+
+            <p className="mt-2 w-full flex justify-center text-sm italic text-gray-500">Not applicable for multi filter selections.</p>
         </div>
     )
 }

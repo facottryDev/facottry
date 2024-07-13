@@ -87,7 +87,7 @@ const Sidebar = () => {
         </Link>
 
         <div className={`flex flex-col mt-6 rounded-md text-sm items-center justify-cente text-white transition-all ${
-          sidebarCollapsed ? 'bg-gray-700 pt-2' : 'bg-gray-800 p-4'
+          sidebarCollapsed ? 'bg-gray-700 px-4 pt-2' : 'bg-gray-800 p-4'
         }`}>
           <button
             className={`bg-gray-700 text-white px-2 w-full py-1 rounded-md`}
