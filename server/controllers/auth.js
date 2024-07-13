@@ -149,7 +149,7 @@ export const sendOTP = async (req, res) => {
       Date.now() < req.session.otpExpiry &&
       req.body.email === req.session.email
     ) {
-      return res.status(400).send("OTP not expired");
+      return res.status(400).send({ message: "Wait before resending" });
     }
 
     // Email Validation
@@ -173,34 +173,30 @@ export const sendOTP = async (req, res) => {
              <p>Your OTP for verification is: <strong>${otp}</strong></p>
              <p>Thank you for using facOTTry!</p>`,
     };
-
-    // const result = await sendMail(mailOptions);
-    // if (result.accepted) {
-    //   // Store temporary information
-    //   req.session.otp = otp;
-    //   req.session.email = req.body.email;
-    //   req.session.otpExpiry = Date.now() + 180000; //5 Minutes from now
-
-    //   return res.json({ message: `OTP sent to ${req.body.email}`});
-    // }
-
+    
     req.session.otp = otp;
     req.session.email = req.body.email;
-    req.session.otpExpiry = Date.now() + 180000; // 5 Minutes from now
+    req.session.otpExpiry = Date.now() + 120000;
 
-    return res.status(200).json({ message: otp });
-
-    res.status(500).send("Error sending OTP");
+    res.json({ message: `OTP (${otp}) sent to ${req.body.email}.` });
+    
+    setImmediate(async () => {
+      try {
+        await sendMail(mailOptions);
+      } catch (error) {
+        console.error('Error sending email:', error);
+      }
+    });
   } catch (error) {
     if (error.details) {
       return res
-        .status(422)
-        .json(error.details.map((detail) => detail.message).join(", "));
+        .status(400)
+        .json({
+          message: error.details.map((detail) => detail.message).join(", "),
+        });
     }
 
-    console.log(error.message)
-
-    return res.status(500).json(error.message);
+    return res.status(500).json({ message: error.message });
   }
 };
 

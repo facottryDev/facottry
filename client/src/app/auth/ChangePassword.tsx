@@ -7,6 +7,7 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { axios_auth } from "@/lib/axios"
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
+import { toast } from "react-toastify"
 
 export const ChangePassword = () => {
     const router = useRouter();
@@ -21,7 +22,7 @@ export const ChangePassword = () => {
         const confirmPassword = e.currentTarget.confirmpass.value;
 
         if(password !== confirmPassword) {
-            alert("Passwords do not match.");
+            toast.error("Passwords do not match.");
             return;
         }
 
@@ -39,16 +40,16 @@ export const ChangePassword = () => {
                 }
 
                 if (result.status === 200) {
-                    alert("Success");
-                    router.push(`/onboarding`)
+                    toast.success("Success");
+                    router.push(`/`)
                 };
             } else {
-                alert("Email is required");
+                toast.error("Email is required");
             }
 
         } catch (error: any) {
-            console.log(error);
-            alert(error.response.data);
+            console.log(error.response);
+            toast.error(error.response.data);
         }
     }
 

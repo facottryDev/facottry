@@ -8,6 +8,7 @@ import Link from "next/link"
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { useRouter } from 'next/navigation'
 import { axios_auth } from "@/lib/axios"
+import { toast } from "react-toastify"
 
 const LoginForm = () => {
     const router = useRouter();
@@ -41,7 +42,7 @@ const LoginForm = () => {
 
             router.push('/dashboard');
         } catch (error: any) {
-            alert(error.response.data.message);
+            toast.error(error.response.data.message);
             setIsLoading(false);
         }
     }
