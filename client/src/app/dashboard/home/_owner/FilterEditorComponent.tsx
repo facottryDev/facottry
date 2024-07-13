@@ -35,7 +35,12 @@ const FilterEditorComponent = (props: Props) => {
 
             const filter = {
                 name: String(data.filterName).toUpperCase(),
-                values: String(data.filterValues).toUpperCase().split(',').map((value: string) => value.trim()),
+                values: Array.from(new Set(
+                    String(data.filterValues)
+                        .toUpperCase()
+                        .split(',')
+                        .map((value: string) => value.trim())
+                )),
                 default: String(data.filterDefault).toUpperCase(),
             };
 
@@ -58,7 +63,12 @@ const FilterEditorComponent = (props: Props) => {
 
             const filter = {
                 name: String(data.filterName).toUpperCase(),
-                values: String(data.filterValues).toUpperCase().split(',').map((value: string) => value.trim()),
+                values: Array.from(new Set(
+                    String(data.filterValues)
+                        .toUpperCase()
+                        .split(',')
+                        .map((value: string) => value.trim())
+                )),
                 default: String(data.filterDefault).toUpperCase(),
             };
 
@@ -70,6 +80,7 @@ const FilterEditorComponent = (props: Props) => {
             console.log(error);
             toast.error(error.response.data.message);
         }
+
     }
 
     const handleDeleteFilters = async (filterName: string) => {
