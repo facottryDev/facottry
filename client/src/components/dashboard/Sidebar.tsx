@@ -10,6 +10,7 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { AiOutlineProject } from "react-icons/ai";
 import { CgOrganisation } from "react-icons/cg";
+import { GrAnalytics } from "react-icons/gr";
 
 const SidebarButton = ({ href, label, icon, target }: {
   href: string;
@@ -68,6 +69,7 @@ const Sidebar = () => {
         <SidebarButton href="/dashboard/playground" label="Playground" icon={<FiPlayCircle />} />
         <SidebarButton href="/dashboard/settings/project" label="Project Settings" icon={<AiOutlineProject />} />
         <SidebarButton href="/dashboard/settings/company" label="Company Settings" icon={<CgOrganisation />} />
+        <SidebarButton href="https://facottryanalytics.vercel.app/" target='_blank' label="Analytics Dashboard" icon={<GrAnalytics  />} />
       </div>
 
       <hr className="mt-4 w-full" />
