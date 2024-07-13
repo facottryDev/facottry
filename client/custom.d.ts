@@ -25,6 +25,8 @@ type config = {
   params: string;
   createdAt: string;
   updatedAt: string;
+  createdBy: string;
+  lastModifiedBy: string;
 };
 
 type User = {

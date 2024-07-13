@@ -7,7 +7,7 @@ import Modal from 'react-modal';
 import { IoClose, IoPencilSharp } from "react-icons/io5";
 import { Editor } from "@monaco-editor/react";
 import { toast } from "react-toastify";
-import { MdDeleteSweep, MdEditNote } from "react-icons/md";
+import { MdDeleteSweep, MdEditNote, MdInfo, MdInfoOutline } from "react-icons/md";
 
 type Props = {
     configList: config[] | undefined;
@@ -18,6 +18,7 @@ type Props = {
 const ConfigTableComponent = (props: Props) => {
     const activeProject = userStore(state => state.activeProject);
     const [configModal, setconfigModal] = useState('');
+    const [detailsModal, setDetailsModal] = useState('');
     const [editorValue, setEditorValue] = useState<any>('');
     const [editorMarker, setEditorMarker] = useState<any>([]);
     const [isEditable, setIsEditable] = useState(false);
@@ -144,14 +145,16 @@ const ConfigTableComponent = (props: Props) => {
                             <tr>
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Updated At</th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Details</th>
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {props.configList?.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).map((config, index) => {
                                 const updatedAtDate = new Date(config.updatedAt);
+                                const createdAtDate = new Date(config.createdAt);
                                 const formattedUpdatedAt = `${updatedAtDate.toLocaleDateString()}, ${updatedAtDate.toLocaleTimeString()}`;
+                                const formattedCreatedAt = `${createdAtDate.toLocaleDateString()}, ${createdAtDate.toLocaleTimeString()}`;
 
                                 return (
                                     <tr key={index}>
@@ -162,7 +165,77 @@ const ConfigTableComponent = (props: Props) => {
                                             <p className="text-gray-900 whitespace-no-wrap">{config.desc}</p>
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{formattedUpdatedAt}</p>
+                                            <button className="ml-2 p-2 rounded-full bg-primary600 text-white hover:bg-primary700 transition-all" onClick={
+                                                () => {
+                                                    setDetailsModal(config.configID)
+                                                }
+                                            }>
+                                                <MdInfoOutline fontSize={18} />
+                                            </button>
+
+                                            <Modal
+                                                isOpen={detailsModal === config.configID}
+                                                onRequestClose={() => {
+                                                    setDetailsModal("");
+                                                }}
+                                                contentLabel="Config Details Modal"
+                                                style={
+                                                    {
+                                                        overlay: {
+                                                            backgroundColor: 'rgba(0, 0, 0, 0.75)'
+                                                        },
+                                                        content: {
+                                                            width: 'max-content',
+                                                            height: 'max-content',
+                                                            margin: 'auto',
+                                                            padding: '2rem',
+                                                            boxSizing: 'border-box',
+                                                            borderRadius: '10px',
+                                                            backgroundColor: 'white',
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+
+                                                        }
+                                                    }
+                                                }
+                                            >
+                                                <div className="flex flex-col items-center justify-center bg-white">
+                                                    <div className="flex justify-between w-full">
+                                                        <h1 className="font-bold text-lg">Config Details</h1>
+                                                        <div>
+                                                            <button className="p-2 rounded-full bg-primary900 hover:bg-black text-white transition-all" onClick={() => {
+                                                                setDetailsModal('');
+                                                            }}>
+                                                                <IoClose />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex text-sm w-full flex-col mt-4">
+
+                                                        <div className="flex gap-4 items-center mb-2 justify-between">
+                                                            <p className="text-gray-600 mr-4">ConfigID:</p>
+                                                            <p className="text-gray-900">{config.configID}</p>
+                                                        </div>
+                                                        <div className="flex gap-4 items-center mb-2 justify-between">
+                                                            <p className="text-gray-600 mr-4">Created At:</p>
+                                                            <p className="text-gray-900">{formattedCreatedAt}</p>
+                                                        </div>
+                                                        <div className="flex gap-4 items-center mb-2  justify-between">
+                                                            <p className="text-gray-600">Updated At:</p>
+                                                            <p className="text-gray-900">{formattedUpdatedAt}</p>
+                                                        </div>
+                                                        <div className="flex gap-4 items-center mb-2  justify-between">
+                                                            <p className="text-gray-600">Created By:</p>
+                                                            <p className="text-gray-900">{config.createdBy}</p>
+                                                        </div>
+                                                        <div className="flex gap-4 items-center mb-2  justify-between">
+                                                            <p className="text-gray-600">Last Modified By:</p>
+                                                            <p className="text-gray-900">{config.lastModifiedBy}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Modal>
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                             <div className="flex">
@@ -214,7 +287,7 @@ const ConfigTableComponent = (props: Props) => {
                                             >
                                                 <div className="flex flex-col items-center justify-center bg-white">
                                                     <div className="flex justify-between w-full px-4">
-                                                        <h1 className="font-bold uppercase text-lg">Edit Config</h1>
+                                                        <h1 className="font-bold text-lg">Edit Config</h1>
                                                         <div>
                                                             <button
                                                                 onClick={() => setIsEditable(!isEditable)}

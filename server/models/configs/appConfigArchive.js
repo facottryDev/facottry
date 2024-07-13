@@ -41,6 +41,14 @@ const appConfigArchivesSchema = new mongoose.Schema(
     params: {
       type: Object,
     },
+    
+    createdBy: {
+      type: String,
+    },
+
+    lastModifiedBy: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

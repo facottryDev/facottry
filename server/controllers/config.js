@@ -229,7 +229,7 @@ export const modifyConfig = async (req, res) => {
       appConfig.params = params || appConfig.params;
       appConfig.name = name || appConfig.name;
       appConfig.desc = desc || appConfig.desc;
-
+      appConfig.lastModifiedBy = user;
       await appConfig.save();
 
       // Update name, desc, params in master docs also
@@ -263,6 +263,7 @@ export const modifyConfig = async (req, res) => {
       playerConfig.params = params || playerConfig.params;
       playerConfig.name = name || playerConfig.name;
       playerConfig.desc = desc || playerConfig.desc;
+      playerConfig.lastModifiedBy = user;
       await playerConfig.save();
 
       // Update name, desc, params in master docs also
@@ -296,6 +297,7 @@ export const modifyConfig = async (req, res) => {
       customConfig.params = params || customConfig.params;
       customConfig.name = name || customConfig.name;
       customConfig.desc = desc || customConfig.desc;
+      customConfig.lastModifiedBy = user;
       await customConfig.save();
     }
 
@@ -334,6 +336,8 @@ export const cloneConfig = async (req, res) => {
         desc: desc || appConfig.desc,
         name: name + "_copy" || appConfig.name + "_copy",
         params: params || appConfig.params,
+        createdBy: user,
+        lastModifiedBy: user,
       });
       await newAppConfig.save();
     } else if (configID.startsWith("player") || configID.startsWith("pc")) {
@@ -362,6 +366,8 @@ export const cloneConfig = async (req, res) => {
         desc: desc || playerConfig.desc,
         name: name || playerConfig.name,
         params: params || playerConfig.params,
+        createdBy: user,
+        lastModifiedBy: user,
       });
       await newPlayerConfig.save();
     } else {
@@ -390,6 +396,8 @@ export const cloneConfig = async (req, res) => {
         desc: desc || customConfig.desc,
         name: name || customConfig.name,
         params: params || customConfig.params,
+        createdBy: user,
+        lastModifiedBy: user,
       });
       await newCustomConfig.save();
     }
@@ -562,6 +570,8 @@ export const addConfig = async (req, res) => {
         type,
         desc,
         params,
+        createdBy: owner,
+        lastModifiedBy: owner,
       });
 
       await newAppConfig.save();
@@ -588,6 +598,8 @@ export const addConfig = async (req, res) => {
         type,
         desc,
         params,
+        createdBy: owner,
+        lastModifiedBy: owner,
       });
 
       await newPlayerConfig.save();
@@ -616,6 +628,8 @@ export const addConfig = async (req, res) => {
         type,
         desc,
         params,
+        createdBy: owner,
+        lastModifiedBy: owner,
       });
 
       await newCustomConfig.save();
