@@ -5,7 +5,7 @@ import logo_1 from '@/assets/logo_1.svg'
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
 import { axios_admin } from "@/lib/axios"
-import { useEffect } from "react"
+import { toast } from "react-toastify"
 
 const LoginForm = () => {
     const router = useRouter();
@@ -20,10 +20,10 @@ const LoginForm = () => {
             const res = await axios_admin.post(`/join-company`, { companyID: companyid });
 
             console.log(res.data);
-            alert('Request sent successfully');
+            toast('Request sent successfully');
         } catch (error: any) {
             console.log(error.response)
-            alert(error.response.data.message)
+            toast(error.response.data.message)
         }
     }
 

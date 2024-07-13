@@ -7,6 +7,7 @@ import GoogleIcon from '@/assets/Google.svg'
 import Link from "next/link"
 import { axios_auth } from "@/lib/axios"
 import { useRouter } from 'next/navigation'
+import { toast } from "react-toastify"
 
 const SignupForm = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +26,7 @@ const SignupForm = () => {
 
                 if (result1.data.registered === true) {
                     setIsLoading(false);
-                    alert(result1.data.message);
+                    toast(result1.data.message);
                     router.push(`/auth/login`);
                 } else {
                     const result2 = await axios_auth.post(`/send-otp`, {
@@ -35,18 +36,20 @@ const SignupForm = () => {
                     setIsLoading(false);
 
                     if (result2.status === 200) {
-                        alert(result2.data.message);
+                        toast(result2.data.message);
+                        console.log(result2.data.message);
                         router.push(`/auth/signup/verify?email=${email}`);
                     }
                 }
             } else {
-                alert("Email is required");
+                toast("Email is required");
                 setIsLoading(false);
             }
 
         } catch (error: any) {
             setIsLoading(false);
-            alert(error.response.data.message);
+            console.log(error.response);
+            toast(error.response.data.message);
         }
     }
 

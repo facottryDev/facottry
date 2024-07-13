@@ -3,6 +3,7 @@ import { userStore } from '@/lib/store'
 import { axios_auth } from "@/lib/axios"
 import { IoTrashBin } from "react-icons/io5"
 import { useRouter } from "next/navigation"
+import { toast } from "react-toastify"
 
 export default function AccountSettings() {
     const user = userStore(state => state.user)
@@ -48,22 +49,22 @@ export default function AccountSettings() {
             }
 
             axios_auth.patch('/update-user', body);
-            alert('User updated successfully')
+            toast('User updated successfully')
             window.location.reload();
         } catch (error) {
             console.error(error)
-            alert('Error updating user')
+            toast('Error updating user')
         }
     }
 
     const deleteUser = async () => {
         try {
             await axios_auth.delete('/delete-user');
-            alert('User deleted successfully');
+            toast('User deleted successfully');
             router.push('/auth/logout');
         } catch (error) {
             console.error(error);
-            alert('Error deleting user');
+            toast('Error deleting user');
         }
     }
 

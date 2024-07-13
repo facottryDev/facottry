@@ -6,6 +6,7 @@ import logo_1 from '@/assets/logo_1.svg'
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
 import { axios_auth } from "@/lib/axios"
+import { toast } from "react-toastify"
 
 const ForgotPassword = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +25,7 @@ const ForgotPassword = () => {
 
                 if (result1.data.registered === false) {
                     setIsLoading(false);
-                    alert(result1.data.message)
+                    toast.error(result1.data.message)
                     router.push(`/auth/signup`);
                 } else {
                     const result2 = await axios_auth.post(`/send-otp`, {
@@ -32,19 +33,20 @@ const ForgotPassword = () => {
                     });
 
                     setIsLoading(false);
-                    alert(result2.data.message);
+                    toast.success(result2.data.message);
+                    console.log(result2.data.message);
 
                     if (result2.status === 200) router.push(`/auth/forgot-password/verify?email=${email}`
                     );
                 }
             } else {
-                alert("Email is required");
+                toast.error("Email is required");
                 setIsLoading(false);
             }
 
         } catch (error: any) {
             console.log(error);
-            alert(error.response.data.message);
+            toast.error(error.response.data.message);
             setIsLoading(false);
         }
     }

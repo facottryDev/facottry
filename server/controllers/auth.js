@@ -149,7 +149,7 @@ export const sendOTP = async (req, res) => {
       Date.now() < req.session.otpExpiry &&
       req.body.email === req.session.email
     ) {
-      return res.status(400).send("OTP not expired");
+      return res.status(400).send({ message: "Wait before resending" });
     }
 
     // Email Validation
@@ -174,33 +174,27 @@ export const sendOTP = async (req, res) => {
              <p>Thank you for using facOTTry!</p>`,
     };
 
-    // const result = await sendMail(mailOptions);
-    // if (result.accepted) {
-    //   // Store temporary information
-    //   req.session.otp = otp;
-    //   req.session.email = req.body.email;
-    //   req.session.otpExpiry = Date.now() + 180000; //5 Minutes from now
-
-    //   return res.json({ message: `OTP sent to ${req.body.email}`});
-    // }
-
     req.session.otp = otp;
     req.session.email = req.body.email;
-    req.session.otpExpiry = Date.now() + 180000; // 5 Minutes from now
+    req.session.otpExpiry = Date.now() + 120000;
 
-    return res.status(200).json({ message: otp });
+    res.json({ message: `OTP (${otp}) sent to ${req.body.email}.` });
 
-    res.status(500).send("Error sending OTP");
+    setImmediate(async () => {
+      try {
+        await sendMail(mailOptions);
+      } catch (error) {
+        console.error("Error sending email:", error);
+      }
+    });
   } catch (error) {
     if (error.details) {
-      return res
-        .status(422)
-        .json(error.details.map((detail) => detail.message).join(", "));
+      return res.status(400).json({
+        message: error.details.map((detail) => detail.message).join(", "),
+      });
     }
 
-    console.log(error.message)
-
-    return res.status(500).json(error.message);
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -269,14 +263,28 @@ export const registerUser = async (req, res) => {
     const profilePic =
       "https://res.cloudinary.com/dqjkucbjn/image/upload/v1688890088/Avatars/thumbs-1688889944751_w9xb0e.svg";
 
-    // Hash password & save to mongoDB
+    // Hash password
     const hash = await bcrypt.hash(password, 12);
-    const newUser = new users({
-      email,
-      password: hash,
-      profilePic,
-    });
-    await newUser.save();
+
+    // Check for existing user
+    const user = await users.findOne({ email });
+
+    if (user && user.status === "active") {
+      return res.status(400).json({ message: "User already registered" });
+    } else if (user && user.status === "inactive") {
+      user.status = "active";
+      user.password = hash;
+      user.markModified("status");
+      user.markModified("password");
+      await user.save();
+    } else {
+      const newUser = new users({
+        email,
+        password: hash,
+        profilePic,
+      });
+      await newUser.save();
+    }
 
     delete req.session.tempSessionExp;
     delete req.session.email;
@@ -292,7 +300,6 @@ export const registerUser = async (req, res) => {
     });
 
     removeExpiredUserSessions(email);
-
     return res.status(200).json({ message: "Registered Successfully" });
   } catch (error) {
     if (error.details) {
@@ -301,6 +308,7 @@ export const registerUser = async (req, res) => {
         .json(error.details.map((detail) => detail.message).join(", "));
     }
 
+    console.log(error.message);
     return res.status(500).json(error.message);
   }
 };
@@ -457,7 +465,7 @@ export const updateUserDetails = async (req, res) => {
     if (result) {
       return res.status(200).json(result);
     } else {
-      return res.status(500).send("Error updating user details");
+      return res.status(500).json({ message: "Error updating details." });
     }
   } catch (error) {
     return res.status(500).json(error.message);
@@ -478,7 +486,7 @@ export const deleteUserAccount = async (req, res) => {
     await user.save();
 
     revokeUserSessions(email);
-    return res.status(200).send("Account deleted successfully");
+    return res.status(200).json({ message: "Account deactivated" });
   } catch (error) {
     return res.status(500).json(error.message);
   }

@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 type Props = {}
 
-const Filter = ({ }: Props) => {
+const Filter = ({}: Props) => {
     const [activeFilter, setActiveFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter]);
     const activeProject = userStore(state => state.activeProject);
     const allFilters = activeProject?.filters || [];

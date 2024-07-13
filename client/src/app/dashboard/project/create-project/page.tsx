@@ -6,12 +6,19 @@ import Link from "next/link"
 import { useRouter } from 'next/navigation'
 import { axios_admin } from "@/lib/axios"
 import { userStore } from "@/lib/store"
+import { toast } from "react-toastify"
 
 const LoginForm = () => {
   const router = useRouter();
+  const { activeProject, setActiveProject, setProjects } = userStore();
 
-  const setProjects = userStore(state => state.setProjects)
-  const projects = userStore(state => state.projects)
+  const refreshAdmin = async () => {
+    const adminResponse = await axios_admin.get('/get-admin');
+    const { projects } = adminResponse.data;
+    setProjects(projects);
+    const currentProject = projects.find((p: any) => p.projectID === activeProject?.projectID);
+    setActiveProject(currentProject);
+}
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,12 +29,12 @@ const LoginForm = () => {
     try {
       const res = await axios_admin.post(`/add-project`, data);
 
-      alert(res.data.message);
-      setProjects([...projects, res.data.project])
+      toast.success(res.data.message);
+      refreshAdmin();
       router.push('/dashboard/home')
     } catch (error: any) {
       console.log(error.response)
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
     }
   }
 

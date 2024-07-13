@@ -298,21 +298,9 @@ export const addProject = async (req, res) => {
 
     await newProject.save();
 
-    const projectDetails = {
-      projectID: newProject.projectID,
-      name: newProject.name,
-      type: newProject.type,
-      role: "owner",
-      joinRequests: [],
-      activeInvites: [],
-      owners: [owner],
-      editors: [],
-      viewers: [],
-    };
-
     res
       .status(200)
-      .json({ message: "Project added successfully", project: projectDetails });
+      .json({ message: "Project added successfully" });
   } catch (error) {
     return res.status(500).send(error.message);
   }

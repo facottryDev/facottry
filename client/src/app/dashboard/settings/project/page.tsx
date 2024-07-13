@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import ProjectOwnerSettings from "./ProjectOwnerSettings";
 import Sidebar from "@/components/dashboard/Sidebar";
 import UserDropdown from "@/components/dashboard/UserDropdown"
 import ToggleSwitch from "@/components/global/ToggleTheme"
@@ -9,17 +8,19 @@ import Image from "next/image"
 import logo_2 from '@/assets/logo_2.svg'
 import logo_dark_2 from '@/assets/logo_dark_2.svg'
 import BasicDetails from "./BasicDetails";
-import { ManageUsers } from "./ManageUsers";
+import ManageUsers from "./ManageUsers";
+import JoinRequests from "./ManageInvites";
+import ActiveInvites from "./ActiveInvites";
+import CriticalSettings from "./CriticalSettings";
 
 type Props = {}
 
-const ownerTabs = ['Basic Details', 'Manage Users', 'Join Requests', 'Active Invites', 'Critical Settings']
-const editorTabs = ['SDK Demo', 'Site Examples']
-const viewerTabs = ['SDK Demo', 'Site Examples']
+const ownerTabs = ['Basic Details', 'Manage Users', 'Manage Invites', 'Critical Settings']
+const editorTabs = ['Basic']
+const viewerTabs = ['Basic']
 
 const ProjectSettings = (props: Props) => {
     const activeProject = userStore(state => state.activeProject);
-    const userRole = activeProject?.role;
     const roleTab = (activeProject?.role === 'owner') ? ownerTabs : (activeProject?.role === 'editor') ? editorTabs : viewerTabs;
 
     const [selectedTab, setSelectedTab, sidebar, setSidebar] = globalStore(state => [state.projectSettingTab, state.setProjectSettingTab, state.sidebar, state.setSidebar]);
@@ -55,7 +56,7 @@ const ProjectSettings = (props: Props) => {
                             </button>
                         )}
 
-                        <h1 className="text-2xl font-bold">Playground</h1>
+                        <h1 className="text-2xl font-bold">Manage Project</h1>
 
 
                     </div>
@@ -98,6 +99,8 @@ const ProjectSettings = (props: Props) => {
 
                 {selectedTab === 'Basic Details' && <BasicDetails />}
                 {selectedTab === 'Manage Users' && <ManageUsers />}
+                {selectedTab === 'Manage Invites' && <JoinRequests />}
+                {selectedTab === 'Critical Settings' && <CriticalSettings />}
             </div>
         </div>
     )

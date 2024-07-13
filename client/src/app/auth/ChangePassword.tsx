@@ -7,6 +7,7 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { axios_auth } from "@/lib/axios"
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
+import { toast } from "react-toastify"
 
 export const ChangePassword = () => {
     const router = useRouter();
@@ -20,35 +21,38 @@ export const ChangePassword = () => {
         const password = e.currentTarget.password.value;
         const confirmPassword = e.currentTarget.confirmpass.value;
 
-        if(password !== confirmPassword) {
-            alert("Passwords do not match.");
+        if (password !== confirmPassword) {
+            toast.error("Passwords do not match.");
             return;
         }
 
         try {
             if (email) {
-                let result = null;
-                if(pathname === '/auth/forgot-password/change-password') {
-                    result = await axios_auth.post(`/forgot`, {
+                if (pathname === '/auth/forgot-password/change-password') {
+                    const result = await axios_auth.post(`/forgot`, {
                         password
                     });
-                } else{
-                    result = await axios_auth.post(`/register`, {
-                        password
-                    });
-                }
 
-                if (result.status === 200) {
-                    alert("Success");
-                    router.push(`/onboarding`)
-                };
+                    if (result.status === 200) {
+                        toast.success("Success");
+                        router.push(`/auth/login`);
+                    };
+                } else {
+                    const result = await axios_auth.post(`/register`, {
+                        password
+                    });
+
+                    if (result.status === 200) {
+                        toast.success("Success");
+                    };
+                }
             } else {
-                alert("Email is required");
+                toast.error("Email is required");
             }
 
         } catch (error: any) {
-            console.log(error);
-            alert(error.response.data);
+            console.log(error.response);
+            toast.error(error.response.data);
         }
     }
 
