@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image'
 import logo_2 from '@/assets/logo_2.svg'
 import logo_dark_2 from '@/assets/logo_dark_2.svg'
-import { userStore, globalStore } from "@/lib/store";
+import { userStore, globalStore, activeFilterStore } from "@/lib/store";
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { AiOutlineProject } from "react-icons/ai";
@@ -27,12 +27,15 @@ const SidebarButton = ({ href, label, icon, target }: {
 const Sidebar = () => {
   const { projects: allProjects, activeProject, setActiveProject, company } = userStore(state => ({ projects: state.projects, activeProject: state.activeProject, setActiveProject: state.setActiveProject, company: state.company }));
   const animatedComponents = makeAnimated();
+  const [setActiveFilter] = activeFilterStore(state => [state.setActiveFilter]);
 
   const { sidebar, setSidebar, sideDetailsCollapsed: sidebarCollapsed, setDetailsCollapsed: setSidebarCollapsed } = globalStore(state => ({ sidebar: state.sidebar, setSidebar: state.setSidebar, sideDetailsCollapsed: state.sideDetailsCollapsed, setDetailsCollapsed: state.setDetailsCollapsed }));
 
   const handleProjectChange = (selectedOption: any) => {
     const project = allProjects.find((item) => item.projectID === selectedOption.value) || null;
     if (project) setActiveProject(project);
+    setActiveFilter([]);
+    window.location.reload();
   }
 
   const ProjectOptions = allProjects

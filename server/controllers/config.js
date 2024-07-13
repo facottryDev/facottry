@@ -332,7 +332,7 @@ export const cloneConfig = async (req, res) => {
         projectID: appConfig.projectID,
         companyID: appConfig.companyID,
         desc: desc || appConfig.desc,
-        name: name + '_copy' || appConfig.name + '_copy',
+        name: name + "_copy" || appConfig.name + "_copy",
         params: params || appConfig.params,
       });
       await newAppConfig.save();
@@ -591,7 +591,7 @@ export const addConfig = async (req, res) => {
       });
 
       await newPlayerConfig.save();
-    } else {     
+    } else {
       const customConfig = await CustomConfig.findOne({
         status: "active",
         projectID,
@@ -643,7 +643,9 @@ export const createMapping = async (req, res) => {
       case !project.owners.includes(owner) && !project.editors.includes(owner):
         return res.status(403).json({ message: "Unauthorized" });
       case !configs.app || !configs.player:
-        return res.status(400).json({ message: "App & Player Configs required" });
+        return res
+          .status(400)
+          .json({ message: "App & Player Configs required" });
     }
 
     const appConfig = await AppConfig.findOne(
@@ -710,7 +712,9 @@ export const createMapping = async (req, res) => {
     // For Loop for all type of configs.
     let searchFilter = {};
     for (const key in filter) {
-      if (filter[key] === "") {
+      if (!project.filters[key]) {
+        delete filter[key];
+      } else if (filter[key] === "") {
         searchFilter[key] = project.filters[key].default;
       } else if (filter[key] === "ALL") {
         searchFilter[key] = project.filters[key].values;
@@ -718,6 +722,8 @@ export const createMapping = async (req, res) => {
         searchFilter[key] = filter[key].split(", ");
       }
     } // COUNTRY = [IND, USA], DEVICE = [MOBILE, DESKTOP], SUBSCRIPTION = FREE
+
+    console.log(searchFilter);
 
     let filterConditions = Object.entries(searchFilter).reduce(
       (acc, [key, value]) => {
@@ -826,7 +832,9 @@ export const getAllMappings = async (req, res) => {
 
     let searchFilter = {};
     for (const key in filter) {
-      if (filter[key] === "") {
+      if (!project.filters[key]) {
+        delete filter[key];
+      } else if (filter[key] === "") {
         searchFilter[key] = project.filters[key].default;
       } else if (filter[key] === "ALL") {
         searchFilter[key] = project.filters[key].values;
