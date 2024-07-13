@@ -151,7 +151,12 @@ const FilterEditorComponent = (props: Props) => {
                                                 }
                                             >
                                                 <div className="flex flex-col items-center justify-center bg-white">
-                                                    <h1 className="font-bold text-lg">Update Filter</h1>
+                                                    <div className="flex justify-between w-full ">
+                                                        <h1 className="font-bold text-lg">Update Filter</h1>
+                                                        <button className="p-2 rounded-full bg-primary800 text-white hover:bg-primary700 transition-all" onClick={() => setEditFilterModal('')}>
+                                                            <IoClose />
+                                                        </button>
+                                                    </div>
 
                                                     <form className="flex flex-col w-[50vw] max-w-sm bg-white " onSubmit={handleUpdateFilters}>
                                                         <label htmlFor="filterName" className="mt-4">Filter Name</label>
@@ -220,7 +225,7 @@ const FilterEditorComponent = (props: Props) => {
                 <div className="flex  flex-col items-center justify-center bg-white">
                     <div className="flex justify-between w-full ">
                         <h1 className="font-bold text-lg">Create New Filter</h1>
-                        <button className="p-2 rounded-full bg-red-400 text-white hover:bg-red-500 transition-all" onClick={() => setAddFilterModal(false)}>
+                        <button className="p-2 rounded-full bg-primary800 text-white hover:bg-primary700 transition-all" onClick={() => setAddFilterModal(false)}>
                             <IoClose />
                         </button>
                     </div>

@@ -345,7 +345,7 @@ const ConfigTableComponent = (props: Props) => {
             >
                 <div className="flex flex-col items-center justify-center bg-white">
                     <div className="flex justify-between w-full px-4">
-                        <h1 className="font-bold uppercase text-lg">Add New Config</h1>
+                        <h1 className="font-bold text-lg">Create New Config</h1>
                         <button className="p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
                             setconfigModal("");
                             setEditorMarker([]);
@@ -358,12 +358,12 @@ const ConfigTableComponent = (props: Props) => {
                     <form className="flex w-full flex-col bg-white text-sm" onSubmit={handleCreate}>
                         <div className="flex p-4 flex-col md:flex-row w-full">
                             {/* Left side */}
-                            <div className="flex flex-col">
-                                <label htmlFor="ConfigName" className="mb-1 font-semibold">Name*</label>
+                            <div className="flex flex-col min-w-[200px]">
+                                <label htmlFor="ConfigName" className="mb-1 font-semibold">Name</label>
                                 <input id="ConfigName" name="ConfigName" type="text" className="w-full p-2 border rounded-md" onKeyDown={(e) => e.stopPropagation()} />
 
                                 <label htmlFor="ConfigDesc" className="mb-1 font-semibold mt-4">Description</label>
-                                <input type="text" id="ConfigDesc" maxLength={50} name="ConfigDesc" className="w-full p-2 border rounded-md" onKeyDown={(e) => e.stopPropagation()} />
+                                <input type="text" id="ConfigDesc" maxLength={50} name="ConfigDesc" required className="w-full p-2 border rounded-md" onKeyDown={(e) => e.stopPropagation()} />
                             </div>
 
                             {/* Divider */}
@@ -371,12 +371,13 @@ const ConfigTableComponent = (props: Props) => {
 
                             {/* Right side */}
                             <div className="w-full flex flex-col mt-2 md:mt-0">
-                                <label className="font-semibold mb-1">Params (JSON)*</label>
+                                <label className="font-semibold mb-1">Params (JSON)</label>
                                 <Editor
                                     height="50vh"
                                     width="100%"
                                     defaultLanguage="json"
                                     theme="vs-dark"
+                                    defaultValue={`{\n"key": "value"\n}`}
                                     onChange={(value) => setEditorValue(value)}
                                     onValidate={(markers) => {
                                         setEditorMarker(markers);

@@ -269,11 +269,9 @@ export const registerUser = async (req, res) => {
     // Check for existing user
     const user = await users.findOne({ email });
 
-    if (user.status === "active") {
+    if (user && user.status === "active") {
       return res.status(400).json({ message: "User already registered" });
-    }
-
-    if (user.status === "inactive") {
+    } else if (user && user.status === "inactive") {
       user.status = "active";
       user.password = hash;
       user.markModified("status");
@@ -310,6 +308,7 @@ export const registerUser = async (req, res) => {
         .json(error.details.map((detail) => detail.message).join(", "));
     }
 
+    console.log(error.message);
     return res.status(500).json(error.message);
   }
 };
