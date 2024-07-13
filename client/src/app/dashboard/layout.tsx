@@ -41,7 +41,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             setIsLoading(false);
         } catch (error: any) {
             console.log(error);
-            router.push(error.response?.data.code === "NO_PROJECT" ? '/onboarding' : '/');
+            if(error.response?.data.code === "NO_COMPANY" || error.response?.data.code === "NO_PROJECT") {
+                router.push('/onboarding');
+            } else {
+                router.push('/');
+            }
         }
     };
 

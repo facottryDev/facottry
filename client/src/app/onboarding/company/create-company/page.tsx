@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useRouter } from 'next/navigation'
 import { axios_admin } from "@/lib/axios"
 import { userStore } from "@/lib/store"
+import { toast } from "react-toastify"
 
 const LoginForm = () => {
     const router = useRouter();
@@ -21,11 +22,11 @@ const LoginForm = () => {
             const res = await axios_admin.post(`/company/create`, data);
 
             setCompany(res.data.company);
-            alert(res.data.message);
+            toast(res.data.message);
             router.push('/onboarding/project/create-project');
         } catch (error: any) {
             console.log(error.response)
-            alert(error.response.data.message)
+            toast(error.response.data.message)
         }
     }
 

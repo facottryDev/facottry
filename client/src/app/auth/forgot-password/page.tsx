@@ -34,6 +34,7 @@ const ForgotPassword = () => {
 
                     setIsLoading(false);
                     toast.success(result2.data.message);
+                    console.log(result2.data.message);
 
                     if (result2.status === 200) router.push(`/auth/forgot-password/verify?email=${email}`
                     );

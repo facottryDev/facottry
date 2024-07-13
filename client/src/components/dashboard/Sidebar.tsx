@@ -8,6 +8,8 @@ import logo_dark_2 from '@/assets/logo_dark_2.svg'
 import { userStore, globalStore } from "@/lib/store";
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
+import { AiOutlineProject } from "react-icons/ai";
+import { CgOrganisation } from "react-icons/cg";
 
 const SidebarButton = ({ href, label, icon, target }: {
   href: string;
@@ -29,7 +31,7 @@ const Sidebar = () => {
 
   const handleProjectChange = (selectedOption: any) => {
     const project = allProjects.find((item) => item.projectID === selectedOption.value) || null;
-    if(project) setActiveProject(project);
+    if (project) setActiveProject(project);
   }
 
   const ProjectOptions = allProjects
@@ -41,7 +43,7 @@ const Sidebar = () => {
 
   return (
     <div className={`${sidebar ? 'block' : 'hidden'} bg-white p-8 pl-5 dark:bg-darkblue`}>
-      <button onClick={() => { setSidebar(false) }} className="flex gap-2 items-center mb-8">
+      <button onClick={() => { setSidebar(false) }} className="flex gap-2 items-center mb-5">
         <Image
           src={logo_2}
           alt="FacOTTry"
@@ -64,18 +66,13 @@ const Sidebar = () => {
       <div className="font-medium text-slate-700 dark:text-white">
         <SidebarButton href="/dashboard/home" label="Dashboard" icon={<FiHome />} />
         <SidebarButton href="/dashboard/playground" label="Playground" icon={<FiPlayCircle />} />
-        {/* <SidebarButton href="/dashboard/analytics" label="Analytics" icon={<FiBarChart2 />} />
-        <SidebarButton href="/docs" target='_blank' label="Documentation" icon={<FiFileText />} />
-        <SidebarButton href="/dashboard/pricing" label="Upgrade" icon={<FiShoppingCart />} />
-        <SidebarButton href="/dashboard/buy-features" label="Buy Features" icon={<FiDollarSign />} /> */}
-        {/* <SidebarButton href="/dashboard/contact" label="Contact Us" icon={<FiPhone />} /> */}
-        <SidebarButton href="/dashboard/settings/project" label="Project Settings" icon={<FiSettings />} />
-        <SidebarButton href="/dashboard/settings/company" label="Company Settings" icon={<FiSettings />} />
+        <SidebarButton href="/dashboard/settings/project" label="Project Settings" icon={<AiOutlineProject />} />
+        <SidebarButton href="/dashboard/settings/company" label="Company Settings" icon={<CgOrganisation />} />
       </div>
 
       <hr className="mt-4 w-full" />
 
-      <div className="mt-4">
+      <div className="mt-4 min-w-[200px]">
         <Select
           options={ProjectOptions}
           onChange={handleProjectChange}
@@ -83,7 +80,6 @@ const Sidebar = () => {
           closeMenuOnSelect={true}
           components={animatedComponents}
         />
-
 
         {/* Add new project button */}
         <Link href="/dashboard/project" className="mt-4 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm text-center hover:bg-gray-100 transition-all">
@@ -103,13 +99,18 @@ const Sidebar = () => {
               }`}
           >
             <span>
-              <h3 className="font-bold">Project ID: </h3>
-              <p>{activeProject?.projectID}</p>
+              <h3 className="font-bold">Company ID: </h3>
+              <p>{company?.companyID}</p>
             </span>
 
             <span>
-              <h3 className="font-bold">Company: </h3>
-              <p>{company?.name}</p>
+              <h3 className="font-bold">Company Name: </h3>
+              <p>{activeProject?.name}</p>
+            </span>
+
+            <span>
+              <h3 className="font-bold">Project ID: </h3>
+              <p>{activeProject?.projectID}</p>
             </span>
 
             <span>

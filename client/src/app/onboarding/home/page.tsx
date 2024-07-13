@@ -6,10 +6,13 @@ import Link from "next/link"
 import { userStore } from "@/lib/store"
 import { PiUserCircleFill } from "react-icons/pi"
 import { axios_auth } from "@/lib/axios"
+import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
 
 const LoginForm = () => {
   const user = userStore(state => state.user);
   const company = userStore(state => state.company);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -27,7 +30,8 @@ const LoginForm = () => {
         };
 
         if (!isValidName(String(data.name))) {
-          throw new Error('Invalid name');
+          toast.error('Invalid name');
+          return;
         }
 
         body = { ...body, name: data.name };
@@ -40,7 +44,8 @@ const LoginForm = () => {
         };
 
         if (!isValidMobile(String(data.mobile))) {
-          throw new Error('Invalid mobile number');
+          toast.error('Invalid mobile number');
+          return;
         }
 
         body = { ...body, mobile: data.mobile };
@@ -50,11 +55,11 @@ const LoginForm = () => {
         body = { ...body, address: data.address };
       }
 
-      const result = await axios_auth.patch('/update-user', body);
-      alert('Updated successfully')
-      window.location.reload();
-    } catch (error) {
-      alert(error);
+      await axios_auth.patch('/update-user', body);
+      toast.success('Updated successfully')
+      router.push(company ? "/onboarding/project" : "/onboarding/company")
+    } catch (error: any) {
+      console.log(error.response.data);
     }
   }
 

@@ -21,28 +21,31 @@ export const ChangePassword = () => {
         const password = e.currentTarget.password.value;
         const confirmPassword = e.currentTarget.confirmpass.value;
 
-        if(password !== confirmPassword) {
+        if (password !== confirmPassword) {
             toast.error("Passwords do not match.");
             return;
         }
 
         try {
             if (email) {
-                let result = null;
-                if(pathname === '/auth/forgot-password/change-password') {
-                    result = await axios_auth.post(`/forgot`, {
+                if (pathname === '/auth/forgot-password/change-password') {
+                    const result = await axios_auth.post(`/forgot`, {
                         password
                     });
-                } else{
-                    result = await axios_auth.post(`/register`, {
-                        password
-                    });
-                }
 
-                if (result.status === 200) {
-                    toast.success("Success");
-                    router.push(`/`)
-                };
+                    if (result.status === 200) {
+                        toast.success("Success");
+                        router.push(`/auth/login`);
+                    };
+                } else {
+                    const result = await axios_auth.post(`/register`, {
+                        password
+                    });
+
+                    if (result.status === 200) {
+                        toast.success("Success");
+                    };
+                }
             } else {
                 toast.error("Email is required");
             }

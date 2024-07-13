@@ -58,7 +58,7 @@ type GlobalStore = {
 
 export const globalStore = create(persist<GlobalStore>((set) => ({
   sidebar: true,
-  sideDetailsCollapsed: false,
+  sideDetailsCollapsed: true,
   dashboardTab: 'Manage Filters',
   playgroundTab: 'SDK Demo',
   projectSettingTab: 'Basic Details',

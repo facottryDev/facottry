@@ -26,6 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     if (error.response.data.code === "NO_PROJECT") {
                         setProjects([]);
                         setCompany(error.response.data.company);
+                        router.push("/onboarding/project");
                     }
                 }
 

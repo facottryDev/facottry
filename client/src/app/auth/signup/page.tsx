@@ -37,6 +37,7 @@ const SignupForm = () => {
 
                     if (result2.status === 200) {
                         toast(result2.data.message);
+                        console.log(result2.data.message);
                         router.push(`/auth/signup/verify?email=${email}`);
                     }
                 }
