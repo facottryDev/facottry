@@ -32,9 +32,13 @@ const BasicDetails = (props: Props) => {
     }
 
     return (
-        <div className="mt-5">
+        <div className="w-full border rounded-md mt-8">
+            <div className="flex px-4 my-4 w-full justify-between">
+                <label className="font-bold leading-6 text-gray-900 dark:text-slate-200">Basic Details</label>
+            </div>
+
             <div className="flex flex-col">
-                <form className="p-5 bg-white border rounded-lg mt-2" onSubmit={updateProjectDetails}>
+                <form className="p-5 bg-white border rounded-lg" onSubmit={updateProjectDetails}>
                     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         <div className="sm:col-span-3">
                             <label htmlFor="projectID" className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">

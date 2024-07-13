@@ -43,17 +43,19 @@ export const ManageUsers = (props: Props) => {
     }
 
     return (
-        <div>
-            <div className="mt-4 flex gap-2 items-center">
-                <label className="text-sm font-bold leading-6 text-gray-900 dark:text-slate-200">Manage Users</label>
+        <div className="w-full border rounded-md mt-8">
+            <div className="my-4">
+                <div className="flex px-4 w-full justify-between">
+                    <label className="font-bold leading-6 text-gray-900 dark:text-slate-200">Manage Users</label>
 
-                <button
-                    type="button"
-                    className="flex items-center text-sm font-semibold leading-6 text-primary hover:underline"
-                    onClick={() => setInviteUserModal(true)}
-                >
-                    Invite User
-                </button>
+                    <button
+                        type="button"
+                        className="flex items-center text-sm font-semibold leading-6 text-primary hover:underline"
+                        onClick={() => setInviteUserModal(true)}
+                    >
+                        Invite User
+                    </button>
+                </div>
 
                 {/* Invite User Dialog Box */}
                 <Modal
@@ -106,125 +108,125 @@ export const ManageUsers = (props: Props) => {
                 </Modal>
             </div>
 
-            <div className="border bg-white rounded-lg p-4 items-center mt-2 gap-2 justify-between max-h-[400px] overflow-y-scroll">
-                    {activeProject?.owners.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center">
-                            <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
-                                {index + 1}. {item}
-                            </h2>
+            <div className="border bg-white p-4 items-center gap-2 justify-between min-h-[50vh] overflow-y-scroll">
+                {activeProject?.owners.map((item, index) => (
+                    <div key={index} className="flex justify-between items-center">
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
+                            {index + 1}. {item}
+                        </h2>
 
-                            <div className="flex gap-6 text-sm items-center font-semibold">
-                                <select
-                                    id={item}
-                                    name={item}
-                                    className="p-2 border bg-bggray w-full rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm"
-                                    defaultValue={"owner"}
-                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                        if (window.confirm('Are you sure?')) {
-                                            changeAccess(item, e)();
-                                        }
-                                    }}
-                                >
-                                    <option value="owner">Owner</option>
-                                    <option value="editor">Editor</option>
-                                    <option value="viewer">Viewer</option>
-                                </select>
+                        <div className="flex gap-6 text-sm items-center font-semibold">
+                            <select
+                                id={item}
+                                name={item}
+                                className="p-2 border bg-bggray w-full rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm"
+                                defaultValue={"owner"}
+                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                    if (window.confirm('Are you sure?')) {
+                                        changeAccess(item, e)();
+                                    }
+                                }}
+                            >
+                                <option value="owner">Owner</option>
+                                <option value="editor">Editor</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
 
-                                <button
-                                    type="button"
-                                    className="flex items-center text-red-600 dark:text-red-400 hover:underline"
-                                    onClick={() => {
-                                        if (window.confirm('Are you sure?')) {
-                                            deleteUser(item)();
-                                        }
-                                    }}
-                                >
-                                    Remove
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                className="flex items-center text-red-600 dark:text-red-400 hover:underline"
+                                onClick={() => {
+                                    if (window.confirm('Are you sure?')) {
+                                        deleteUser(item)();
+                                    }
+                                }}
+                            >
+                                Remove
+                            </button>
                         </div>
-                    ))}
+                    </div>
+                ))}
 
-                    {activeProject && activeProject?.editors.length > 0 && <hr className="my-4 border-gray-900/10 dark:border-gray-500" />}
+                {activeProject && activeProject?.editors.length > 0 && <hr className="my-4 border-gray-900/10 dark:border-gray-500" />}
 
-                    {activeProject?.editors.map((item, index) => (
-                        <div key={index} className="flex justify-between">
-                            <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
-                                {index + 1}. {item}
-                            </h2>
+                {activeProject?.editors.map((item, index) => (
+                    <div key={index} className="flex justify-between">
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
+                            {index + 1}. {item}
+                        </h2>
 
-                            <div className="flex gap-6 text-sm items-center font-semibold">
-                                <select
-                                    id={item}
-                                    name={item}
-                                    className="p-2 border bg-bggray w-full rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm"
-                                    defaultValue={"editor"}
-                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                        if (window.confirm('Are you sure?')) {
-                                            changeAccess(item, e)();
-                                        }
-                                    }}
-                                >
-                                    <option value="owner">Owner</option>
-                                    <option value="editor">Editor</option>
-                                    <option value="viewer">Viewer</option>
-                                </select>
+                        <div className="flex gap-6 text-sm items-center font-semibold">
+                            <select
+                                id={item}
+                                name={item}
+                                className="p-2 border bg-bggray w-full rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm"
+                                defaultValue={"editor"}
+                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                    if (window.confirm('Are you sure?')) {
+                                        changeAccess(item, e)();
+                                    }
+                                }}
+                            >
+                                <option value="owner">Owner</option>
+                                <option value="editor">Editor</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
 
-                                <button
-                                    type="button"
-                                    className="flex items-center text-red-600 dark:text-red-400 hover:underline"
-                                    onClick={() => {
-                                        if (window.confirm('Are you sure?')) {
-                                            deleteUser(item)();
-                                        }
-                                    }}
-                                >
-                                    Remove
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                className="flex items-center text-red-600 dark:text-red-400 hover:underline"
+                                onClick={() => {
+                                    if (window.confirm('Are you sure?')) {
+                                        deleteUser(item)();
+                                    }
+                                }}
+                            >
+                                Remove
+                            </button>
                         </div>
-                    ))}
+                    </div>
+                ))}
 
-                    {activeProject && activeProject?.viewers.length > 0 && <hr className="my-4 border-gray-900/10 dark:border-gray-500" />}
+                {activeProject && activeProject?.viewers.length > 0 && <hr className="my-4 border-gray-900/10 dark:border-gray-500" />}
 
-                    {activeProject?.viewers.map((item, index) => (
-                        <div key={index} className="flex justify-between">
-                            <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
-                                {index + 1}. {item}
-                            </h2>
+                {activeProject?.viewers.map((item, index) => (
+                    <div key={index} className="flex justify-between">
+                        <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
+                            {index + 1}. {item}
+                        </h2>
 
-                            <div className="flex gap-6 text-sm items-center font-semibold">
-                                <select
-                                    id={item}
-                                    name={item}
-                                    className="p-2 border bg-bggray w-full rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm"
-                                    defaultValue={"viewer"}
-                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                        if (window.confirm('Are you sure?')) {
-                                            changeAccess(item, e)();
-                                        }
-                                    }}
-                                >
-                                    <option value="owner">Owner</option>
-                                    <option value="editor">Editor</option>
-                                    <option value="viewer">Viewer</option>
-                                </select>
+                        <div className="flex gap-6 text-sm items-center font-semibold">
+                            <select
+                                id={item}
+                                name={item}
+                                className="p-2 border bg-bggray w-full rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm"
+                                defaultValue={"viewer"}
+                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                    if (window.confirm('Are you sure?')) {
+                                        changeAccess(item, e)();
+                                    }
+                                }}
+                            >
+                                <option value="owner">Owner</option>
+                                <option value="editor">Editor</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
 
-                                <button
-                                    type="button"
-                                    className="flex items-center text-red-600 dark:text-red-400 hover:underline"
-                                    onClick={() => {
-                                        if (window.confirm('Are you sure?')) {
-                                            deleteUser(item)();
-                                        }
-                                    }}
-                                >
-                                    Remove
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                className="flex items-center text-red-600 dark:text-red-400 hover:underline"
+                                onClick={() => {
+                                    if (window.confirm('Are you sure?')) {
+                                        deleteUser(item)();
+                                    }
+                                }}
+                            >
+                                Remove
+                            </button>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }

@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import ProjectOwnerSettings from "./ProjectOwnerSettings";
 import Sidebar from "@/components/dashboard/Sidebar";
 import UserDropdown from "@/components/dashboard/UserDropdown"
 import ToggleSwitch from "@/components/global/ToggleTheme"
@@ -10,6 +9,9 @@ import logo_2 from '@/assets/logo_2.svg'
 import logo_dark_2 from '@/assets/logo_dark_2.svg'
 import BasicDetails from "./BasicDetails";
 import { ManageUsers } from "./ManageUsers";
+import JoinRequests from "./JoinRequests";
+import ActiveInvites from "./ActiveInvites";
+import CriticalSettings from "./CriticalSettings";
 
 type Props = {}
 
@@ -98,6 +100,10 @@ const ProjectSettings = (props: Props) => {
 
                 {selectedTab === 'Basic Details' && <BasicDetails />}
                 {selectedTab === 'Manage Users' && <ManageUsers />}
+                {selectedTab === 'Join Requests' && <JoinRequests />}
+                {selectedTab === 'Active Invites' && <ActiveInvites />}
+                {selectedTab === 'Critical Settings' && <CriticalSettings />}
+                
             </div>
         </div>
     )
