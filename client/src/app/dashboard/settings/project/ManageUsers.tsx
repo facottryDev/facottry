@@ -6,7 +6,7 @@ import { userStore } from "@/lib/store";
 
 type Props = {}
 
-export const ManageUsers = (props: Props) => {
+const ManageUsers = (props: Props) => {
     const [InviteUserModal, setInviteUserModal] = useState(false);
     const [inviteData, setInviteData] = useState({ email: "", role: "" });
     const activeProject = userStore(state => state.activeProject);
@@ -230,3 +230,5 @@ export const ManageUsers = (props: Props) => {
         </div>
     )
 }
+
+export default ManageUsers

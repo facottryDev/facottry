@@ -8,20 +8,19 @@ import Image from "next/image"
 import logo_2 from '@/assets/logo_2.svg'
 import logo_dark_2 from '@/assets/logo_dark_2.svg'
 import BasicDetails from "./BasicDetails";
-import { ManageUsers } from "./ManageUsers";
-import JoinRequests from "./JoinRequests";
+import ManageUsers from "./ManageUsers";
+import JoinRequests from "./ManageInvites";
 import ActiveInvites from "./ActiveInvites";
 import CriticalSettings from "./CriticalSettings";
 
 type Props = {}
 
-const ownerTabs = ['Basic Details', 'Manage Users', 'Join Requests', 'Active Invites', 'Critical Settings']
-const editorTabs = ['SDK Demo', 'Site Examples']
-const viewerTabs = ['SDK Demo', 'Site Examples']
+const ownerTabs = ['Basic Details', 'Manage Users', 'Manage Invites', 'Critical Settings']
+const editorTabs = ['Basic']
+const viewerTabs = ['Basic']
 
 const ProjectSettings = (props: Props) => {
     const activeProject = userStore(state => state.activeProject);
-    const userRole = activeProject?.role;
     const roleTab = (activeProject?.role === 'owner') ? ownerTabs : (activeProject?.role === 'editor') ? editorTabs : viewerTabs;
 
     const [selectedTab, setSelectedTab, sidebar, setSidebar] = globalStore(state => [state.projectSettingTab, state.setProjectSettingTab, state.sidebar, state.setSidebar]);
@@ -100,10 +99,8 @@ const ProjectSettings = (props: Props) => {
 
                 {selectedTab === 'Basic Details' && <BasicDetails />}
                 {selectedTab === 'Manage Users' && <ManageUsers />}
-                {selectedTab === 'Join Requests' && <JoinRequests />}
-                {selectedTab === 'Active Invites' && <ActiveInvites />}
+                {selectedTab === 'Manage Invites' && <JoinRequests />}
                 {selectedTab === 'Critical Settings' && <CriticalSettings />}
-                
             </div>
         </div>
     )

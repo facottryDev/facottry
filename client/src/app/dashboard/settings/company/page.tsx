@@ -1,42 +1,44 @@
 'use client'
-import ToggleSwitch from "@/components/global/ToggleTheme";
-import UserDropdown from "@/components/dashboard/UserDropdown";
+import React from 'react'
 import Sidebar from "@/components/dashboard/Sidebar";
-import React, { useState } from 'react';
-import CompanyEmployeeSettings from "./CompanyEmployeeSettings";
-import CompanyOwnerSettings from "./CompanyOwnerSettings";
-import { globalStore, userStore } from "@/lib/store";
-import Link from "next/link";
-import Image from "next/image";
+import UserDropdown from "@/components/dashboard/UserDropdown"
+import ToggleSwitch from "@/components/global/ToggleTheme"
+import { globalStore, userStore } from "@/lib/store"
+import Image from "next/image"
 import logo_2 from '@/assets/logo_2.svg'
 import logo_dark_2 from '@/assets/logo_dark_2.svg'
+import BasicDetails from "./BasicDetails";
+import ManageUsers from "./ManageUsers";
+import JoinRequests from "./ManageInvites";
+import CriticalSettings from "./CriticalSettings";
 
-const tabs = [
-    {
-        name: 'company',
-        label: 'Company',
-    }
-]
+type Props = {}
 
-const Settings = () => {
-    const [selectedTab, setSelectedTab] = useState(localStorage.getItem('selectedSettingTab') || 'account' as string);
-    const company = userStore(state => state.company);
-    const sidebar = globalStore(state => state.sidebar);
+const ownerTabs = ['Basic Details', 'Manage Users', 'Manage Invites', 'Critical Settings']
+const editorTabs = ['Basic']
+const viewerTabs = ['Basic']
 
-    // Store selectedTab in local storage
-    React.useEffect(() => {
-        localStorage.setItem('selectedSettingTab', selectedTab);
-    }, [selectedTab]);
+const ProjectSettings = (props: Props) => {
+    const activeProject = userStore(state => state.activeProject);
+    const userRole = activeProject?.role;
+    const roleTab = (activeProject?.role === 'owner') ? ownerTabs : (activeProject?.role === 'editor') ? editorTabs : viewerTabs;
+
+    const [selectedTab, setSelectedTab, sidebar, setSidebar] = globalStore(state => [state.projectSettingTab, state.setProjectSettingTab, state.sidebar, state.setSidebar]);
 
     return (
-        <section className="flex min-h-screen dark:bg-darkblue300">
-            <Sidebar />
+        <div className="flex min-h-screen dark:bg-darkblue300">
+            <div>
+                <Sidebar />
+            </div>
 
-            <div className="w-full bg-bggray p-8 mx-auto">
+            <div className="flex flex-col w-full bg-bggray p-8">
+                {/* Top Navbar */}
                 <nav className="flex justify-between">
                     <div className="flex items-center mr-10 space-x-4">
                         {!sidebar && (
-                            <Link href={'/'} className="">
+                            <button onClick={() => {
+                                setSidebar(true);
+                            }}>
                                 <Image
                                     src={logo_2}
                                     alt="FacOTTry"
@@ -51,24 +53,12 @@ const Settings = () => {
                                     height={50}
                                     className="hidden dark:block"
                                 />
-                            </Link>
+                            </button>
                         )}
 
-                        <h1 className="text-2xl font-bold">Settings</h1>
+                        <h1 className="text-2xl font-bold">Manage Company</h1>
 
-                        <div className="text-sm font-medium text-center text-gray-500 dark:text-gray-400 dark:border-gray-700 mx-auto mt-1">
-                            <ul className="flex space-x-6 ml-4">
-                                {tabs.map((tab, index) => (
-                                    <li key={index} className="">
-                                        <button
-                                            onClick={() => { setSelectedTab(tab.name) }}
-                                            className="inline-block py-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 focus:text-primary transition-all focus:border-primary duration-300">
-                                            {tab.label}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+
                     </div>
 
                     <div className="flex items-center gap-6">
@@ -77,15 +67,43 @@ const Settings = () => {
                     </div>
                 </nav>
 
-                <hr className="w-full mt-4" />
-
-                <div className="mt-8">
-                    {selectedTab === 'company' && company?.role === 'owner' && <CompanyOwnerSettings />}
-                    {selectedTab === 'company' && company?.role === 'employee' && <CompanyEmployeeSettings />}
+                <div className="mt-4">
+                    <select
+                        className="cursor-pointer text-sm font-medium text-center text-gray-500 dark:text-gray-400 mx-auto sm:hidden block w-full p-2 border border-gray-300 rounded-b-md"
+                        value={selectedTab}
+                        onChange={(e) => setSelectedTab(e.target.value)}
+                    >
+                        {roleTab.map((tab, index) => (
+                            <option key={index} value={tab}>
+                                {tab}
+                            </option>
+                        ))}
+                    </select>
+                    <div className="hidden sm:block text-sm font-medium text-center text-gray-500 dark:text-gray-400 dark:border-gray-700">
+                        <ul className="flex space-x-1">
+                            {roleTab.map((tab, index) => (
+                                <li key={index}>
+                                    <button
+                                        onClick={() => setSelectedTab(tab)}
+                                        className={`tab-button lg:w-[200px] ${selectedTab === tab ? 'tab-button-active' : ''}`}
+                                    >
+                                        {tab}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </section>
-    );
-};
 
-export default Settings;
+                <hr className="w-full mt-2" />
+
+                {selectedTab === 'Basic Details' && <BasicDetails />}
+                {selectedTab === 'Manage Users' && <ManageUsers />}
+                {selectedTab === 'Manage Invites' && <JoinRequests />}
+                {selectedTab === 'Critical Settings' && <CriticalSettings />}
+            </div>
+        </div>
+    )
+}
+
+export default ProjectSettings

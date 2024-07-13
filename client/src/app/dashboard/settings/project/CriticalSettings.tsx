@@ -2,6 +2,7 @@
 import { IoExitSharp, IoTrashBin } from "react-icons/io5";
 import { userStore } from '@/lib/store'
 import { axios_admin } from "@/lib/axios"
+import { toast } from "react-toastify";
 
 export default function ProjectOwnerSettings() {
   const activeProject = userStore(state => state.activeProject);
@@ -9,10 +10,10 @@ export default function ProjectOwnerSettings() {
   const leaveProject = async () => {
     try {
       const result = await axios_admin.post("/project/leave", { projectID: activeProject?.projectID });
-      alert(result.data.message);
+      toast(result.data.message);
       window.location.reload();
     } catch (error: any) {
-      alert(error.response.data.message);
+      toast(error.response.data.message);
       console.log(error.response)
     }
   }
@@ -26,7 +27,7 @@ export default function ProjectOwnerSettings() {
       window.location.reload();
     } catch (error: any) {
       console.log(error.response);
-      alert(error.response.data.message);
+      toast(error.response.data.message);
     }
   }
 
