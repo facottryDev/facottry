@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             setActiveProject(currentProject);
 
             if (Object.keys(activeFilter).length === 0 && projects.length > 0) {
-                const defaultFilter = Object.keys(projects[0].filters).reduce((acc, key) => ({ ...acc, [key]: "" }), {});
+                const defaultFilter = Object.keys(currentProject.filters).reduce((acc, key) => ({ ...acc, [key]: "" }), {});
                 setActiveFilter(defaultFilter);
             }
 
