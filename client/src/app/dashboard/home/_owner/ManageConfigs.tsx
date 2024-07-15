@@ -28,7 +28,6 @@ const ManageConfigs = (props: Props) => {
             });
 
             setConfigs(result.data);
-            console.log(result.data)
         } catch (error: any) {
             return error.response;
         }

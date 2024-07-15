@@ -299,6 +299,15 @@ export const modifyConfig = async (req, res) => {
       customConfig.desc = desc || customConfig.desc;
       customConfig.lastModifiedBy = user;
       await customConfig.save();
+
+      await Master.updateMany(
+        { [`customConfig.${customConfig.type}.configID`]: configID },
+        {
+          [`customConfig.${customConfig.type}.name`]: name,
+          [`customConfig.${customConfig.type}.desc`]: desc,
+          [`customConfig.${customConfig.type}.params`]: params,
+        }
+      );
     }
 
     return res.status(200).json({ message: "Success" });
