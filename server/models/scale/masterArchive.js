@@ -63,6 +63,12 @@ const masterArchiveSchema = new mongoose.Schema(
 
     customConfigs: {
       type: Object,
+    },
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: '30d'
     }
   },
   { timestamps: true }

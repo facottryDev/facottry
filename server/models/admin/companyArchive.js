@@ -53,6 +53,12 @@ const companyArchivesSchema = new mongoose.Schema(
     ],
 
     employees: [String],
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: '30d'
+    }
   },
   { timestamps: true }
 );

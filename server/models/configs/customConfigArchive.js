@@ -49,6 +49,12 @@ const customConfigArchiveSchema = new mongoose.Schema(
     lastModifiedBy: {
       type: String,
     },
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: '30d' // 30 days
+    }
   },
   { timestamps: true }
 );

@@ -3,6 +3,7 @@ import Company from "../models/admin/company.js";
 import Project from "../models/admin/project.js";
 import AppConfig from "../models/configs/appConfig.js";
 import PlayerConfig from "../models/configs/playerConfig.js";
+import CustomConfig from "../models/configs/customConfig.js";
 import Master from "../models/scale/master.js";
 
 // GET ADMIN INFO
@@ -127,7 +128,7 @@ export const addCompany = async (req, res) => {
     const netflixProject = new Project({
       projectID: netflixProjectID,
       name: "NETFLIX_DEMO",
-      type: "PROD",
+      type: "TEST",
       companyID: company.companyID,
       owners: [email],
       filters: {
@@ -147,7 +148,7 @@ export const addCompany = async (req, res) => {
       projectID: netflixProjectID,
       companyID: company.companyID,
       name: "NETFLIX_APP 1.0",
-      type: "PROD",
+      type: "app",
       desc: "App Config for Netflix",
       params: {
         originalname: false,
@@ -178,7 +179,7 @@ export const addCompany = async (req, res) => {
       projectID: netflixProjectID,
       companyID: company.companyID,
       name: "NETFLIX_PLAYER 1.0",
-      type: "PROD",
+      type: "player",
       desc: "Player Config for Netflix",
       params: {
         settingButton: "false",
@@ -209,7 +210,7 @@ export const addCompany = async (req, res) => {
     const hotstarProject = new Project({
       projectID: hotstarProjectID,
       name: "HOTSTAR_DEMO",
-      type: "PROD",
+      type: "TEST",
       companyID: company.companyID,
       owners: [email],
       filters: {
@@ -229,7 +230,7 @@ export const addCompany = async (req, res) => {
       projectID: hotstarProjectID,
       companyID: company.companyID,
       name: "HOTSTAR_APP 1.0",
-      type: "PROD",
+      type: "app",
       desc: "App Config for Hotstar",
       params: {
         home: true,
@@ -283,7 +284,7 @@ export const addCompany = async (req, res) => {
       projectID: hotstarProjectID,
       companyID: company.companyID,
       name: "HOTSTAR_PLAYER 1.0",
-      type: "PROD",
+      type: "player",
       desc: "Player Config for Hotstar",
       params: {
         playvideo: false,
@@ -315,7 +316,7 @@ export const addCompany = async (req, res) => {
     const apneckProject = new Project({
       projectID: apneckProjectID,
       name: "APNECK_DEMO",
-      type: "PROD",
+      type: "TEST",
       companyID: company.companyID,
       owners: [email],
       filters: {
@@ -335,7 +336,7 @@ export const addCompany = async (req, res) => {
       projectID: apneckProjectID,
       companyID: company.companyID,
       name: "APNECK_APP 1.0",
-      type: "PROD",
+      type: "app",
       desc: "App Config for Apneck",
       params: {
         heading1: true,
@@ -401,7 +402,7 @@ export const addCompany = async (req, res) => {
       projectID: apneckProjectID,
       companyID: company.companyID,
       name: "APNECK_PLAYER 1.0",
-      type: "PROD",
+      type: "player",
       desc: "Player Config for Apneck",
       params: {
         playvideo: true,
@@ -451,7 +452,7 @@ export const deactivateCompany = async (req, res) => {
     }
 
     // Update the status of all projects under the company and return projectIDs
-    const projects = await Project.updateMany(
+    await Project.updateMany(
       { status: "active", companyID: company.companyID },
       { status: "inactive" }
     );
@@ -464,6 +465,18 @@ export const deactivateCompany = async (req, res) => {
 
     // Update the status of all playerConfigs under the company
     await PlayerConfig.updateMany(
+      { status: "active", companyID: company.companyID },
+      { status: "inactive" }
+    );
+
+    // Update the status of all customConfigs under the company
+    await CustomConfig.updateMany(
+      { status: "active", companyID: company.companyID },
+      { status: "inactive" }
+    );
+
+    // Update the status of all masters under the company
+    await Master.updateMany(
       { status: "active", companyID: company.companyID },
       { status: "inactive" }
     );

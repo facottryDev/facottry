@@ -20,7 +20,7 @@ import customConfigArchives from "../models/configs/customConfigArchive.js";
 // CRON JOB TO SHIFT INACTIVE USERS TO ARCHIVE
 export const startCronJobs = () => {
   cron.schedule(
-    "5 5 8 * *",
+    "25 2 17 * *",
     async () => {
       try {
         console.log(`Cron Job Started ${new Date()}`);
