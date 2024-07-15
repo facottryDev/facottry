@@ -12,7 +12,7 @@ const FilterEditorComponent = (props: Props) => {
     const [AddFilterModal, setAddFilterModal] = useState(false);
     const [EditFilterModal, setEditFilterModal] = useState('');
     const [activeProject, setActiveProject, setProjects] = userStore(state => [state.activeProject, state.setActiveProject, state.setProjects]);
-    const setActiveFilter = activeFilterStore(state => state.setActiveFilter);
+    const [setActiveFilter, setScaleFilter] = activeFilterStore(state => [state.setActiveFilter, state.setScaleFilter]);
 
     const resetFilters = async () => {
         const adminResponse = await axios_admin.get('/get-admin');
@@ -24,6 +24,10 @@ const FilterEditorComponent = (props: Props) => {
         setActiveFilter({});
         const defaultFilter = Object.keys(projects[0].filters).reduce((acc, key) => ({ ...acc, [key]: "" }), {});
         setActiveFilter(defaultFilter);
+
+        setScaleFilter({});
+        const defaultScaleFilter = Object.keys(projects[0].filters).reduce((acc, key) => ({ ...acc, [key]: "" }), {});
+        setScaleFilter(defaultScaleFilter);
     }
 
     const handleAddFilters = async (e: React.FormEvent<HTMLFormElement>) => {

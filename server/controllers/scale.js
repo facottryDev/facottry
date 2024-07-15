@@ -90,8 +90,7 @@ export const getMapping = async (req, res) => {
 
     if (master.customConfig) {
       for (const key in master.customConfig) {
-        const keyName = key + 'Config';
-        resObj[keyName] = master.customConfig[key].params;
+        resObj[key] = master.customConfig[key].params;
       }
     }
 

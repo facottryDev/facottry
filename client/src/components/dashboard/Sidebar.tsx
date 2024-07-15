@@ -112,7 +112,7 @@ const Sidebar = () => {
 
             <span>
               <h3 className="font-bold">Company Name: </h3>
-              <p>{activeProject?.name}</p>
+              <p>{company?.name}</p>
             </span>
 
             <span>
