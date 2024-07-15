@@ -68,10 +68,11 @@ export const getMapping = async (req, res) => {
     if (!master) {
       return res.status(200).json({
         code: "NO_MAPPING",
-        message: "Mapping not found",
+        message: "No Mapping Found",
         mappings: {
           appConfig: {},
           playerConfig: {},
+          customConfig: {},
           filter: {},
         },
       });
