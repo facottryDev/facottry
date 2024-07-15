@@ -50,7 +50,7 @@ export const getMapping = async (req, res) => {
         return res.status(400).json({ message: "Filter is required" });
     }
 
-    const masters = await Master.findOne(
+    const master = await Master.findOne(
       {
         projectID,
         status: "active",
@@ -65,7 +65,7 @@ export const getMapping = async (req, res) => {
       }
     );
 
-    if (!masters) {
+    if (!master) {
       return res.status(200).json({
         code: "NO_MAPPING",
         message: "Mapping not found",
@@ -77,15 +77,25 @@ export const getMapping = async (req, res) => {
       });
     }
 
-    const appConfig = masters.appConfig?.params || {};
-    const playerConfig = masters.playerConfig?.params || {};
+    const appConfig = master.appConfig?.params || {};
+    const playerConfig = master.playerConfig?.params || {};
+    const customConfig = {};
+
+    if (master.customConfig) {
+      for (const key in master.customConfig) {
+        if (master.customConfig[key].params) {
+          customConfig[key] = master.customConfig[key].params;
+        }
+      }
+    }
 
     const resObj = {
       appConfig,
       playerConfig,
-      filter: masters.filter,
-      projectID: masters.projectID,
-      companyID: masters.companyID,
+      customConfig,
+      filter: master.filter,
+      projectID: master.projectID,
+      companyID: master.companyID,
     };
 
     res
