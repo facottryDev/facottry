@@ -80,24 +80,20 @@ export const getMapping = async (req, res) => {
 
     const appConfig = master.appConfig?.params || {};
     const playerConfig = master.playerConfig?.params || {};
-    const customConfig = {};
-
-    if (master.customConfig) {
-      for (const key in master.customConfig) {
-        if (master.customConfig[key].params) {
-          customConfig[key] = master.customConfig[key].params;
-        }
-      }
-    }
-
     const resObj = {
       appConfig,
       playerConfig,
-      customConfig,
       filter: master.filter,
       projectID: master.projectID,
       companyID: master.companyID,
     };
+
+    if (master.customConfig) {
+      for (const key in master.customConfig) {
+        const keyName = key + 'Config';
+        resObj[keyName] = master.customConfig[key].params;
+      }
+    }
 
     res
       .status(200)
