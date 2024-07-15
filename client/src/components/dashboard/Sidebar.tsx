@@ -35,7 +35,6 @@ const Sidebar = () => {
     const project = allProjects.find((item) => item.projectID === selectedOption.value) || null;
     if (project) setActiveProject(project);
     setActiveFilter([]);
-    window.location.reload();
   }
 
   const ProjectOptions = allProjects
