@@ -2,6 +2,7 @@ import Master from "../models/scale/master.js";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
+import axios from "axios";
 
 // SCALE AUTHENTICATION
 export const scaleAuth = (req, res, next) => {
@@ -47,9 +48,15 @@ export const getMapping = async (req, res) => {
 
     switch (true) {
       case !projectID:
-        return res.status(400).json({ message: "ProjectID is required" });
+        const projectIDError = { message: "ProjectID is required" };
+        res.status(400).json(projectIDError);
+        setImmediate(async () => await loggerFunction(req, projectIDError));
+        return;
       case !filter:
-        return res.status(400).json({ message: "Filter is required" });
+        const filterError = { message: "Filter is required" };
+        res.status(400).json(filterError);
+        setImmediate(async () => await loggerFunction(req, filterError));
+        return;
     }
 
     const master = await Master.findOne(
@@ -68,7 +75,7 @@ export const getMapping = async (req, res) => {
     );
 
     if (!master) {
-      return res.status(200).json({
+      const noMappingResponse = {
         code: "NO_MAPPING",
         message: "No Mapping Found",
         mappings: {
@@ -77,7 +84,10 @@ export const getMapping = async (req, res) => {
           customConfig: {},
           filter: {},
         },
-      });
+      };
+      res.status(200).json(noMappingResponse);
+      setImmediate(async () => await loggerFunction(req, noMappingResponse));
+      return;
     }
 
     const appConfig = master.appConfig?.params || {};
@@ -96,51 +106,61 @@ export const getMapping = async (req, res) => {
       }
     }
 
-    res
-      .status(200)
-      .json({ code: "FOUND", message: "Success", mappings: resObj });
+    const successResponse = {
+      code: "FOUND",
+      message: "Success",
+      mappings: resObj,
+    };
+    res.status(200).json(successResponse);
+    setImmediate(async () => await loggerFunction(req, successResponse));
   } catch (error) {
     console.log(error.message);
-    return res.status(500).send(error.message);
+    const errorResponse = { message: error.message };
+    res.status(500).send(errorResponse);
+    setImmediate(async () => await loggerFunction(req, errorResponse));
   }
 };
 
-// LOGGER MIDDLEWARE
-export const logRequestResponse = (req, res, next) => {
-  const { projectID, filter } = req.body;
+// LOGGER FUNCTION
+const loggerFunction = async (req, resObj) => {
+  try {
+    const { projectID, filter } = req.body;
 
-  // Get current date and time
-  const now = new Date();
-  const year = String(now.getFullYear());
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-  const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
+    // Get current date and time
+    const now = new Date();
+    const year = String(now.getFullYear());
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
 
-  // Filename format: <filter>_<timestamp>.json
-  const filterString = Object.values(filter)
-    .map((value) => (value === "" ? "DEFAULT" : value))
-    .join("_");
-  const timestamp = `${year}${month}${day}_${hours}${minutes}${seconds}_${milliseconds}`;
+    // Filename format: <filter>_<timestamp>.json
+    const filterString = Object.values(filter)
+      .map((value) => (value === "" ? "DEFAULT" : value))
+      .join("_");
+    const timestamp = `${year}${month}${day}_${hours}${minutes}${seconds}_${milliseconds}`;
 
-  // Define log directory and file path
-  const logDir = path.join(process.cwd(), "logs", projectID, year, month, day);
-  const logFilePath = path.join(logDir, `${filterString}_${timestamp}.json`);
+    // Define log directory and file path
+    const logDir = path.join(
+      process.cwd(),
+      "logs",
+      projectID,
+      year,
+      month,
+      day
+    );
+    const logFilePath = path.join(logDir, `${filterString}_${timestamp}.json`);
 
-  // Ensure the logs directory exists
-  fs.mkdir(logDir, { recursive: true }, (err) => {
-    if (err) {
-      console.error("Failed to create log directory:", err);
-      return next();
-    }
+    // Ensure the logs directory exists
+    fs.mkdir(logDir, { recursive: true }, (err) => {
+      if (err) {
+        console.error("Failed to create log directory:", err);
+        return;
+      }
 
-    // Capture the original send method
-    const originalSend = res.send;
-
-    // Override the send method to capture the response body
-    res.send = function (body) {
+      // Log the request and response
       const logEntry = {
         timestamp: now.toISOString(),
         request: {
@@ -149,7 +169,7 @@ export const logRequestResponse = (req, res, next) => {
           method: req.method,
           url: req.url,
         },
-        response: body,
+        response: resObj,
       };
 
       fs.writeFile(logFilePath, JSON.stringify(logEntry, null, 2), (err) => {
@@ -157,12 +177,25 @@ export const logRequestResponse = (req, res, next) => {
           console.error("Failed to write log:", err);
         }
       });
+    });
 
-      return originalSend.call(this, body);
-    };
+    // Send the log metadata to analytics service
+    const analytics_URL = process.env.ANALYTICS_SERVER_URL;
+    const basename = path.basename(logFilePath);
+    const pathname = `${projectID}/${year}/${month}/${day}/${basename}`;
 
-    next();
-  });
+    if (analytics_URL) {
+      await axios.post(analytics_URL + "/update-logs", {
+        projectID,
+        filter,
+        pathname,
+      });
+    } else {
+      console.log({ message: "Analytics service URL not found" });
+    }
+  } catch (error) {
+    console.log("Failed to log request and response:", error, error.message);
+  }
 };
 
 // GET LOGS
@@ -220,3 +253,63 @@ export const getLogs = (req, res) => {
   // Send the logs as a response
   res.send(logs);
 };
+
+// LOGGER MIDDLEWARE
+// export const logRequestResponse = (req, res, next) => {
+//   const { projectID, filter } = req.body;
+
+//   // Get current date and time
+//   const now = new Date();
+//   const year = String(now.getFullYear());
+//   const month = String(now.getMonth() + 1).padStart(2, "0");
+//   const day = String(now.getDate()).padStart(2, "0");
+//   const hours = String(now.getHours()).padStart(2, "0");
+//   const minutes = String(now.getMinutes()).padStart(2, "0");
+//   const seconds = String(now.getSeconds()).padStart(2, "0");
+//   const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
+
+//   // Filename format: <filter>_<timestamp>.json
+//   const filterString = Object.values(filter)
+//     .map((value) => (value === "" ? "DEFAULT" : value))
+//     .join("_");
+//   const timestamp = `${year}${month}${day}_${hours}${minutes}${seconds}_${milliseconds}`;
+
+//   // Define log directory and file path
+//   const logDir = path.join(process.cwd(), "logs", projectID, year, month, day);
+//   const logFilePath = path.join(logDir, `${filterString}_${timestamp}.json`);
+
+//   // Ensure the logs directory exists
+//   fs.mkdir(logDir, { recursive: true }, (err) => {
+//     if (err) {
+//       console.error("Failed to create log directory:", err);
+//       return next();
+//     }
+
+//     // Capture the original send method
+//     const originalSend = res.send;
+
+//     // Override the send method to capture the response body
+//     res.send = function (body) {
+//       const logEntry = {
+//         timestamp: now.toISOString(),
+//         request: {
+//           body: req.body,
+//           headers: req.headers,
+//           method: req.method,
+//           url: req.url,
+//         },
+//         response: body,
+//       };
+
+//       fs.writeFile(logFilePath, JSON.stringify(logEntry, null, 2), (err) => {
+//         if (err) {
+//           console.error("Failed to write log:", err);
+//         }
+//       });
+
+//       return originalSend.call(this, body);
+//     };
+
+//     next();
+//   });
+// };
