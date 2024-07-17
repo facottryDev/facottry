@@ -49,7 +49,6 @@ export const logRequestResponse = (req, res, next) => {
         timestamp: now.toISOString(),
         request: {
           body: req.body,
-          headers: req.headers,
           method: req.method,
           url: req.url,
         },
