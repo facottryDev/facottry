@@ -10,5 +10,4 @@ router.get("/", (req, res) => {
 });
 
 router.post("/get-mapping", logRequestResponse, getMapping);
-
 export default router;

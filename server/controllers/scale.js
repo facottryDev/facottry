@@ -1,7 +1,5 @@
 import Master from "../models/scale/master.js";
 import crypto from "crypto";
-import fs from 'fs';
-import path from 'path';
 
 // SCALE AUTHENTICATION
 export const scaleAuth = (req, res, next) => {
