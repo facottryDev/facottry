@@ -24,7 +24,9 @@ export const logRequestResponse = (req, res, next) => {
   const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
 
   // Filename format: <filter>_<timestamp>.json
-  const filterString = Object.values(filter).join("_");
+  const filterString = Object.values(filter)
+    .map((value) => (value === "" ? "DEFAULT" : value))
+    .join("_");
   const timestamp = `${year}${month}${day}_${hours}${minutes}${seconds}_${milliseconds}`;
 
   // Define log directory and file path
@@ -62,8 +64,6 @@ export const logRequestResponse = (req, res, next) => {
 
       return originalSend.call(this, body);
     };
-
-    console.log("Log file created:", logFilePath);
 
     next();
   });
