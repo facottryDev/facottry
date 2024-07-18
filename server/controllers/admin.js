@@ -363,6 +363,9 @@ export const addCompany = async (req, res) => {
           highicon: true,
           quickicon: true,
         },
+        checkoutConfig: {
+          checkout: true,
+        },
         cartitemConfig: {
           cartimage: true,
           cartname: true,
