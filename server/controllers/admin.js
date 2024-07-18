@@ -641,6 +641,30 @@ export const deactivateProject = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
+    // Update the status of all appConfigs under the company
+    await AppConfig.updateMany(
+      { status: "active", projectID },
+      { status: "inactive" }
+    );
+
+    // Update the status of all playerConfigs under the company
+    await PlayerConfig.updateMany(
+      { status: "active", projectID },
+      { status: "inactive" }
+    );
+
+    // Update the status of all customConfigs under the company
+    await CustomConfig.updateMany(
+      { status: "active", projectID },
+      { status: "inactive" }
+    );
+
+    // Update the status of all masters under the company
+    await Master.updateMany(
+      { status: "active", projectID },
+      { status: "inactive" }
+    );
+
     // Update the status of the project
     project.status = "inactive";
     await project.save();
