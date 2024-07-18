@@ -178,7 +178,7 @@ export const sendOTP = async (req, res) => {
     req.session.email = req.body.email;
     req.session.otpExpiry = Date.now() + 120000;
 
-    res.json({ message: `OTP (${otp}) sent to ${req.body.email}.` });
+    res.json({ message: `OTP sent to ${req.body.email}.` });
 
     setImmediate(async () => {
       try {
