@@ -27,14 +27,17 @@ const SidebarButton = ({ href, label, icon, target }: {
 const Sidebar = () => {
   const { projects: allProjects, activeProject, setActiveProject, company } = userStore(state => ({ projects: state.projects, activeProject: state.activeProject, setActiveProject: state.setActiveProject, company: state.company }));
   const animatedComponents = makeAnimated();
-  const [setActiveFilter] = activeFilterStore(state => [state.setActiveFilter]);
+  const [activeFilter, setActiveFilter, scaleFilter, setScaleFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter, state.scaleFilter, state.setScaleFilter]);
 
   const { sidebar, setSidebar, sideDetailsCollapsed: sidebarCollapsed, setDetailsCollapsed: setSidebarCollapsed } = globalStore(state => ({ sidebar: state.sidebar, setSidebar: state.setSidebar, sideDetailsCollapsed: state.sideDetailsCollapsed, setDetailsCollapsed: state.setDetailsCollapsed }));
 
   const handleProjectChange = (selectedOption: any) => {
     const project = allProjects.find((item) => item.projectID === selectedOption.value) || null;
     if (project) setActiveProject(project);
+
     setActiveFilter({});
+    setScaleFilter({});
+
     window.location.reload();
   }
 
@@ -72,7 +75,7 @@ const Sidebar = () => {
         <SidebarButton href="/dashboard/playground" label="Playground" icon={<FiPlayCircle />} />
         <SidebarButton href="/dashboard/settings/project" label="Project Settings" icon={<AiOutlineProject />} />
         <SidebarButton href="/dashboard/settings/company" label="Company Settings" icon={<CgOrganisation />} />
-        <SidebarButton href="https://facottryanalytics.vercel.app/" target='_blank' label="Analytics Dashboard" icon={<GrAnalytics  />} />
+        <SidebarButton href="https://facottryanalytics.vercel.app/" target='_blank' label="Analytics Dashboard" icon={<GrAnalytics />} />
       </div>
 
       <hr className="mt-4 w-full" />
@@ -91,9 +94,8 @@ const Sidebar = () => {
           Add Project
         </Link>
 
-        <div className={`flex flex-col mt-6 rounded-md text-sm items-center justify-cente text-white transition-all ${
-          sidebarCollapsed ? 'bg-gray-700 px-4 pt-2' : 'bg-gray-800 p-4'
-        }`}>
+        <div className={`flex flex-col mt-6 rounded-md text-sm items-center justify-cente text-white transition-all ${sidebarCollapsed ? 'bg-gray-700 px-4 pt-2' : 'bg-gray-800 p-4'
+          }`}>
           <button
             className={`bg-gray-700 text-white px-2 w-full py-1 rounded-md`}
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -112,7 +114,7 @@ const Sidebar = () => {
 
             <span>
               <h3 className="font-bold">Company Name: </h3>
-              <p>{activeProject?.name}</p>
+              <p>{company?.name}</p>
             </span>
 
             <span>

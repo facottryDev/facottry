@@ -153,7 +153,7 @@ const LoginForm = () => {
             <button type="submit" className="mt-6 w-full bg-primary bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 dark:bg-slate-400 dark:hover:bg-slate-300 transition-all text-white hover:bg-primary/80 dark:text-black">Save Changes</button>
 
             <div className="w-full flex justify-center -mb-2 mt-4">
-              <Link href={company ? "/onboarding/project" : "/onboarding/company"} className="font-semibold dark:text-gray-400 hover:underline text-primary600">Next Step</Link>
+              <Link href={"/onboarding/company"} className="font-semibold dark:text-gray-400 hover:underline text-primary600">Next Step</Link>
             </div>
           </form>
         </div>

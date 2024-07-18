@@ -53,6 +53,12 @@ const userArchiveSchema = new mongoose.Schema(
     address: {
       type: String,
       trim: true,
+    },
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: '30d'
     }
   },
   { timestamps: true }

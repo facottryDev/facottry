@@ -11,8 +11,7 @@ function classNames(...classes: string[]) {
 
 const options = [
     { href: '/', label: 'Home' },
-    { href: '/dashboard/settings', label: 'Profile' },
-    { href: '/dashboard/settings/user', label: 'Settings' },
+    { href: '/dashboard/settings/user', label: 'Profile' },
     { href: '/auth/logout', label: 'Logout' }
 ]
 

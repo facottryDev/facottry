@@ -8,15 +8,13 @@ import authRouter from "./router/authRouter.js";
 import adminRouter from "./router/adminRouter.js";
 import configRouter from "./router/configRouter.js";
 import scaleRouter from "./router/scaleRouter.js";
-import analyticsRouter from "./router/analyticsRouter.js";
 import { createClient } from "redis";
 import RedisStore from "connect-redis";
 import session from "express-session";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth2";
 import User from "./models/auth/user.js";
-import { startCronJobs } from "./lib/cron.js";
-import crypto from "crypto";
+import { archiveCronJob } from "./lib/cron.js";
 
 // Const declarations
 dotenv.config();
@@ -136,7 +134,7 @@ mongoose
   .then(
     app.listen(PORT, () => {
       console.log("Connected to MongoDB");
-      startCronJobs();
+      archiveCronJob();
       if (process.env.NODE_ENV === "production") {
         console.log("Production Ready");
       } else {
@@ -159,4 +157,3 @@ app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
 app.use("/config", configRouter);
 app.use("/scale", scaleRouter);
-app.use("/analytics", analyticsRouter);

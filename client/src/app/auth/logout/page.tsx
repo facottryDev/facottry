@@ -7,11 +7,8 @@ import { Loader } from "@/components/global/Loader"
 
 const Logout = () => {
     const router = useRouter();
-    const setActiveFilter = activeFilterStore(state => state.setActiveFilter);
-    const setUser = userStore(state => state.setUser);
-    const setCompany = userStore(state => state.setCompany);
-    const setProjects = userStore(state => state.setProjects);
-    const setActiveProject = userStore(state => state.setActiveProject);
+    const [setCompany, setProjects, setActiveProject, setUser] = userStore(state => [state.setCompany, state.setProjects, state.setActiveProject, state.setUser]);
+    const [setActiveFilter, setScaleFilter] = activeFilterStore(state => [state.setActiveFilter, state.setScaleFilter]);
 
     useEffect(() => {
         const logout = async () => {
@@ -23,11 +20,7 @@ const Logout = () => {
                 setUser(null);
                 setCompany(null);
                 setActiveFilter({});
-
-                //clear local storage
-                localStorage.removeItem('selectedDashboardTab');
-                localStorage.removeItem('selectedSettingTab');
-                localStorage.removeItem('selectedPlaygroundTab');
+                setScaleFilter({});
 
                 router.push('/auth/login');
             } catch (error: any) {

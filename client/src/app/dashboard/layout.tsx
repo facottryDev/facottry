@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
-    const [activeFilter, setActiveFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter]);
+    const [activeFilter, setActiveFilter, scaleFilter, setScaleFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter, state.scaleFilter, state.setScaleFilter]);
 
     const { activeProject, setActiveProject, setCompany, setProjects, setUser } = userStore(state => ({
         activeProject: state.activeProject,
@@ -36,6 +36,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             if (Object.keys(activeFilter).length === 0 && projects.length > 0) {
                 const defaultFilter = Object.keys(currentProject.filters).reduce((acc, key) => ({ ...acc, [key]: "" }), {});
                 setActiveFilter(defaultFilter);
+            }
+
+            if (Object.keys(scaleFilter).length === 0 && projects.length > 0) {
+                const defaultFilter = Object.keys(currentProject.filters).reduce((acc, key) => ({ ...acc, [key]: "" }), {});
+                setScaleFilter(defaultFilter);
             }
 
             setIsLoading(false);

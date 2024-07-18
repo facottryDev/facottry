@@ -3,6 +3,7 @@ import Company from "../models/admin/company.js";
 import Project from "../models/admin/project.js";
 import AppConfig from "../models/configs/appConfig.js";
 import PlayerConfig from "../models/configs/playerConfig.js";
+import CustomConfig from "../models/configs/customConfig.js";
 import Master from "../models/scale/master.js";
 
 // GET ADMIN INFO
@@ -120,6 +121,313 @@ export const addCompany = async (req, res) => {
       employees: company.employees.includes(email) ? company.employees : [],
     };
 
+    // Add Demo Project & Configs*************
+
+    // NETFLIX DEMO PROJECT
+    const netflixProjectID = generateID("NETFLIX_DEMO");
+    const netflixProject = new Project({
+      projectID: netflixProjectID,
+      name: "NETFLIX_DEMO",
+      type: "TEST",
+      companyID: company.companyID,
+      owners: [email],
+      filters: {
+        COUNTRY: { default: "IN", values: ["IN", "US"] },
+        SUBSCRIPTION: {
+          default: "FREE",
+          values: ["FREE", "PAID"],
+        },
+      },
+    });
+
+    await netflixProject.save();
+
+    // NETFLIX APP CONFIG
+    const netflixAppConfig = new AppConfig({
+      configID: generateID(`app_NETFLIX_DEMO`),
+      projectID: netflixProjectID,
+      companyID: company.companyID,
+      name: "NETFLIX_APP 1.0",
+      type: "app",
+      desc: "App Config for Netflix",
+      params: {
+        originalname: false,
+        vote: false,
+        year: false,
+        Actor: false,
+        overview: false,
+        Towatch: false,
+        Menu: false,
+        genres: false,
+        biglogo: false,
+        smalllogo: false,
+        title: false,
+        movielist: false,
+        movieRowright: false,
+        movieRowlist: false,
+        movieRowitem: false,
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await netflixAppConfig.save();
+
+    // NETFLIX PLAYER CONFIG
+    const netflixPlayerConfig = new PlayerConfig({
+      configID: generateID(`player_NETFLIX_DEMO`),
+      projectID: netflixProjectID,
+      companyID: company.companyID,
+      name: "NETFLIX_PLAYER 1.0",
+      type: "player",
+      desc: "Player Config for Netflix",
+      params: {
+        settingButton: "false",
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await netflixPlayerConfig.save();
+
+    // NETFLIX DEFAULT MAPPING
+    const netflixMapping = new Master({
+      appConfig: netflixAppConfig,
+      playerConfig: netflixPlayerConfig,
+      customConfig: {},
+      filter: {
+        COUNTRY: "IN",
+        SUBSCRIPTION: "FREE",
+      },
+      projectID: netflixProjectID,
+      companyID,
+    });
+
+    await netflixMapping.save();
+
+    // HOTSAR DEMO PROJECT
+    const hotstarProjectID = generateID("HOTSTAR_DEMO");
+    const hotstarProject = new Project({
+      projectID: hotstarProjectID,
+      name: "HOTSTAR_DEMO",
+      type: "TEST",
+      companyID: company.companyID,
+      owners: [email],
+      filters: {
+        COUNTRY: { default: "IN", values: ["IN", "US"] },
+        SUBSCRIPTION: {
+          default: "FREE",
+          values: ["FREE", "PAID"],
+        },
+      },
+    });
+
+    await hotstarProject.save();
+
+    // HOTSTAR APP CONFIG
+    const hotstarAppConfig = new AppConfig({
+      configID: generateID(`app_HOTSTAR_DEMO`),
+      projectID: hotstarProjectID,
+      companyID: company.companyID,
+      name: "HOTSTAR_APP 1.0",
+      type: "app",
+      desc: "App Config for Hotstar",
+      params: {
+        home: true,
+        search: true,
+        userName: true,
+        Signout: true,
+        series: true,
+        movies: true,
+        originals: true,
+        watchlist: true,
+        Login: true,
+        Disney: true,
+        imgone: true,
+        imgtwo: true,
+        imgthree: true,
+        imgfour: true,
+        videodisney: true,
+        videopixer: true,
+        videomarvel: true,
+        videostarwars: true,
+        videonational: true,
+        recommended: true,
+        movierecommended: true,
+        newtodisney: true,
+        newmovies: true,
+        originalheading: true,
+        originalmovies: true,
+        trendingheading: true,
+        trendingmovies: true,
+        detailimage: true,
+        detailtitle: true,
+        player: true,
+        trailer: true,
+        groupimage: true,
+        subtitle: true,
+        description: true,
+        loginimages: true,
+        singaleline: true,
+        descriptionline: true,
+        images: true,
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await hotstarAppConfig.save();
+
+    // HOTSTAR PLAYER CONFIG
+    const hotstarPlayerConfig = new PlayerConfig({
+      configID: generateID(`player_HOTSTAR_DEMO`),
+      projectID: hotstarProjectID,
+      companyID: company.companyID,
+      name: "HOTSTAR_PLAYER 1.0",
+      type: "player",
+      desc: "Player Config for Hotstar",
+      params: {
+        playvideo: false,
+        videourl: false,
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await hotstarPlayerConfig.save();
+
+    // HOTSTAR DEFAULT MAPPING
+    const hotstarMapping = new Master({
+      appConfig: hotstarAppConfig,
+      playerConfig: hotstarPlayerConfig,
+      customConfig: {},
+      filter: {
+        COUNTRY: "IN",
+        SUBSCRIPTION: "FREE",
+      },
+      projectID: hotstarProjectID,
+      companyID,
+    });
+
+    await hotstarMapping.save();
+
+    // APNECK DEMO PROJECT
+    const apneckProjectID = generateID("APNECK_DEMO");
+    const apneckProject = new Project({
+      projectID: apneckProjectID,
+      name: "APNECK_DEMO",
+      type: "TEST",
+      companyID: company.companyID,
+      owners: [email],
+      filters: {
+        COUNTRY: { default: "IN", values: ["IN", "US"] },
+        SUBSCRIPTION: {
+          default: "FREE",
+          values: ["FREE", "PAID"],
+        },
+      },
+    });
+
+    await apneckProject.save();
+
+    // APNECK APP CONFIG
+    const apneckAppConfig = new AppConfig({
+      configID: generateID(`app_APNECK_DEMO`),
+      projectID: apneckProjectID,
+      companyID: company.companyID,
+      name: "APNECK_APP 1.0",
+      type: "app",
+      desc: "App Config for Apneck",
+      params: {
+        heading1: true,
+        telephone: true,
+        call: true,
+        email: true,
+        logo: true,
+        cart: true,
+        login: true,
+        search: true,
+        home: true,
+        shop: true,
+        blog: true,
+        about: true,
+        contact: true,
+        carticon: true,
+        loginicon: true,
+        tollyicon: true,
+        fasticon: true,
+        supporticon: true,
+        highicon: true,
+        quickicon: true,
+        cartimage: true,
+        cartname: true,
+        cartbrand: true,
+        cartprice: true,
+        cartquantity: true,
+        cartstock: true,
+        count: true,
+        cartremove: true,
+        coupancode: true,
+        shopdetails: true,
+        shopproduct: true,
+        shopnumber: true,
+        blog1: true,
+        blog2: true,
+        featuredproduct: true,
+        newarrival: true,
+        newsletter: true,
+        contacthading1: true,
+        homeconfig1: true,
+        homeconfig2: true,
+        homeconfig3: true,
+        homeconfig4: true,
+        homeconfig5: true,
+        homeconfig6: true,
+        banner1: true,
+        banner2: true,
+        banner3: true,
+        banner4: true,
+        banner5: true,
+        checkout: true,
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await apneckAppConfig.save();
+
+    // APNECK PLAYER CONFIG
+    const apneckPlayerConfig = new PlayerConfig({
+      configID: generateID(`player_APNECK_DEMO`),
+      projectID: apneckProjectID,
+      companyID: company.companyID,
+      name: "APNECK_PLAYER 1.0",
+      type: "player",
+      desc: "Player Config for Apneck",
+      params: {
+        playvideo: true,
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await apneckPlayerConfig.save();
+
+    // APNECK DEFAULT MAPPING
+    const apneckMapping = new Master({
+      appConfig: apneckAppConfig,
+      playerConfig: apneckPlayerConfig,
+      customConfig: {},
+      filter: {
+        COUNTRY: "IN",
+        SUBSCRIPTION: "FREE",
+      },
+      projectID: apneckProjectID,
+      companyID,
+    });
+
+    await apneckMapping.save();
+
     return res
       .status(200)
       .json({ message: "Company added successfully", company: companyDetails });
@@ -144,7 +452,7 @@ export const deactivateCompany = async (req, res) => {
     }
 
     // Update the status of all projects under the company and return projectIDs
-    const projects = await Project.updateMany(
+    await Project.updateMany(
       { status: "active", companyID: company.companyID },
       { status: "inactive" }
     );
@@ -157,6 +465,18 @@ export const deactivateCompany = async (req, res) => {
 
     // Update the status of all playerConfigs under the company
     await PlayerConfig.updateMany(
+      { status: "active", companyID: company.companyID },
+      { status: "inactive" }
+    );
+
+    // Update the status of all customConfigs under the company
+    await CustomConfig.updateMany(
+      { status: "active", companyID: company.companyID },
+      { status: "inactive" }
+    );
+
+    // Update the status of all masters under the company
+    await Master.updateMany(
       { status: "active", companyID: company.companyID },
       { status: "inactive" }
     );
@@ -298,9 +618,7 @@ export const addProject = async (req, res) => {
 
     await newProject.save();
 
-    res
-      .status(200)
-      .json({ message: "Project added successfully" });
+    res.status(200).json({ message: "Project added successfully" });
   } catch (error) {
     return res.status(500).send(error.message);
   }
@@ -1312,7 +1630,7 @@ export const deleteConfigType = async (req, res) => {
       { $unset: { [`customConfigs.${name}`]: "" } }
     );
 
-    res.status(200).json({ message: "Type deleted successfully" });    
+    res.status(200).json({ message: "Type deleted successfully" });
   } catch (error) {
     return res.status(500).json(error);
   }
