@@ -23,11 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     await axios_admin.get('/get-admin');
                     return router.push("/dashboard/home");
                 } catch (error: any) {
-                    if (error.response.data.code === "NO_PROJECT") {
-                        setProjects([]);
-                        setCompany(error.response.data.company);
-                        router.push("/onboarding/project");
-                    }
+                    console.log(error.response.data);
                 }
 
                 setIsLoading(false);

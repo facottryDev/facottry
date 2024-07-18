@@ -23,7 +23,7 @@ const LoginForm = () => {
 
             setCompany(res.data.company);
             toast(res.data.message);
-            router.push('/dashboard');
+            router.push('/dashboard/home');
         } catch (error: any) {
             console.log(error.response)
             toast(error.response.data.message)

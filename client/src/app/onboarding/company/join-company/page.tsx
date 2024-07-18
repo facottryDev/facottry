@@ -17,13 +17,11 @@ const LoginForm = () => {
         const { companyid } = Object.fromEntries(formData.entries())
 
         try {
-            const res = await axios_admin.post(`/join-company`, { companyID: companyid });
-
-            console.log(res.data);
-            toast('Request sent successfully');
+            await axios_admin.post(`/join-company`, { companyID: companyid });
+            toast.success('Request sent successfully');
         } catch (error: any) {
             console.log(error.response)
-            toast(error.response.data.message)
+            toast.error(error.response.data.message)
         }
     }
 
