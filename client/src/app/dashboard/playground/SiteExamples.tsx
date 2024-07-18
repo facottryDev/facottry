@@ -10,21 +10,21 @@ const cardData = [
         title: 'Netflix',
         id: 'netflix_demo',
         desc: 'Build a Netflix clone with FacOTTry',
-        imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/v1721292829/bv1po9i096v6ssobzaxp.png'
+        imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/t_siteExamples/v1721292829/bv1po9i096v6ssobzaxp.png'
     },
     {
         href: 'https://facottry-hotstar.vercel.app',
         title: 'Hotstar',
         id: 'hotstar_demo',
         desc: 'Build a Hotstar clone with FacOTTry',
-        imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/v1721292829/p7nv0k4vzssrcrlvxbvm.png'
+        imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/t_siteExamples/v1721292829/p7nv0k4vzssrcrlvxbvm.png'
     },
     {
         href: 'https://facottry-ecommerce.vercel.app',
         title: 'Apneck',
         id: 'apneck_demo',
         desc: 'Build an e-commerce site with FacOTTry',
-        imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/v1721292829/izalw7vhywgrgiw82us3.png'
+        imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/t_siteExamples/v1721292829/izalw7vhywgrgiw82us3.png'
     }
 ]
 

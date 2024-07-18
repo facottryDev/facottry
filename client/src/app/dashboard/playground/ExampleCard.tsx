@@ -17,7 +17,14 @@ const ExampleCard = ({ href, title, desc, imgURL }: Props) => {
                 <p className="text-gray-400 mt-2 group-hover:text-gray-300 transition-colors">{desc}</p>
             </div>
 
-            <div className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-50 transition-opacity" style={{ backgroundImage: `url(${imgURL})` }}></div>
+            <div className="absolute inset-0 z-0">
+                <Image
+                    src={imgURL}
+                    alt={title}
+                    fill
+                    className="opacity-30 group-hover:opacity-50 transition-opacity object-cover"
+                    priority={false} />
+            </div>
         </Link>
     );
 }
