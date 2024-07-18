@@ -15,7 +15,7 @@ export const Hero = ({ isLoggedin }: { isLoggedin: boolean }) => {
 
         </h1>
         <p className="text-body dark:text-slate-300 font-light text-slate-500">
-          A simple, customizable, and, beautiful SaaS business focused landing page to make your project closer to launch!
+          A complete Feature-flag management solution for streamlining your application development.
         </p>
 
         {/* Button */}
