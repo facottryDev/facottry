@@ -20,7 +20,7 @@ const Notibar = ({ message, href }: Props) => {
                     <div className="md:block hidden">
                         <IoAlertCircleOutline fontSize={"1.5rem"} />
                     </div>
-                    <span className="block sm:inline">Got a minute? We'd love to hear about your experience.</span>
+                    <span className="block sm:inline">Got a minute? We&apos;d love to hear about your experience.</span>
                 </div>
 
                 <div className="flex items-center gap-2">
