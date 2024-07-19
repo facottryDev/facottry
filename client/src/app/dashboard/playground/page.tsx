@@ -8,6 +8,7 @@ import logo_2 from '@/assets/logo_2.svg'
 import logo_dark_2 from '@/assets/logo_dark_2.svg'
 import { SDKDemo } from "./SDKDemo"
 import SiteExamples from "./SiteExamples"
+import DashboardNav from "../DashboardNav"
 
 type Props = {}
 const ownerTabs = ['SDK Demo', 'Site Examples']
@@ -30,39 +31,8 @@ const Playground = (props: Props) => {
             {/* Dashboard Home */}
             <div className="flex flex-col w-full bg-bggray p-8">
                 {/* Top Navbar */}
-                <nav className="flex justify-between">
-                    <div className="flex items-center mr-10 space-x-4">
-                        {!sidebar && (
-                            <button onClick={() => {
-                                setSidebar(true);
-                            }}>
-                                <Image
-                                    src={logo_2}
-                                    alt="FacOTTry"
-                                    width={50}
-                                    height={50}
-                                    className="dark:hidden"
-                                />
-                                <Image
-                                    src={logo_dark_2}
-                                    alt="FacOTTry"
-                                    width={50}
-                                    height={50}
-                                    className="hidden dark:block"
-                                />
-                            </button>
-                        )}
 
-                        <h1 className="text-2xl font-bold">Playground</h1>
-
-
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        <ToggleSwitch />
-                        <UserDropdown />
-                    </div>
-                </nav>
+                <DashboardNav title="Playground" />
 
                 <div className="mt-4">
                     <select

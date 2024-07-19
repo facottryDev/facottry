@@ -1,11 +1,6 @@
 'use client'
 import Sidebar from "@/components/dashboard/Sidebar"
 import React from 'react'
-import Image from "next/image"
-import ToggleSwitch from "@/components/global/ToggleTheme"
-import UserDropdown from "@/components/dashboard/UserDropdown"
-import logo_2 from '@/assets/logo_2.svg'
-import logo_dark_2 from '@/assets/logo_dark_2.svg'
 import { globalStore, userStore } from "@/lib/store"
 import CreateMappings from "./_owner/CreateMapping"
 import ModifyMapping from "./_owner/ManageMappings"
@@ -14,12 +9,13 @@ import FilterSettings from "./_owner/FilterSettings"
 import ViewConfigs from "./_viewer/ViewConfigs"
 import ViewMappings from "./_viewer/ViewMappings"
 import ManageConfigTypes from "./_owner/ManageConfigTypes"
+import DashboardNav from "../DashboardNav"
 
 const ownerTabs = ['Manage Filters', 'Config Types', 'Manage Configs', 'Create Mappings', 'Modify Mappings']
 const viewerTabs = ['View Configs', 'View Mappings']
 
 const Dashboard = () => {
-  const [selectedTab, setSelectedTab, sidebar, setSidebar] = globalStore(state => [state.dashboardTab, state.setDashboardTab, state.sidebar, state.setSidebar]);
+  const [selectedTab, setSelectedTab] = globalStore(state => [state.dashboardTab, state.setDashboardTab]);
 
   const activeProject = userStore(state => state.activeProject);
   const userRole = activeProject?.role;
@@ -27,42 +23,11 @@ const Dashboard = () => {
   const roleTab = (userRole === 'owner' || userRole === 'editor') ? ownerTabs : viewerTabs;
 
   return (
-    <div className="flex min-h-screen dark:bg-darkblue300">
+    <div className="flex min-h-screen bg-bggray dark:bg-zinc-950">
       <Sidebar />
 
-      <div className="w-full bg-bggray p-8 mx-auto">
-        <nav className="flex justify-between">
-          <div className="flex items-center mr-10 space-x-4">
-            {!sidebar && (
-              <button onClick={() => {
-                setSidebar(true);
-              }}>
-                <Image
-                  src={logo_2}
-                  alt="FacOTTry"
-                  width={50}
-                  height={50}
-                  className="dark:hidden"
-                />
-                <Image
-                  src={logo_dark_2}
-                  alt="FacOTTry"
-                  width={50}
-                  height={50}
-                  className="hidden dark:block"
-                />
-              </button>
-            )}
-
-            <h1 className="text-2xl font-bold">Dashboard</h1>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <ToggleSwitch />
-            <UserDropdown />
-          </div>
-        </nav>
-
+      <div className="w-full p-8 mx-auto">
+        <DashboardNav title="Dashboard" />
         <div className="mt-4">
           <select
             className="cursor-pointer text-sm font-medium text-center text-gray-500 dark:text-gray-400 mx-auto sm:hidden block w-full p-2 border border-gray-300 rounded-b-md"

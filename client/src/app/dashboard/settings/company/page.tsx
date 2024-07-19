@@ -11,6 +11,7 @@ import BasicDetails from "./BasicDetails";
 import ManageUsers from "./ManageUsers";
 import JoinRequests from "./ManageInvites";
 import CriticalSettings from "./CriticalSettings";
+import DashboardNav from "../../DashboardNav";
 
 type Props = {}
 
@@ -33,39 +34,7 @@ const ProjectSettings = (props: Props) => {
 
             <div className="flex flex-col w-full bg-bggray p-8">
                 {/* Top Navbar */}
-                <nav className="flex justify-between">
-                    <div className="flex items-center mr-10 space-x-4">
-                        {!sidebar && (
-                            <button onClick={() => {
-                                setSidebar(true);
-                            }}>
-                                <Image
-                                    src={logo_2}
-                                    alt="FacOTTry"
-                                    width={50}
-                                    height={50}
-                                    className="dark:hidden"
-                                />
-                                <Image
-                                    src={logo_dark_2}
-                                    alt="FacOTTry"
-                                    width={50}
-                                    height={50}
-                                    className="hidden dark:block"
-                                />
-                            </button>
-                        )}
-
-                        <h1 className="text-2xl font-bold">Manage Company</h1>
-
-
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        <ToggleSwitch />
-                        <UserDropdown />
-                    </div>
-                </nav>
+                <DashboardNav title="Manage Company" />
 
                 <div className="mt-4">
                     <select

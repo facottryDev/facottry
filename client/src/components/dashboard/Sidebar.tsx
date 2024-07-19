@@ -20,7 +20,7 @@ const SidebarButton = ({ href, label, icon, target }: {
 }) => (
   <Link href={href} target={target} className="flex items-center p-3 hover:text-primary transition">
     <span className="mr-3 text-xl">{icon}</span>
-    {label}
+    <span className="flex-shrink-0">{label}</span>
   </Link>
 );
 
@@ -49,8 +49,8 @@ const Sidebar = () => {
     }));
 
   return (
-    <div className={`${sidebar ? 'block' : 'hidden'} bg-white p-8 pl-5 dark:bg-darkblue`}>
-      <button onClick={() => { setSidebar(false) }} className="flex gap-2 items-center mb-5">
+    <div className={`${sidebar ? 'block' : 'hidden'} bg-white p-8 pl-5 dark:bg-zinc-900`}>
+      <Link href={'/'}  className="flex gap-2 items-center mb-5">
         <Image
           src={logo_2}
           alt="FacOTTry"
@@ -68,7 +68,7 @@ const Sidebar = () => {
         <p className="font-extrabold text-2xl text-black dark:text-white">
           Fac<span className="text-primary">OTT</span>ry
         </p>
-      </button>
+      </Link>
 
       <div className="font-medium text-slate-700 dark:text-white">
         <SidebarButton href="/dashboard/home" label="Dashboard" icon={<FiHome />} />
@@ -80,7 +80,7 @@ const Sidebar = () => {
 
       <hr className="mt-4 w-full" />
 
-      <div className="mt-4 min-w-[200px]">
+      <div className="mt-4 text-sm min-w-[200px] max-w-[300px]">
         <Select
           options={ProjectOptions}
           onChange={handleProjectChange}
@@ -90,21 +90,21 @@ const Sidebar = () => {
         />
 
         {/* Add new project button */}
-        <Link href="/dashboard/project" className="mt-4 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm text-center hover:bg-gray-100 transition-all">
+        <Link href="/dashboard/project" className="mt-4 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 text-sm text-center hover:bg-gray-100 transition-all">
           Add Project
         </Link>
 
-        <div className={`flex flex-col mt-6 rounded-md text-sm items-center justify-cente text-white transition-all ${sidebarCollapsed ? 'bg-gray-700 px-4 pt-2' : 'bg-gray-800 p-4'
+        <div className={`flex flex-col mt-6 rounded-md text-sm items-center justify-cente text-white transition-all ${sidebarCollapsed ? 'bg-primary900 px-4 pt-2' : 'bg-primary800 p-4'
           }`}>
           <button
-            className={`bg-gray-700 text-white px-2 w-full py-1 rounded-md`}
+            className={`bg-primary900 text-white px-2 w-full py-1 rounded-md`}
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
           >
             {sidebarCollapsed ? 'Show Details' : 'Hide Details'}
           </button>
 
           <div
-            className={`rounded-md mt-2 flex flex-col gap-2 text-white collapsible-content ${sidebarCollapsed ? 'max-h-0 opacity-0' : 'max-h-96 opacity-100'
+            className={`rounded-md mt-2 flex flex-col gap-2 text-white collapsible-content ${sidebarCollapsed ? 'max-h-0 opacity-0' : 'max-h-96 dark:bg-primary800 opacity-100'
               }`}
           >
             <span>
