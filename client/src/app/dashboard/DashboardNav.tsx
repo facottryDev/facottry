@@ -22,10 +22,6 @@ const DashboardNav = ({ title }: Props) => {
                 </button>
 
                 <h1 className="text-2xl font-bold ml-3">{title}</h1>
-
-                <Link href={'https://forms.gle/YESLbaEbMBXkYXJ87'} target="_blank" className="inline-block ml-4 text-center border border-gray-800 dark:border-white px-2 py-2 rounded-lg text-black hover:bg-gray-800 hover:text-white transition dark:text-slate-200 dark:hover:bg-zinc-800 text-sm font-medium">
-                    Submit Feedback
-                </Link>
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">

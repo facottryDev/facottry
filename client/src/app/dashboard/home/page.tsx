@@ -10,6 +10,7 @@ import ViewConfigs from "./_viewer/ViewConfigs"
 import ViewMappings from "./_viewer/ViewMappings"
 import ManageConfigTypes from "./_owner/ManageConfigTypes"
 import DashboardNav from "../DashboardNav"
+import Notibar from "@/components/global/Notibar"
 
 const ownerTabs = ['Manage Filters', 'Config Types', 'Manage Configs', 'Create Mappings', 'Modify Mappings']
 const viewerTabs = ['View Configs', 'View Mappings']
@@ -26,7 +27,8 @@ const Dashboard = () => {
     <div className="flex min-h-screen">
       <Sidebar />
 
-      <div className="w-full p-8 mx-auto bg-bggray dark:bg-zinc-950">
+      <div className="relative w-full p-8 mx-auto bg-bggray dark:bg-zinc-950">
+      <Notibar message="Take a moment to provide your valuable feedback to us by" href={'https://forms.gle/YESLbaEbMBXkYXJ87'} />
         <DashboardNav title="Dashboard" />
         <div className="mt-4 ">
           <select

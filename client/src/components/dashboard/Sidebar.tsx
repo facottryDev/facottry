@@ -10,20 +10,9 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { AiOutlineProject } from "react-icons/ai";
 import { CgOrganisation } from "react-icons/cg";
-import { GrAnalytics } from "react-icons/gr";
+import { TbDeviceDesktopAnalytics } from "react-icons/tb";
 
-const SidebarButton = ({ href, label, icon, target }: {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-  target?: string;
-}) => (
-  <Link href={href} target={target} className="flex items-center p-3 hover:text-primary transition">
-    <span className="mr-3 text-xl">{icon}</span>
-    <span className="flex-shrink-0">{label}</span>
-  </Link>
-);
-
+// Main Sidebar Component
 const Sidebar = () => {
   const { projects: allProjects, activeProject, setActiveProject, company } = userStore(state => ({ projects: state.projects, activeProject: state.activeProject, setActiveProject: state.setActiveProject, company: state.company }));
   const animatedComponents = makeAnimated();
@@ -50,7 +39,7 @@ const Sidebar = () => {
 
   return (
     <div className={`${sidebar ? 'block' : 'hidden'} bg-white p-8 pl-5 dark:bg-zinc-900`}>
-      <Link href={'/dashboard/home'}  className="flex gap-1 items-center mb-5">
+      <Link href={'/dashboard/home'} className="flex gap-1 items-center mb-5">
         <Image
           src={logo_2}
           alt="FacOTTry"
@@ -75,7 +64,7 @@ const Sidebar = () => {
         <SidebarButton href="/dashboard/playground" label="Playground" icon={<FiPlayCircle />} />
         <SidebarButton href="/dashboard/settings/project" label="Project Settings" icon={<AiOutlineProject />} />
         <SidebarButton href="/dashboard/settings/company" label="Company Settings" icon={<CgOrganisation />} />
-        <SidebarButton href="https://facottryanalytics.vercel.app/" target='_blank' label="Analytics Dashboard" icon={<GrAnalytics />} />
+        <SidebarButton href="https://facottryanalytics.vercel.app/" target='_blank' label="Analytics Dashboard" icon={<TbDeviceDesktopAnalytics />} />
       </div>
 
       <hr className="mt-4 w-full" />
@@ -90,7 +79,7 @@ const Sidebar = () => {
         />
 
         {/* Add new project button */}
-        <Link href="/dashboard/project" className="mt-4 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 text-sm text-center hover:bg-gray-100 transition-all">
+        <Link href="/dashboard/project" className="mt-4 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 text-sm text-center hover:bg-gray-100 dark:bg-transparent dark:hover:bg-zinc-800">
           Add Project
         </Link>
 
@@ -145,3 +134,16 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+// Sidebar Button Component
+const SidebarButton = ({ href, label, icon, target }: {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  target?: string;
+}) => (
+  <Link href={href} target={target} className="flex items-center p-3 hover:text-primary transition">
+    <span className="mr-3 text-xl">{icon}</span>
+    <span className="flex-shrink-0">{label}</span>
+  </Link>
+);
