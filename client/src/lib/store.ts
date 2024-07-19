@@ -53,6 +53,8 @@ type GlobalStore = {
   dashboardTab: string;
   playgroundTab: string;
   projectSettingTab: string;
+  notibar: boolean;
+  setNotibar: (notibar: boolean) => void;
   setProjectSettingTab: (projectSettingTab: string) => void;
   setPlaygroundTab: (playgroundTab: string) => void;
   setDashboardTab: (dashboardTab: string) => void;
@@ -66,6 +68,8 @@ export const globalStore = create(persist<GlobalStore>((set) => ({
   dashboardTab: 'Manage Filters',
   playgroundTab: 'SDK Demo',
   projectSettingTab: 'Basic Details',
+  notibar: true,
+  setNotibar: (notibar: boolean) => set({ notibar }),
   setProjectSettingTab: (projectSettingTab: string) => set({ projectSettingTab }),
   setPlaygroundTab: (playgroundTab: string) => set({ playgroundTab }),
   setDashboardTab: (dashboardTab: string) => set({ dashboardTab }),

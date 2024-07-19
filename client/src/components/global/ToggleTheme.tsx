@@ -16,14 +16,12 @@ export default function ToggleSwitch() {
   }
 
   return (
-    <div className="">
-      <button className="bg-slate-200 dark:bg-slate-600 p-2 rounded-xl hover:bg-slate-300 transition-all" onClick={()=>{setTheme(theme === 'dark' ? 'light' : 'dark')}} >
-        {theme === 'dark' ? (
-          <BsFillSunFill className="text-2xl dark:text-slate-200 text-slate-800" />
-        ) : (
-          <BsFillMoonFill className="text-2xl dark:text-slate-200 text-slate-800" />
-        )}
-      </button>
-    </div>
+    <button className="border border-gray-800 dark:border-gray-300 dark:bg-transparent p-2 rounded-full hover:bg-gray-800 text-slate-800 dark:text-slate-200 hover:text-white dark:hover:bg-zinc-800 transition-all" onClick={() => { setTheme(theme === 'dark' ? 'light' : 'dark') }} >
+      {theme === 'dark' ? (
+        <BsFillSunFill className="text-xl " />
+      ) : (
+        <BsFillMoonFill className="text-xl " />
+      )}
+    </button>
   )
 }

@@ -48,13 +48,11 @@ export const getMapping = async (req, res) => {
 
     switch (true) {
       case !projectID:
-        const projectIDError = { message: "ProjectID is required" };
-        res.status(400).json(projectIDError);
+        res.status(400).json({ message: "ProjectID is required" });
         setImmediate(async () => await loggerFunction(req, projectIDError));
         return;
       case !filter:
-        const filterError = { message: "Filter is required" };
-        res.status(400).json(filterError);
+        res.status(400).json({ message: "Filter is required" });
         setImmediate(async () => await loggerFunction(req, filterError));
         return;
     }

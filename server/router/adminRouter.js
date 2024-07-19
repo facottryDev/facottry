@@ -26,7 +26,8 @@ import {
   updateFilter,
   cloneProject,
   addConfigType,
-  deleteConfigType
+  deleteConfigType,
+  getProject
 } from "../controllers/admin.js";
 import { isAuth } from "../lib/middlewares.js";
 import { toggleConfigTypeStatus } from "../controllers/config.js";
@@ -34,6 +35,7 @@ const router = Router();
 
 router.use(isAuth);
 router.get("/get-admin", getAdmin);
+router.get("/get-project", getProject);
 
 // FOR COMPANY OWNERS
 router.post("/company/create", addCompany);

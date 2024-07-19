@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { userStore, activeFilterStore } from "@/lib/store";
 import { Loader } from "@/components/global/Loader";
+import IssueButton from "@/components/global/IssueButton";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +47,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             setIsLoading(false);
         } catch (error: any) {
             console.log(error);
-            if(error.response?.data.code === "NO_COMPANY" || error.response?.data.code === "NO_PROJECT") {
+            if (error.response?.data.code === "NO_COMPANY" || error.response?.data.code === "NO_PROJECT") {
                 router.push('/onboarding');
             } else {
                 router.push('/');

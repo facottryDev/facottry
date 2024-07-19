@@ -9,6 +9,8 @@
     padding: 0;
     margin: 0;
     background-color: #e0e0e0; /* Light grey background */
+    /* Dark mode */
+    @apply dark:bg-gray-800;
   }
 
   /* Base styles for each tab */
@@ -22,23 +24,31 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
     cursor: pointer;
     transition: all 0.3s ease; /* Smooth transition for hover and focus */
-}
+    /* Dark mode */
+    @apply dark:bg-gray-700 dark:text-white dark:shadow-lg;
+  }
 
   /* Styles for the active tab */
   .tab-button-active {
     background-color: #ffffff; 
     border-color: #2768A4; 
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3); /* Slightly more pronounced shadow */
+    /* Dark mode */
+    @apply dark:bg-gray-900 dark:border-blue-500 dark:shadow-xl;
   }
 
   /* Hover styles */
   .tab-button:hover {
     background-color: #ffffff; /* Lighten background on hover */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25); /* Increased shadow on hover */
+    /* Dark mode */
+    @apply dark:bg-gray-800 dark:shadow-2xl;
   }
 
   .collapsible-content {
     transition: max-height 0.3s ease-out, opacity 0.3s ease;
     overflow: hidden;
+    /* Dark mode */
+    @apply dark:bg-gray-900 dark:text-white;
   }
 }

@@ -38,7 +38,7 @@ export default function CompanyEmployeeSettings() {
   return (
     <div className="w-full border rounded-md mt-8">
       <div className="flex px-4 my-4 w-full justify-between">
-        <label className="font-bold leading-6 text-gray-900 dark:text-slate-200">Basic Details</label>
+        <label className="font-bold leading-6 text-gray-900 dark:text-slate-200">Critical Settings</label>
       </div>
 
       <div className="p-5 border bg-white">

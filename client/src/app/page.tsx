@@ -22,8 +22,8 @@ const LandingPage = () => {
   }, [])
 
   return (
-    <div className="bg-white dark:bg-darkblue300">
-      <div className="bg-bgblue dark:bg-darkblue py-8 px-8">
+    <div className="bg-white dark:bg-zinc-950">
+      <div className="bg-gray-100 dark:bg-zinc-900 py-8 px-8">
         <NavBar isLoggedin={isLoggedin} />
 
         <section id="about">

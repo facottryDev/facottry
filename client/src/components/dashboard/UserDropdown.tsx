@@ -4,6 +4,7 @@ import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { BsChevronDown } from "react-icons/bs";
 import { userStore } from "@/lib/store";
+import { AiOutlineUser } from "react-icons/ai";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -19,13 +20,19 @@ const UserDropdown = () => {
     const user = userStore(state => state.user);
 
     return (
-        <Menu as="div" className="relative inline-block text-left">
+        <Menu as="div" className="relative inline-block text-left flex-shrink-0 border border-black dark:border-white md:px-4 px-2 py-2 rounded-full text-black hover:bg-gray-800 hover:text-white transition dark:text-slate-200 dark:hover:bg-slate-700">
             <div>
                 <Menu.Button
-                    className="flex items-center gap-2 text-sm transition-all rounded-lg font-semibold"
+                    className="text-sm flex items-center transition-all rounded-lg font-semibold"
                 >
-                    {user?.name || user?.email}
-                    <BsChevronDown />
+                    <div className="hidden sm:flex items-center gap-2 ">
+                        {user?.name || user?.email}
+                        <BsChevronDown />
+                    </div>
+
+                    <div className="sm:hidden">
+                        <AiOutlineUser fontSize={"1.2rem"} />
+                    </div>
                 </Menu.Button>
             </div>
 
@@ -47,7 +54,7 @@ const UserDropdown = () => {
                                 <Link
                                     href={option.href}
                                     className={classNames(
-                                        active ? "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-200" : "text-slate-700 dark:text-slate-200",
+                                        active ? "bg-zinc-100 dark:bg-slate-700 text-slate-900 dark:text-slate-200" : "text-slate-700 dark:text-slate-200",
                                         "block w-full px-4 py-2 text-left text-sm"
                                     )}
                                 >

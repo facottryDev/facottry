@@ -30,7 +30,7 @@ const NavBar = ({ isLoggedin }: { isLoggedin: boolean; }) => {
                         className="hidden dark:block"
                     />
                     <p className="font-extrabold text-2xl dark:text-slate-200 text-black">
-                        Fac<span className="text-primary">OTT</span>ry
+                        Fac<span className="text-primary dark:text-primary600">OTT</span>ry
                     </p>
                 </Link>
                 {pathname === '/' ? (
@@ -43,7 +43,7 @@ const NavBar = ({ isLoggedin }: { isLoggedin: boolean; }) => {
                         <Link href={'#contact'} className="hover:text-primary transition-all">Contact</Link>
                     </div>
                 ) : null}
-                <div className="flex space-x-8 items-center">
+                <div className="flex space-x-4 items-center">
                     <ToggleSwitch />
 
                     {isLoggedin ? (
@@ -62,7 +62,7 @@ const NavBar = ({ isLoggedin }: { isLoggedin: boolean; }) => {
                             </Link>
                         </div>
                     ) : (
-                        <Link href='/auth/login' className="flex-shrink-0 border border-black px-10 py-2 rounded-full text-black hover:bg-black hover:text-white transition dark:text-slate-200 dark:hover:bg-slate-700">
+                        <Link href='/auth/login' className="flex-shrink-0 border border-black px-8 py-2 rounded-full text-black hover:bg-black hover:text-white transition dark:text-slate-200 dark:border-gray-200 dark:hover:bg-zinc-800">
                             Sign In
                         </Link>
                     )}
