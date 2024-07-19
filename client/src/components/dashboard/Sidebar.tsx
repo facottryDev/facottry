@@ -50,7 +50,7 @@ const Sidebar = () => {
 
   return (
     <div className={`${sidebar ? 'block' : 'hidden'} bg-white p-8 pl-5 dark:bg-zinc-900`}>
-      <Link href={'/'}  className="flex gap-2 items-center mb-5">
+      <Link href={'/dashboard/home'}  className="flex gap-1 items-center mb-5">
         <Image
           src={logo_2}
           alt="FacOTTry"

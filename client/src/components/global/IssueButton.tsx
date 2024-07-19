@@ -4,7 +4,7 @@ import { BiSupport } from "react-icons/bi";
 
 type Props = {}
 
-const FeedbackButton = (props: Props) => {
+const IssueButton = (props: Props) => {
     return (
         <div className="fixed bottom-7 right-7 flex flex-col items-center group">
             <Link
@@ -22,4 +22,4 @@ const FeedbackButton = (props: Props) => {
     );
 }
 
-export default FeedbackButton;
+export default IssueButton;

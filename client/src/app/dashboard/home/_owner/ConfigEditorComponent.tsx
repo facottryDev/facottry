@@ -329,7 +329,7 @@ const ConfigTableComponent = (props: Props) => {
                                                                     width="100%"
                                                                     defaultLanguage="json"
                                                                     defaultValue={JSON.stringify(config.params, null, 4)}
-                                                                    theme="vs-dark"
+                                                                    theme="light"
                                                                     onMount={(editor) => {
                                                                         setEditorValue(JSON.stringify(config.params, null, 4));
                                                                     }
@@ -338,6 +338,7 @@ const ConfigTableComponent = (props: Props) => {
                                                                     onValidate={(markers) => {
                                                                         setEditorMarker(markers);
                                                                     }}
+                                                                    options={{ readOnly: isEditable ? true : false }}
                                                                 />
 
                                                                 {/* Validation Errors */}

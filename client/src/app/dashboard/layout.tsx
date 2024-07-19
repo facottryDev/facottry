@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { userStore, activeFilterStore } from "@/lib/store";
 import { Loader } from "@/components/global/Loader";
-import FeedbackButton from "@/components/global/FeedbackButton";
+import IssueButton from "@/components/global/IssueButton";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -67,7 +67,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         return (
             <main>
                 {children}
-                <FeedbackButton />
+                <IssueButton />
             </main>
         )
     }

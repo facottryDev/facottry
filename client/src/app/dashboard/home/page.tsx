@@ -23,12 +23,12 @@ const Dashboard = () => {
   const roleTab = (userRole === 'owner' || userRole === 'editor') ? ownerTabs : viewerTabs;
 
   return (
-    <div className="flex min-h-screen bg-bggray dark:bg-zinc-950">
+    <div className="flex min-h-screen">
       <Sidebar />
 
-      <div className="w-full p-8 mx-auto">
+      <div className="w-full p-8 mx-auto bg-bggray dark:bg-zinc-950">
         <DashboardNav title="Dashboard" />
-        <div className="mt-4">
+        <div className="mt-4 ">
           <select
             className="cursor-pointer text-sm font-medium text-center text-gray-500 dark:text-gray-400 mx-auto sm:hidden block w-full p-2 border border-gray-300 rounded-b-md"
             value={selectedTab}
