@@ -1680,3 +1680,24 @@ export const deleteConfigType = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+
+export const getProject = async (req, res) => {
+  try {
+    const owner = req.session.username || req.user.email;
+    const { projectID } = req.query;
+
+    const project = await Project.findOne({
+      status: "active",
+      projectID,
+      owners: { $in: [owner] },
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.status(200).json(project);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};

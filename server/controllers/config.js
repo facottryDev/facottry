@@ -746,8 +746,6 @@ export const createMapping = async (req, res) => {
       }
     } // COUNTRY = [IND, USA], DEVICE = [MOBILE, DESKTOP], SUBSCRIPTION = FREE
 
-    console.log(searchFilter);
-
     let filterConditions = Object.entries(searchFilter).reduce(
       (acc, [key, value]) => {
         if (Array.isArray(value)) {
