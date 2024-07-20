@@ -158,12 +158,20 @@ const loggerFunction = async (req, resObj) => {
         return;
       }
 
+      const safeHeaders = {
+        "x-client-hash": req.headers["x-client-hash"],
+        "x-forwarded-for": req.headers["x-forwarded-for"],
+        "x-real-ip": req.headers["x-real-ip"],
+        "x-amzn-trace-id": req.headers["x-amzn-trace-id"],
+        "user-agent": req.headers["user-agent"],
+      };
+
       // Log the request and response
       const logEntry = {
         timestamp: now.toISOString(),
         request: {
           body: req.body,
-          headers: req.headers,
+          headers: safeHeaders,
           method: req.method,
           url: req.url,
         },
@@ -196,58 +204,29 @@ const loggerFunction = async (req, resObj) => {
   }
 };
 
-// GET LOGS
-export const getLogs = (req, res) => {
-  const { startDate, endDate } = req.query;
+// GET LOG BY PATHNAME
+export const getLogData = async (req, res) => {
+  try {
+    const { pathname } = req.query;
+    console.log(pathname);
 
-  // Parse the start and end dates in "YYYY-MM-DD" format
-  const start = new Date(`${startDate}T00:00:00Z`);
-  const end = new Date(`${endDate}T23:59:59Z`);
+    if (!pathname) {
+      return res.status(400).json({ message: "Pathname is required" });
+    }
 
-  // Ensure the dates are valid
-  if (isNaN(start) || isNaN(end)) {
-    return res.status(400).send({ error: "Invalid date range" });
-  }
+    const logFilePath = path.join(process.cwd(), "logs", pathname);
 
-  // Construct the root log directory path
-  const logDir = path.join(process.cwd(), "logs");
-
-  // Function to get all files in a directory recursively
-  const getFiles = (dir, files = []) => {
-    fs.readdirSync(dir).forEach((file) => {
-      const filePath = path.join(dir, file);
-      if (fs.statSync(filePath).isDirectory()) {
-        getFiles(filePath, files);
-      } else {
-        files.push(filePath);
+    fs.readFile(logFilePath, "utf8", (err, data) => {
+      if (err) {
+        console.error("Failed to read log file:", err);
+        return res.status(404).json({ message: "Log not found" });
       }
+
+      const logData = JSON.parse(data);
+      res.status(200).json(logData);
     });
-    return files;
-  };
-
-  // Get all log files
-  const allFiles = getFiles(logDir);
-
-  // Filter log files by date range
-  const logs = allFiles
-    .filter((file) => {
-      const fileName = path.basename(file, ".json");
-      const [filter, timestamp] = fileName.split("_");
-      const fileDate = new Date(
-        `${timestamp.slice(0, 4)}-${timestamp.slice(4, 6)}-${timestamp.slice(
-          6,
-          8
-        )}T${timestamp.slice(9, 11)}:${timestamp.slice(
-          11,
-          13
-        )}:${timestamp.slice(13, 15)}.${timestamp.slice(16, 19)}Z`
-      );
-      return fileDate >= start && fileDate <= end;
-    })
-    .map((file) => {
-      return JSON.parse(fs.readFileSync(file, "utf8"));
-    });
-
-  // Send the logs as a response
-  res.send(logs);
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send(error.message);
+  }
 };

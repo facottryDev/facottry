@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getLogs, getMapping, scaleAuth } from "../controllers/scale.js";
+import { getLogData, getMapping, scaleAuth } from "../controllers/scale.js";
 const router = Router();
 
 // router.use(scaleAuth);
@@ -9,5 +9,5 @@ router.get("/", (req, res) => {
 });
 
 router.post("/get-mapping", getMapping);
-router.get('get-logs', getLogs);
+router.get("/get-log-by-id", getLogData);
 export default router;
