@@ -4,6 +4,7 @@ import { axios_auth } from "@/lib/axios"
 import ContactForm from "@/components/landing/ContactForm"
 import NavBar from "@/components/landing/NavBar"
 import { Hero } from "@/components/landing/Hero"
+import Notibar from "@/components/global/Notibar"
 
 const LandingPage = () => {
   const [isLoggedin, setIsLoggedin] = useState(false);
@@ -23,6 +24,7 @@ const LandingPage = () => {
 
   return (
     <div className="bg-white dark:bg-zinc-950">
+      <Notibar message="Take a moment to provide your valuable feedback to us by" href={'https://forms.gle/YESLbaEbMBXkYXJ87'} />
       <div className="bg-gray-100 dark:bg-zinc-900 py-8 px-8">
         <NavBar isLoggedin={isLoggedin} />
 

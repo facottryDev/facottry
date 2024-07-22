@@ -14,7 +14,7 @@ const Notibar = ({ message, href }: Props) => {
     if (!notibar) return null;
 
     return (
-        <div className="absolute w-[80%] max-w-[800px] bottom-10 left-1/2 transform -translate-x-1/2 border border-primary400 text-primary700 px-4 py-3 rounded shadow-lg" role="alert">
+        <div className="fixed z-20 bg-bggray w-[80%] max-w-[800px] bottom-10 left-1/2 transform -translate-x-1/2 border border-zinc-400 text-primary700 px-4 py-3 rounded shadow-lg" role="alert">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="md:block hidden">
@@ -24,7 +24,7 @@ const Notibar = ({ message, href }: Props) => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <Link href={'https://forms.gle/YESLbaEbMBXkYXJ87'} target="_blank" className="text-center border border-primary700 dark:border-white px-2 py-2 rounded-lg text-primary700 hover:bg-primary700 hover:text-white transition dark:text-slate-200 ml-2 dark:hover:bg-zinc-800 text-sm font-medium">
+                    <Link href={'https://forms.gle/YESLbaEbMBXkYXJ87'} target="_blank" className="text-center border border-zinc-400 dark:border-white px-2 py-2 rounded-lg text-primary700 hover:bg-primary700 hover:text-white transition dark:text-slate-200 ml-2 dark:hover:bg-zinc-800 text-sm font-medium">
                         Submit Feedback
                     </Link>
                     <button onClick={() => setNotibar(false)} className="text-primary500 hover:text-primary700">
