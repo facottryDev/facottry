@@ -10,7 +10,6 @@ export const scaleAuth = (req, res, next) => {
     const clientHash = req.headers["x-client-hash"];
     const date = new Date();
     const currentHour = date.getHours();
-    // Adjust to change every 5 minutes
     const currentMinute = Math.floor(date.getMinutes() / 5) * 5;
     let isAuthenticated = false;
 
@@ -23,6 +22,8 @@ export const scaleAuth = (req, res, next) => {
         .createHash("sha256")
         .update(dataToHash)
         .digest("hex");
+
+        console.log(generatedHash, clientHash);
 
       if (generatedHash === clientHash) {
         isAuthenticated = true;
