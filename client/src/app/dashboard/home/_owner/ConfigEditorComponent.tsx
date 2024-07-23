@@ -338,7 +338,6 @@ const ConfigTableComponent = (props: Props) => {
                                                                     onValidate={(markers) => {
                                                                         setEditorMarker(markers);
                                                                     }}
-                                                                    options={{ readOnly: isEditable ? true : false }}
                                                                 />
 
                                                                 {/* Validation Errors */}
