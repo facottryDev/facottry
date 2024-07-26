@@ -29,17 +29,14 @@ const NavBar = ({ isLoggedin }: { isLoggedin: boolean; }) => {
                         height={50}
                         className="hidden dark:block"
                     />
-                    <p className="font-extrabold text-2xl dark:text-slate-200 text-black">
+                    <p className="hidden sm:block font-extrabold text-2xl dark:text-slate-200 text-black">
                         Fac<span className="text-primary dark:text-primary600">OTT</span>ry
                     </p>
                 </Link>
                 {pathname === '/' ? (
-                    <div className="space-x-4 hidden text-black lg:flex font-semibold dark:text-slate-200">
+                    <div className="space-x-4 hidden md:flex text-black font-semibold dark:text-slate-200">
                         <Link href={'#about'} className="hover:text-primary transition-all">About</Link>
-                        <Link href={'#demo'} className="hover:text-primary transition-all">Demo</Link>
-                        <Link href={'#videos'} className="hover:text-primary transition-all">Videos</Link>
-                        <Link href={'#testimonial'} className="hover:text-primary transition-all">Testimonial</Link>
-                        <Link href={'#pricing'} className="hover:text-primary transition-all">Pricing</Link>
+                        <Link href={'/faq'} target="_blank" className="hover:text-primary transition-all">FAQ</Link>
                         <Link href={'#contact'} className="hover:text-primary transition-all">Contact</Link>
                     </div>
                 ) : null}

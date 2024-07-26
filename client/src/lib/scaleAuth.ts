@@ -14,6 +14,5 @@ export const generateScaleHash = () => {
     .update(dataToHash)
     .digest("hex");
 
-    console.log(generatedHash);
   return generatedHash;
 };

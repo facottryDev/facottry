@@ -24,7 +24,7 @@ const LandingPage = () => {
 
   return (
     <div className="bg-white dark:bg-zinc-950">
-      <Notibar message="Take a moment to provide your valuable feedback to us by" href={'https://forms.gle/YESLbaEbMBXkYXJ87'} />
+      
       <div className="bg-gray-100 dark:bg-zinc-900 py-8 px-8">
         <NavBar isLoggedin={isLoggedin} />
 

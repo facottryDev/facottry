@@ -3,14 +3,13 @@ import { Disclosure, Transition } from '@headlessui/react';
 import { BsChevronDown } from 'react-icons/bs';
 
 type Props = {
-    key: number;
     title: string;
     content: string;
 }
 
-export default function DisclosureItem({ key, title, content }: Props) {
+export default function DisclosureItem({ title, content }: Props) {
     return (
-        <div className="w-full max-w-xl rounded-2xl">
+        <div className="w-full rounded-2xl">
             <Disclosure>
                 {({ open }) => (
                     <>
