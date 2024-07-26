@@ -11,7 +11,7 @@ type FAQ = {
     content: string;
 }
 
-const page = () => {
+const FAQPage = () => {
     const [data, setData] = React.useState<FAQ[]>([]);
 
     useEffect(() => {
@@ -60,4 +60,4 @@ const page = () => {
     );
 }
 
-export default page
+export default FAQPage
