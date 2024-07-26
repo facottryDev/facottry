@@ -5,6 +5,7 @@ import Image from 'next/image'
 import logo_2 from '@/assets/logo_2.svg'
 import Link from 'next/link'
 import { axios_scale } from "@/lib/axios"
+import { globalStore } from "@/lib/store"
 
 type FAQ = {
     title: string;
@@ -13,26 +14,11 @@ type FAQ = {
 
 const FAQPage = () => {
     const [data, setData] = React.useState<FAQ[]>([]);
+    const [scaleData] = globalStore((state) => [state.scaleData]);
 
     useEffect(() => {
-        const fetchFAQ = async () => {
-            try {
-                const response = await axios_scale.post('get-mapping', {
-                    projectID: process.env.NEXT_PUBLIC_BASE_PROJECT_ID,
-                    filter: {
-                        COUNTRY: "IN",
-                        SUBSCRIPTION: "FREE"
-                    }
-                });
-
-                setData(response.data.mappings.appConfig.faq);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchFAQ();
-    }, []);
+        setData(scaleData?.faq || []);
+    }, [scaleData])
 
     return (
         <div className="w-screen px-4">

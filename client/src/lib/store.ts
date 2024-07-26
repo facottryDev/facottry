@@ -54,6 +54,8 @@ type GlobalStore = {
   playgroundTab: string;
   projectSettingTab: string;
   notibar: boolean;
+  scaleData: scaleData | null;
+  setScaleData: (scaleData: scaleData) => void;
   setNotibar: (notibar: boolean) => void;
   setProjectSettingTab: (projectSettingTab: string) => void;
   setPlaygroundTab: (playgroundTab: string) => void;
@@ -69,6 +71,8 @@ export const globalStore = create(persist<GlobalStore>((set) => ({
   playgroundTab: 'SDK Demo',
   projectSettingTab: 'Basic Details',
   notibar: true,
+  scaleData: null,
+  setScaleData: (scaleData: scaleData) => set({ scaleData }),
   setNotibar: (notibar: boolean) => set({ notibar }),
   setProjectSettingTab: (projectSettingTab: string) => set({ projectSettingTab }),
   setPlaygroundTab: (playgroundTab: string) => set({ playgroundTab }),

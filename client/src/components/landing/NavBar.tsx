@@ -35,7 +35,7 @@ const NavBar = ({ isLoggedin }: { isLoggedin: boolean; }) => {
                 </Link>
                 {pathname === '/' ? (
                     <div className="space-x-4 hidden md:flex text-black font-semibold dark:text-slate-200">
-                        <Link href={'#about'} className="hover:text-primary transition-all">About</Link>
+                        <Link href={'/about'} className="hover:text-primary transition-all">About</Link>
                         <Link href={'/faq'} target="_blank" className="hover:text-primary transition-all">FAQ</Link>
                         <Link href={'#contact'} className="hover:text-primary transition-all">Contact</Link>
                     </div>

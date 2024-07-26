@@ -13,7 +13,7 @@ type configs = {
       createdAt: string;
       updatedAt: string;
     }
-  ]
+  ];
 };
 
 type config = {
@@ -61,13 +61,25 @@ type Project = {
   editors: string[];
   viewers: string[];
   filters: Filter;
-  configTypes: [{
-    name: string;
-    desc: string;
-    status: string;
-    createdAt: string;
-    updatedAt: string;
-  }]
+  configTypes: [
+    {
+      name: string;
+      desc: string;
+      status: string;
+      createdAt: string;
+      updatedAt: string;
+    }
+  ];
 };
 
 type Filter = any;
+
+type scaleData = {
+  faq: [
+    {
+      title: string;
+      content: string;
+    }
+  ];
+  about: string;
+};
