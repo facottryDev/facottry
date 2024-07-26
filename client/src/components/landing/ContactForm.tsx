@@ -20,10 +20,12 @@ const ContactForm = () => {
         }
 
         try {
-            const result = await axios_admin.post('/update-contact', data);
-            console.log(result);
+            await axios_admin.post('/update-contact', data);
+            e.currentTarget.reset();
+            toast.success('Sent successfully');
         } catch (error: any) {
             console.log(error.message);
+            toast.error('Failed to send message');
         }
 
     }
