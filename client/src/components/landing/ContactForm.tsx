@@ -1,9 +1,9 @@
+'use client';
 import { axios_admin } from "@/lib/axios";
 import React from 'react'
 import { toast } from "react-toastify";
 
 const ContactForm = () => {
-
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
