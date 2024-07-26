@@ -13,7 +13,9 @@ export const updateContacts = async (req, res) => {
     const { email, subject, message } = req.body;
 
     // check if email exists
-    const contact = await Contact.findOne({ email });
+    const contact = await Contact.findOne({
+      email,
+    });
 
     if (!contact) {
       const newContact = new Contact({
@@ -22,12 +24,14 @@ export const updateContacts = async (req, res) => {
       });
 
       await newContact.save();
+      return res.status(200).json({ message: "Message sent successfully" });
     } else {
       contact.messages.push({ subject, message });
       await contact.save();
+      return res.status(200).json({ message: "Message sent successfully" });
     }
-
   } catch (error) {
+    console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };

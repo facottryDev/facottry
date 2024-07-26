@@ -5,23 +5,22 @@ import { toast } from "react-toastify";
 
 const ContactForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const data = {
-            email: e.currentTarget.email.value,
-            subject: e.currentTarget.subject.value,
-            message: e.currentTarget.message.value
-        }
-
-        // message length validation
-        if (data.message.length < 10) {
-            toast.error('Message too short');
-            return;
-        }
-
         try {
-            await axios_admin.post('/update-contact', data);
-            e.currentTarget.reset();
+            e.preventDefault();
+
+            const data = {
+                email: e.currentTarget.email.value,
+                subject: e.currentTarget.subject.value,
+                message: e.currentTarget.message.value
+            }
+
+            // message length validation
+            if (data.message.length < 10) {
+                toast.error('Message too short');
+                return;
+            }
+
+            const response = await axios_admin.post('/update-contact', data);
             toast.success('Sent successfully');
         } catch (error: any) {
             console.log(error.message);
