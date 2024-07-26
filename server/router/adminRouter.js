@@ -27,11 +27,14 @@ import {
   cloneProject,
   addConfigType,
   deleteConfigType,
-  getProject
+  getProject,
+  updateContacts
 } from "../controllers/admin.js";
 import { isAuth } from "../lib/middlewares.js";
 import { toggleConfigTypeStatus } from "../controllers/config.js";
 const router = Router();
+
+router.post('/update-contact', updateContacts);
 
 router.use(isAuth);
 router.get("/get-admin", getAdmin);

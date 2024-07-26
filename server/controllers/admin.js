@@ -5,6 +5,32 @@ import AppConfig from "../models/configs/appConfig.js";
 import PlayerConfig from "../models/configs/playerConfig.js";
 import CustomConfig from "../models/configs/customConfig.js";
 import Master from "../models/scale/master.js";
+import Contact from "../models/admin/contact.js";
+
+// UPDATE CONTACT MESSAGES
+export const updateContacts = async (req, res) => {
+  try {
+    const { email, subject, message } = req.body;
+
+    // check if email exists
+    const contact = await Contact.findOne({ email });
+
+    if (!contact) {
+      const newContact = new Contact({
+        email,
+        messages: [{ subject, message }],
+      });
+
+      await newContact.save();
+    } else {
+      contact.messages.push({ subject, message });
+      await contact.save();
+    }
+
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 // GET ADMIN INFO
 export const getAdmin = async (req, res) => {

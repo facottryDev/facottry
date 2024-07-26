@@ -1,11 +1,38 @@
+import { axios_admin } from "@/lib/axios";
 import React from 'react'
+import { toast } from "react-toastify";
 
 const ContactForm = () => {
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const data = {
+            email: e.currentTarget.email.value,
+            subject: e.currentTarget.subject.value,
+            message: e.currentTarget.message.value
+        }
+
+        // message length validation
+        if (data.message.length < 10) {
+            toast.error('Message too short');
+            return;
+        }
+
+        try {
+            const result = await axios_admin.post('/update-contact', data);
+            console.log(result);
+        } catch (error: any) {
+            console.log(error.message);
+        }
+
+    }
+
     return (
         <div className="mx-auto max-w-screen-md">
             <h2 className="mb-2 text-4xl font-extrabold text-center text-gray-900 dark:text-zinc-200">Contact Us</h2>
             <p className="mb-8 font-light text-center text-gray-500">Got a technical issue or Need details about our Business plan? Let us know.</p>
-            <form className="space-y-8 bg-bgblue200 dark:bg-zinc-800 p-10 rounded-xl">
+            <form onSubmit={handleSubmit} className="space-y-8 bg-bgblue200 dark:bg-zinc-800 p-10 rounded-xl">
                 <div>
                     <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-zinc-200">Your email</label>
                     <input type="email" id="email" className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 dark:bg-zinc-300 focus:border-primary-500 block w-full p-2.5 dark:placeholder:text-zinc-600" placeholder="example@gmail.com" required />
