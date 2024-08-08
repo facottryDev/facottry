@@ -27,7 +27,7 @@ export const SDKDemo = (props: Props) => {
                 filter: scaleFilter
             });
 
-            setActiveMapping(mapping.data.mappings);
+            setActiveMapping(mapping.data.data);
         } catch (error: any) {
             console.log(error.response.data);
         }
