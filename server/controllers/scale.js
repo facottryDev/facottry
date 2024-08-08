@@ -79,8 +79,11 @@ export const getMapping = async (req, res) => {
         message: "No Mapping Found",
         mappings: {
           mappings: {},
-          filter: {},
           settings: {},
+          filter,
+          settings: {
+            projectID: projectID
+          },
         },
       };
       res.status(200).json(noMappingResponse);
@@ -104,7 +107,7 @@ export const getMapping = async (req, res) => {
 
     const successResponse = {
       code: "FOUND",
-      message: "Success",
+      message: "Mapping Found",
       mappings: {
         filter: master.filter,
         settings: {
