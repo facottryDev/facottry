@@ -23,7 +23,7 @@ export const scaleAuth = (req, res, next) => {
         .update(dataToHash)
         .digest("hex");
 
-        console.log(generatedHash, clientHash);
+      console.log(generatedHash, clientHash);
 
       if (generatedHash === clientHash) {
         isAuthenticated = true;
@@ -78,10 +78,9 @@ export const getMapping = async (req, res) => {
         code: "NO_MAPPING",
         message: "No Mapping Found",
         mappings: {
-          appConfig: {},
-          playerConfig: {},
-          customConfig: {},
+          mappings: {},
           filter: {},
+          settings: {},
         },
       };
       res.status(200).json(noMappingResponse);
@@ -91,24 +90,29 @@ export const getMapping = async (req, res) => {
 
     const appConfig = master.appConfig?.params || {};
     const playerConfig = master.playerConfig?.params || {};
-    const resObj = {
+
+    const allConfigs = {
       appConfig,
       playerConfig,
-      filter: master.filter,
-      projectID: master.projectID,
-      companyID: master.companyID,
     };
 
     if (master.customConfig) {
       for (const key in master.customConfig) {
-        resObj[key] = master.customConfig[key].params;
+        allConfigs[key] = master.customConfig[key].params;
       }
     }
 
     const successResponse = {
       code: "FOUND",
       message: "Success",
-      mappings: resObj,
+      mappings: {
+        filter: master.filter,
+        settings: {
+          projectID: master.projectID,
+          companyID: master.companyID,
+        },
+        mapping: allConfigs,
+      },
     };
     res.status(200).json(successResponse);
     setImmediate(async () => await loggerFunction(req, successResponse));
