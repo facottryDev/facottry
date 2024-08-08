@@ -79,7 +79,6 @@ export const getMapping = async (req, res) => {
         message: "No Mapping Found",
         mappings: {
           mappings: {},
-          settings: {},
           filter,
           settings: {
             projectID: projectID
@@ -94,27 +93,27 @@ export const getMapping = async (req, res) => {
     const appConfig = master.appConfig?.params || {};
     const playerConfig = master.playerConfig?.params || {};
 
-    const allConfigs = {
+    const allMappings = {
       appConfig,
       playerConfig,
     };
 
     if (master.customConfig) {
       for (const key in master.customConfig) {
-        allConfigs[key] = master.customConfig[key].params;
+        allMappings[key] = master.customConfig[key].params;
       }
     }
 
     const successResponse = {
       code: "FOUND",
       message: "Mapping Found",
-      mappings: {
+      data: {
         filter: master.filter,
         settings: {
           projectID: master.projectID,
           companyID: master.companyID,
         },
-        mapping: allConfigs,
+        mappings: allMappings,
       },
     };
     res.status(200).json(successResponse);
