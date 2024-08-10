@@ -36,6 +36,7 @@ const corsOptions = {
     process.env.NODE_ENV === "production"
       ? [
           "http://localhost:3000",
+          "http://localhost:3001",
           "http://localhost:8000",
           "http://localhost:5173",
           "http://localhost:5500",
@@ -45,9 +46,11 @@ const corsOptions = {
           "https://facottry-netflix.vercel.app",
           "https://facottry-hotstar.vercel.app",
           "https://facottry-ecommerce.vercel.app",
+          "https://facottry-landing-site.web.app/",
         ]
       : [
           "http://localhost:3000",
+          "http://localhost:3001",
           "http://localhost:5173",
           "http://localhost:8000",
           "http://localhost:5500",
