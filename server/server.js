@@ -46,6 +46,7 @@ const corsOptions = {
           "https://facottry-netflix.vercel.app",
           "https://facottry-hotstar.vercel.app",
           "https://facottry-ecommerce.vercel.app",
+          "https://facottry-streamo.onrender.com",
           "https://facottry-landing-site.web.app/",
         ]
       : [
