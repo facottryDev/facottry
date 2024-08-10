@@ -41,8 +41,9 @@ const SiteExamples = (props: Props) => {
     const netflixDemo = projects.find((project) => (project.name === 'NETFLIX_DEMO') && (project.type === 'TEST'))
     const hotstarDemo = projects.find((project) => (project.name === 'HOTSTAR_DEMO') && (project.type === 'TEST'))
     const apneckDemo = projects.find((project) => (project.name === 'APNECK_DEMO') && (project.type === 'TEST'))
+    const streamoDemo = projects.find((project) => (project.name === 'STREAMO_DEMO') && (project.type === 'TEST'))
 
-    const projectIDs = [netflixDemo?.projectID, hotstarDemo?.projectID, apneckDemo?.projectID]
+    const projectIDs = [netflixDemo?.projectID, hotstarDemo?.projectID, apneckDemo?.projectID, streamoDemo?.projectID]
 
     return (
         <div className="bg-white w-full rounded-md p-5 mt-4 text-sm">
