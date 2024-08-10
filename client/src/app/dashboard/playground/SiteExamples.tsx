@@ -25,6 +25,13 @@ const cardData = [
         id: 'apneck_demo',
         desc: 'Build an e-commerce site with FacOTTry',
         imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/t_siteExamples/v1721292829/izalw7vhywgrgiw82us3.png'
+    },
+    {
+        href: 'https://facottry-streamo.onrender.com',
+        title: 'Streamo',
+        id: 'streamo_demo',
+        desc: 'Build an OTT platform with FacOTTry',
+        imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/t_siteExamples/v1723289463/Screenshot_383_varjqi.png'
     }
 ]
 
@@ -58,13 +65,3 @@ const SiteExamples = (props: Props) => {
 }
 
 export default SiteExamples
-
-// < Link target = "_blank" href = {`https://facottry-hotstar.vercel.app?projectID=${hotstarDemo?.projectID}`} className = "bg-gray-100 p-4 rounded-md border shadow-sm hover:bg-gray-200 hover:scale-105 transition-all" >
-//                 <h1 className="text-lg font-semibold">Hotstar</h1>
-//                 <p className="text-gray-500 mt-2">Build a Hotstar clone with FacOTTry</p>
-//             </ >
-
-// <Link target="_blank" href={`https://facottry-ecommerce.vercel.app?projectID=${apneckDemo?.projectID}`} className="bg-gray-100 p-4 rounded-md border shadow-sm hover:bg-gray-200 hover:scale-105 transition-all">
-//     <h1 className="text-lg font-semibold">E-commerce</h1>
-//     <p className="text-gray-500 mt-2">Build an e-commerce site with FacOTTry</p>
-// </Link>
