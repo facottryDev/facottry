@@ -3,6 +3,7 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import axios from "axios";
+import { redisClient } from "../server.js";
 
 // SCALE AUTHENTICATION
 export const scaleAuth = (req, res, next) => {
@@ -45,7 +46,7 @@ export const scaleAuth = (req, res, next) => {
 // GET MAPPING FROM FILTER PARAMS
 export const getMapping = async (req, res) => {
   try {
-    const { projectID, filter } = req.body;
+    const { projectID, filter, noCache } = req.body;
 
     switch (true) {
       case !projectID:
@@ -56,6 +57,18 @@ export const getMapping = async (req, res) => {
         res.status(400).json({ message: "Filter is required" });
         setImmediate(async () => await loggerFunction(req, filterError));
         return;
+    }
+
+    const filterString = JSON.stringify(filter);
+    const cacheKey = `mapping:${projectID}:${filterString}`;
+    const cachedData = await redisClient.get(cacheKey);
+
+    if (!noCache && cachedData) {
+      const cachedResponse = JSON.parse(cachedData);
+      cachedResponse.cacheStatus = true;
+      res.status(200).json(cachedResponse);
+      setImmediate(async () => await loggerFunction(req, cachedResponse));
+      return;
     }
 
     const master = await Master.findOne(
@@ -77,16 +90,22 @@ export const getMapping = async (req, res) => {
       const noMappingResponse = {
         code: "NO_MAPPING",
         message: "No Mapping Found",
-        mappings: {
+        cacheStatus: false,
+        data: {
           mappings: {},
           filter,
           settings: {
-            projectID: projectID
+            projectID: projectID,
           },
         },
       };
+
       res.status(200).json(noMappingResponse);
-      setImmediate(async () => await loggerFunction(req, noMappingResponse));
+      setImmediate(async () => {
+        await loggerFunction(req, noMappingResponse);
+        await redisClient.set(cacheKey, JSON.stringify(noMappingResponse));
+        await redisClient.expire(cacheKey, 3600); // 1 hour
+      });
       return;
     }
 
@@ -107,6 +126,7 @@ export const getMapping = async (req, res) => {
     const successResponse = {
       code: "FOUND",
       message: "Mapping Found",
+      cacheStatus: false,
       data: {
         filter: master.filter,
         settings: {
@@ -117,7 +137,11 @@ export const getMapping = async (req, res) => {
       },
     };
     res.status(200).json(successResponse);
-    setImmediate(async () => await loggerFunction(req, successResponse));
+    setImmediate(async () => {
+      await loggerFunction(req, successResponse);
+      await redisClient.set(cacheKey, JSON.stringify(successResponse));
+      await redisClient.expire(cacheKey, 3600);
+    });
   } catch (error) {
     console.log(error.message);
     const errorResponse = { message: error.message };
