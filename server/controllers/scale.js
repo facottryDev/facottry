@@ -24,6 +24,10 @@ export const scaleAuth = (req, res, next) => {
         .update(dataToHash)
         .digest("hex");
 
+        console.log({
+          dataToHash
+        })
+
       if (generatedHash === clientHash) {
         isAuthenticated = true;
         break;
