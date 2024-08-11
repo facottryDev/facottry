@@ -3,7 +3,7 @@ import crypto from "crypto";
 export const generateScaleHash = () => {
   const date = new Date();
   const currentHour = date.getHours();
-  const currentMinute = date.getMinutes();
+  const currentMinute = Math.floor(date.getMinutes() / 5) * 5;
   const randomizer = Math.floor(Math.random() * 10);
   const permanentSalt = process.env.NEXT_PUBLIC_SCALE_SALT;
 
