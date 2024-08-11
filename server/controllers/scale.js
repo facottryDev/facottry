@@ -10,8 +10,8 @@ export const scaleAuth = (req, res, next) => {
   try {
     const clientHash = req.headers["x-client-hash"];
     const date = new Date();
-    const currentHour = date.getHours();
-    const currentMinute = Math.floor(date.getMinutes() / 5) * 5;
+    const currentHour = date.getUTCHours();
+    const currentMinute = Math.floor(date.getUTCMinutes() / 5) * 5;
     let isAuthenticated = false;
 
     const permanentSalt = process.env.SCALE_SALT;
@@ -25,7 +25,7 @@ export const scaleAuth = (req, res, next) => {
         .digest("hex");
 
         console.log({
-          dataToHash
+          temporarySalt
         })
 
       if (generatedHash === clientHash) {
