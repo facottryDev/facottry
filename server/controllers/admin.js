@@ -1248,11 +1248,11 @@ export const verifyCompanyInvite = async (req, res) => {
   }
 };
 
-// INVITE USER TO JOIN PROJECT USING INVITE LINK - PROJECT OWNER
+// SEND PROJECT INVITE LINK TO USER - PROJECT OWNER
 export const sendProjectInvite = async (req, res) => {
   try {
     const owner = req.session.username || req.user.email;
-    const { email, projectID } = req.body;
+    const { email, projectID, role } = req.body;
 
     const project = await Project.findOne({
       status: "active",
@@ -1262,7 +1262,9 @@ export const sendProjectInvite = async (req, res) => {
 
     // Check if project exists
     if (!project) {
-      return res.status(404).json({ message: "You don't own this project" });
+      return res
+        .status(401)
+        .json({ message: "You are not the owner of this project" });
     }
 
     const isOwner = project.owners.includes(email);
@@ -1272,29 +1274,29 @@ export const sendProjectInvite = async (req, res) => {
     // Check if user is already part of the project
     if (isOwner || isEditor || isViewer) {
       return res.status(400).json({
-        message: "User already part of this project",
+        message: "User is already a member of this project",
         role: isOwner ? "owner" : isEditor ? "editor" : "viewer",
       });
     }
 
-    // Check if email exists in the company
-    const IssameCompany = await Company.findOne({
+    // Check if email exists in any other company
+    const company = await Company.findOne({
       status: "active",
-      companyID: project.companyID,
       $or: [{ owners: email }, { employees: email }],
     });
 
-    if (!IssameCompany) {
+    if (company && company.companyID !== project.companyID) {
       return res.status(400).json({
-        message: "Email does not belong to the same company",
+        message: "User is already part of another company",
       });
     }
 
     // Send email to user
-    const inviteCode = generateID(project.name + "_invite");
-    const inviteLink = `http://localhost:3000/invite/${inviteCode}`;
+    const inviteCode = generateID(project.name + "_invite_" + email);
+    const inviteLink = `${process.env.SERVER_URL}/invite/${encodeURIComponent(
+      inviteCode
+    )}`;
 
-    // Send Email
     const mailOptions = {
       from: " " + process.env.EMAIL,
       to: email,
@@ -1303,7 +1305,13 @@ export const sendProjectInvite = async (req, res) => {
               <p>Click <a href="${inviteLink}">here</a> to join.</p>`,
     };
 
-    // await sendMail(mailOptions);
+    await sendMail(mailOptions);
+
+    // Update project document
+    project.activeInvites.push(email);
+    return res.json({ message: `${inviteLink}` });
+
+    // Send Email
     res.status(200).json({
       message: "Invitation sent successfully (MAIL DISABLED FOR DEMO)",
       inviteLink,

@@ -8,12 +8,22 @@ type Props = {}
 
 const ManageUsers = (props: Props) => {
     const [InviteUserModal, setInviteUserModal] = useState(false);
-    const [inviteData, setInviteData] = useState({ email: "", role: "" });
+    const [inviteData, setInviteData] = useState({ email: "", role: "owner" });
     const activeProject = userStore(state => state.activeProject);
 
     const inviteUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        alert(`Not Implemented Yet`);
+        
+        try {
+            const result = await axios_admin.post("/project/invite", {
+                ...inviteData, projectID: activeProject?.projectID
+            });
+            alert(result.data.message);
+            setInviteUserModal(false);
+        } catch (error: any) {
+            console.error(error);
+            alert(error.response.data.message);
+        }
     }
 
     const deleteUser = (email: string) => async () => {
