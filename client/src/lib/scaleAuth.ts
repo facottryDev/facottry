@@ -10,7 +10,6 @@ export const generateScaleHash = () => {
   const temporarySalt = `${currentHour}${currentMinute}`;
   const dataToHash = `${permanentSalt}${temporarySalt}${randomizer}`;
 
-  console.log(temporarySalt);
   const generatedHash = crypto
     .createHash("sha256")
     .update(dataToHash)
