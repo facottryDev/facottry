@@ -23,12 +23,11 @@ const PORT = process.env.PORT;
 
 // Configure Redis Client
 export const redisClient = createClient({
-  socket: {
-    host: process.env.REDIS_HOST,
-    port: 6379,
-  },
+  url: process.env.REDIS_URL
 });
-redisClient.connect().then(console.log("Redis Connected")).catch(console.error);
+redisClient.connect().then(console.log(
+  "Connected to Redis"
+)).catch(console.error);
 
 // Middlewares
 const corsOptions = {
