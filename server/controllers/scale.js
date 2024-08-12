@@ -57,17 +57,17 @@ export const getMapping = async (req, res) => {
         return;
     }
 
-    const filterString = JSON.stringify(filter);
-    const cacheKey = `mapping:${projectID}:${filterString}`;
-    const cachedData = await redisClient.get(cacheKey);
+    // const filterString = JSON.stringify(filter);
+    // const cacheKey = `mapping:${projectID}:${filterString}`;
+    // const cachedData = await redisClient.get(cacheKey);
 
-    if (!noCache && cachedData) {
-      const cachedResponse = JSON.parse(cachedData);
-      cachedResponse.cacheStatus = true;
-      res.status(200).json(cachedResponse);
-      setImmediate(async () => await loggerFunction(req, cachedResponse));
-      return;
-    }
+    // if (!noCache && cachedData) {
+    //   const cachedResponse = JSON.parse(cachedData);
+    //   cachedResponse.cacheStatus = true;
+    //   res.status(200).json(cachedResponse);
+    //   setImmediate(async () => await loggerFunction(req, cachedResponse));
+    //   return;
+    // }
 
     const master = await Master.findOne(
       {
@@ -101,8 +101,8 @@ export const getMapping = async (req, res) => {
       res.status(200).json(noMappingResponse);
       setImmediate(async () => {
         await loggerFunction(req, noMappingResponse);
-        await redisClient.set(cacheKey, JSON.stringify(noMappingResponse));
-        await redisClient.expire(cacheKey, 3600); // 1 hour
+        // await redisClient.set(cacheKey, JSON.stringify(noMappingResponse));
+        // await redisClient.expire(cacheKey, 3600); 
       });
       return;
     }
@@ -137,8 +137,8 @@ export const getMapping = async (req, res) => {
     res.status(200).json(successResponse);
     setImmediate(async () => {
       await loggerFunction(req, successResponse);
-      await redisClient.set(cacheKey, JSON.stringify(successResponse));
-      await redisClient.expire(cacheKey, 3600);
+      // await redisClient.set(cacheKey, JSON.stringify(successResponse));
+      // await redisClient.expire(cacheKey, 3600);
     });
   } catch (error) {
     console.log(error.message);
