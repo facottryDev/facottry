@@ -47,6 +47,7 @@ const corsOptions = {
           "https://facottry-ecommerce.vercel.app",
           "https://facottry-streamo.onrender.com",
           "https://facottry-landing-site.web.app/",
+          "https://facottry-zee5.onrender.com/",
         ]
       : [
           "http://localhost:3000",

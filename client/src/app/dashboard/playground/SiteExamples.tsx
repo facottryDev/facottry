@@ -27,12 +27,19 @@ const cardData = [
         imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/t_siteExamples/v1721292829/izalw7vhywgrgiw82us3.png'
     },
     {
+        href: 'https://facottry-zee5.onrender.com',
+        title: 'Zee5',
+        id: 'zee5_demo',
+        desc: 'Build an Zee5 clone with FacOTTry',
+        imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/t_siteExamples/v1723539496/Screenshot_385_xazfyf.png'
+    },
+    {
         href: 'https://facottry-streamo.onrender.com',
         title: 'Streamo',
         id: 'streamo_demo',
         desc: 'Build an OTT platform with FacOTTry',
         imgURL: 'https://res.cloudinary.com/djqdugthw/image/upload/t_siteExamples/v1723289463/Screenshot_383_varjqi.png'
-    }
+    },
 ]
 
 const SiteExamples = (props: Props) => {
@@ -42,8 +49,9 @@ const SiteExamples = (props: Props) => {
     const hotstarDemo = projects.find((project) => (project.name === 'HOTSTAR_DEMO') && (project.type === 'TEST'))
     const apneckDemo = projects.find((project) => (project.name === 'APNECK_DEMO') && (project.type === 'TEST'))
     const streamoDemo = projects.find((project) => (project.name === 'STREAMO_DEMO') && (project.type === 'TEST'))
+    const zee5Demo = projects.find((project) => (project.name === 'ZEE5_DEMO') && (project.type === 'TEST'))
 
-    const projectIDs = [netflixDemo?.projectID, hotstarDemo?.projectID, apneckDemo?.projectID, streamoDemo?.projectID]
+    const projectIDs = [netflixDemo?.projectID, hotstarDemo?.projectID, apneckDemo?.projectID, streamoDemo?.projectID, zee5Demo?.projectID]
 
     return (
         <div className="bg-white w-full rounded-md p-5 mt-4 text-sm">
