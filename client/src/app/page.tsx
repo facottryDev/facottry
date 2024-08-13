@@ -6,6 +6,7 @@ import NavBar from "@/components/landing/NavBar"
 import { Hero } from "@/components/landing/Hero"
 import Notibar from "@/components/global/Notibar"
 import { globalStore } from "@/lib/store"
+import Demo from "@/components/landing/Demo"
 
 const LandingPage = () => {
   const [isLoggedin, setIsLoggedin] = useState(false);
@@ -51,6 +52,10 @@ const LandingPage = () => {
           <Hero isLoggedin={isLoggedin} />
         </section>
       </div>
+      
+      <section id="demo">
+          <Demo />
+        </section>
 
       <section id="contact" className="mt-10 py-8 px-8">
         <ContactForm />
