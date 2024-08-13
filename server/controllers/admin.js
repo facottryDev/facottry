@@ -190,7 +190,6 @@ export const addCompany = async (req, res) => {
 
     const company = await newCompany.save();
     const demoResult = await createDemoProjects(companyID, email);
-    console.log(demoResult);
 
     const companyDetails = {
       companyID: company.companyID,
