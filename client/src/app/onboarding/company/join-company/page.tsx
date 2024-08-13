@@ -3,10 +3,13 @@ import Image from "next/image"
 import logo_1_dark from '@/assets/logo_dark_1.svg'
 import logo_1 from '@/assets/logo_1.svg'
 import Link from "next/link"
+import { useRouter } from 'next/navigation'
 import { axios_admin } from "@/lib/axios"
 import { toast } from "react-toastify"
 
-const JoinCompany = () => {
+const LoginForm = () => {
+    const router = useRouter();
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -60,4 +63,4 @@ const JoinCompany = () => {
     )
 }
 
-export default JoinCompany
+export default LoginForm

@@ -107,58 +107,6 @@ export const getAdmin = async (req, res) => {
   }
 };
 
-const createDemoProjects = async (companyID, email) => {
-  try {
-    const defaultProjects = await Project.find({
-      status: "active",
-      projectID: { $regex: /demo/i },
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-    });
-
-    const defaultMappings = await Master.find({
-      status: "active",
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-      projectID: { $regex: /demo/i },
-    });
-
-    defaultProjects.forEach(async (project) => {
-      const projectID = generateID(project.name);
-      const newProject = new Project({
-        projectID,
-        name: project.name,
-        type: project.type,
-        companyID,
-        owners: [email],
-        filters: project.filters,
-      });
-
-      await newProject.save();
-
-      // change the companyID of all default mappings and save as new mappings
-      const mapping = defaultMappings.find(
-        (mapping) => mapping.projectID === project.projectID
-      );
-
-      if (mapping) {
-        const newMapping = new Master({
-          appConfig: mapping.appConfig,
-          playerConfig: mapping.playerConfig,
-          customConfig: mapping.customConfig,
-          filter: mapping.filter,
-          projectID,
-          companyID,
-        });
-
-        await newMapping.save();
-      }
-    });
-
-    return { code:'SUCCESS', message: "Demo projects created successfully" };
-  } catch (error) {
-    return { code:'ERROR', message: error.message };
-  }
-};
-
 // ADD COMPANY - COMPANY OWNER
 export const addCompany = async (req, res) => {
   try {
@@ -189,7 +137,6 @@ export const addCompany = async (req, res) => {
     });
 
     const company = await newCompany.save();
-    const demoResult = await createDemoProjects(companyID, email);
 
     const companyDetails = {
       companyID: company.companyID,
@@ -203,6 +150,275 @@ export const addCompany = async (req, res) => {
       owners: company.owners.includes(email) ? company.owners : [],
       employees: company.employees.includes(email) ? company.employees : [],
     };
+
+    // Add Demo Project & Configs*************
+
+    // NETFLIX DEMO PROJECT
+    const netflixProjectID = generateID("NETFLIX_DEMO");
+    const netflixProject = new Project({
+      projectID: netflixProjectID,
+      name: "NETFLIX_DEMO",
+      type: "TEST",
+      companyID: company.companyID,
+      owners: [email],
+      filters: {
+        COUNTRY: { default: "IN", values: ["IN", "US"] },
+        SUBSCRIPTION: {
+          default: "FREE",
+          values: ["FREE", "PAID"],
+        },
+      },
+    });
+
+    await netflixProject.save();
+
+    // NETFLIX APP CONFIG
+    const netflixAppConfig = new AppConfig({
+      configID: generateID(`app_NETFLIX_DEMO`),
+      projectID: netflixProjectID,
+      companyID: company.companyID,
+      name: "NETFLIX_APP 1.0",
+      type: "app",
+      desc: "App Config for Netflix",
+      params: {
+        headerLogoSection: {
+          headerMainLogo: true,
+          headerUserLogo: true,
+        },
+        heroSection: {
+          heroSectionBackgroundImageAndDetalisSection: true,
+        },
+        movieSection: {
+          allMovieSection: true,
+        },
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await netflixAppConfig.save();
+
+    // NETFLIX PLAYER CONFIG
+    const netflixPlayerConfig = new PlayerConfig({
+      configID: generateID(`player_NETFLIX_DEMO`),
+      projectID: netflixProjectID,
+      companyID: company.companyID,
+      name: "NETFLIX_PLAYER 1.0",
+      type: "player",
+      desc: "Player Config for Netflix",
+      params: {},
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await netflixPlayerConfig.save();
+
+    // NETFLIX DEFAULT MAPPING
+    const netflixMapping = new Master({
+      appConfig: netflixAppConfig,
+      playerConfig: netflixPlayerConfig,
+      customConfig: {},
+      filter: {
+        COUNTRY: "IN",
+        SUBSCRIPTION: "FREE",
+      },
+      projectID: netflixProjectID,
+      companyID,
+    });
+
+    await netflixMapping.save();
+
+    // HOTSAR DEMO PROJECT
+    const hotstarProjectID = generateID("HOTSTAR_DEMO");
+    const hotstarProject = new Project({
+      projectID: hotstarProjectID,
+      name: "HOTSTAR_DEMO",
+      type: "TEST",
+      companyID: company.companyID,
+      owners: [email],
+      filters: {
+        COUNTRY: { default: "IN", values: ["IN", "US"] },
+        SUBSCRIPTION: {
+          default: "FREE",
+          values: ["FREE", "PAID"],
+        },
+      },
+    });
+
+    await hotstarProject.save();
+
+    // HOTSTAR APP CONFIG
+    const hotstarAppConfig = new AppConfig({
+      configID: generateID(`app_HOTSTAR_DEMO`),
+      projectID: hotstarProjectID,
+      companyID: company.companyID,
+      name: "HOTSTAR_APP 1.0",
+      type: "app",
+      desc: "App Config for Hotstar",
+      params: {
+        header: {
+          headerMainlogo: true,
+          loginButton: true,
+        },
+        silderbarImages: {
+          heroImages: true,
+        },
+        animationVideoSection: {
+          animationVideosStop: true,
+          animationVideoSectionHide: true,
+        },
+
+        movieSection: {
+          recommendsForYouMovieSection: true,
+          originalMovieSection: true,
+          trendingMovieSection: true,
+          newDisneyMovieSection: true,
+        },
+        movieDetailSection: {
+          detailPageBackGroundimage: true,
+          detailPageTitle: true,
+          detailPagePlayButton: true,
+          detailPageTrailerButton: true,
+          detailPageSubtitle: true,
+          detailPageDescription: true,
+        },
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await hotstarAppConfig.save();
+
+    // HOTSTAR PLAYER CONFIG
+    const hotstarPlayerConfig = new PlayerConfig({
+      configID: generateID(`player_HOTSTAR_DEMO`),
+      projectID: hotstarProjectID,
+      companyID: company.companyID,
+      name: "HOTSTAR_PLAYER 1.0",
+      type: "player",
+      desc: "Player Config for Hotstar",
+      params: {
+        playVideo: true,
+        videoUrl: "/videos/insideout2.mp4",
+        controls: true,
+        width: "100%",
+        height: "100%",
+        volume: 0.8,
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await hotstarPlayerConfig.save();
+
+    // HOTSTAR DEFAULT MAPPING
+    const hotstarMapping = new Master({
+      appConfig: hotstarAppConfig,
+      playerConfig: hotstarPlayerConfig,
+      customConfig: {},
+      filter: {
+        COUNTRY: "IN",
+        SUBSCRIPTION: "FREE",
+      },
+      projectID: hotstarProjectID,
+      companyID,
+    });
+
+    await hotstarMapping.save();
+
+    // APNECK DEMO PROJECT
+    const apneckProjectID = generateID("APNECK_DEMO");
+    const apneckProject = new Project({
+      projectID: apneckProjectID,
+      name: "APNECK_DEMO",
+      type: "TEST",
+      companyID: company.companyID,
+      owners: [email],
+      filters: {
+        COUNTRY: { default: "IN", values: ["IN", "US"] },
+        SUBSCRIPTION: {
+          default: "FREE",
+          values: ["FREE", "PAID"],
+        },
+      },
+    });
+
+    await apneckProject.save();
+
+    // APNECK APP CONFIG
+    const apneckAppConfig = new AppConfig({
+      configID: generateID(`app_APNECK_DEMO`),
+      projectID: apneckProjectID,
+      companyID: company.companyID,
+      name: "APNECK_APP 1.0",
+      type: "app",
+      desc: "App Config for Apneck",
+      params: {
+        header: {
+          headerMainLogo: true,
+        },
+        navbarButtons: {
+          homeButton: true,
+          shopButton: true,
+          blogButton: true,
+          aboutButton: true,
+          contactButton: true,
+        },
+        heroSection: {
+          heroSectionBannerImage: true,
+          iconsFastOrderOnlineOrderetc: true,
+        },
+        homePageInfeaturedProductSection: {
+          featuredProduct4ImagesSection: true,
+        },
+        homePageInnewArrivals: {
+          newArrivals4ImagesSection: true,
+        },
+        shopButtonProductImages: {
+          shopButtonProductAllImages: true,
+        },
+        blogButton: {
+          blogPageSection: true,
+        },
+        aboutButton: {
+          blogPageSection: true,
+        },
+      },
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await apneckAppConfig.save();
+
+    // APNECK PLAYER CONFIG
+    const apneckPlayerConfig = new PlayerConfig({
+      configID: generateID(`player_APNECK_DEMO`),
+      projectID: apneckProjectID,
+      companyID: company.companyID,
+      name: "APNECK_PLAYER 1.0",
+      type: "player",
+      desc: "Player Config for Apneck",
+      params: {},
+      createdBy: email,
+      lastModifiedBy: email,
+    });
+
+    await apneckPlayerConfig.save();
+
+    // APNECK DEFAULT MAPPING
+    const apneckMapping = new Master({
+      appConfig: apneckAppConfig,
+      playerConfig: apneckPlayerConfig,
+      customConfig: {},
+      filter: {
+        COUNTRY: "IN",
+        SUBSCRIPTION: "FREE",
+      },
+      projectID: apneckProjectID,
+      companyID,
+    });
+
+    await apneckMapping.save();
 
     return res
       .status(200)
