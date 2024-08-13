@@ -107,7 +107,7 @@ export const getAdmin = async (req, res) => {
   }
 };
 
-const createDemoProjects = async (companyID, email) => {
+export const createDemoProjects = async (companyID, email) => {
   try {
     const defaultProjects = await Project.find({
       status: "active",
@@ -116,6 +116,18 @@ const createDemoProjects = async (companyID, email) => {
     });
 
     const defaultMappings = await Master.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    const defaultAppConfigs = await AppConfig.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    const defaultPlayerConfigs = await PlayerConfig.find({
       status: "active",
       companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
       projectID: { $regex: /demo/i },
@@ -150,6 +162,36 @@ const createDemoProjects = async (companyID, email) => {
         });
 
         await newMapping.save();
+      }
+
+      // change the companyID of all default appConfigs and save as new appConfigs
+      const appConfig = defaultAppConfigs.find(
+        (appConfig) => appConfig.projectID === project.projectID
+      );
+
+      if (appConfig) {
+        const newAppConfig = new AppConfig({
+          projectID,
+          companyID,
+          config: appConfig.config,
+        });
+
+        await newAppConfig.save();
+      }
+
+      // change the companyID of all default playerConfigs and save as new playerConfigs
+      const playerConfig = defaultPlayerConfigs.find(
+        (playerConfig) => playerConfig.projectID === project.projectID
+      );
+
+      if (playerConfig) {
+        const newPlayerConfig = new PlayerConfig({
+          projectID,
+          companyID,
+          config: playerConfig.config,
+        });
+
+        await newPlayerConfig.save();
       }
     });
 
