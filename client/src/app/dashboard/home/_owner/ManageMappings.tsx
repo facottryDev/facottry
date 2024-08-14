@@ -1,5 +1,5 @@
 'use client'
-import { activeFilterStore, userStore } from "@/lib/store";
+import { activeFilterStore, globalStore, userStore } from "@/lib/store";
 import { useEffect, useState } from 'react'
 import { axios_config } from "@/lib/axios"
 import React from 'react'
@@ -14,11 +14,14 @@ type Props = {}
 const ModifyMapping = (props: Props) => {
     const [allMappings, setAllMappings] = useState<any>();
     const activeProject = userStore(state => state.activeProject);
-    const [activeFilter] = activeFilterStore(state => [state.activeFilter]);
-    const [editMappingModal, setEditMappingModal] = useState(false);
+    const [activeFilter, setActiveFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter]);
+    const [setDashboardTab] = globalStore(state => [state.setDashboardTab]);
 
-    const handleEditMapping = async (mapping: any) => {
-        setEditMappingModal(true);
+    const handleEditMapping = (mapping: any) => {
+        if (mapping) {
+            setActiveFilter(mapping.filter);
+            setDashboardTab('Create Mappings');
+        }
     }
 
     const handleDeleteMapping = async (mapping: any) => {

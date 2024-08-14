@@ -81,6 +81,7 @@ const Dashboard = () => {
             <ModifyMapping />
           )}
 
+          {/* Viewers */}
           {userRole === 'viewer' && selectedTab === 'View Configs' && (
             <ViewConfigs />
           )}
