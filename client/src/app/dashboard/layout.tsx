@@ -21,6 +21,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }));
 
     const fetchData = async () => {
+        console.log('hey')
         try {
             const userResponse = await axios_auth.get('/get-user');
             setUser(userResponse.data);
@@ -47,8 +48,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             setIsLoading(false);
         } catch (error: any) {
             console.log(error);
-            if (error.response?.data.code === "NO_COMPANY" || error.response?.data.code === "NO_PROJECT") {
+            if (error.response?.data.code === "NO_COMPANY") {
                 router.push('/onboarding');
+            } else if (error.response?.data.code === "NO_PROJECT") {
+                setCompany(error.response.data.company);
+                router.push('/dashboard/project');
+                setIsLoading(false);
             } else {
                 router.push('/');
             }

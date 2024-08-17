@@ -57,7 +57,7 @@ const LoginForm = () => {
 
       await axios_auth.patch('/update-user', body);
       toast.success('Updated successfully')
-      router.push(company ? "/onboarding/project" : "/onboarding/company")
+      router.push(company ? "/dashboard/project" : "/onboarding/company")
     } catch (error: any) {
       console.log(error.response.data);
     }

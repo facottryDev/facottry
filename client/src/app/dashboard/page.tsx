@@ -10,7 +10,7 @@ const Page = (props: Props) => {
   const router = useRouter();
 
   if (projects.length === 0) {
-    router.push('/onboarding/project');
+    router.push('/dashboard/project');
   } else if (!company) {
     router.push('/onboarding/company');
   } else {

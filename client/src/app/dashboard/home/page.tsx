@@ -3,7 +3,7 @@ import Sidebar from "@/components/dashboard/Sidebar"
 import React from 'react'
 import { globalStore, userStore } from "@/lib/store"
 import CreateMappings from "./_owner/CreateMapping"
-import ModifyMapping from "./_owner/ManageMappings"
+import ModifyMapping from "./_owner/ModifyMappings"
 import ManageConfigs from "./_owner/ManageConfigs"
 import FilterSettings from "./_owner/FilterSettings"
 import ViewConfigs from "./_viewer/ViewConfigs"

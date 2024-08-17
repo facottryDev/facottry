@@ -5,7 +5,6 @@ import {
   createJoinProjectRequest,
   leaveProject,
   acceptJoinCompanyRequest,
-  sendCompanyInvite,
   sendProjectInvite,
   verifyCompanyInvite,
   addProject,
@@ -16,7 +15,7 @@ import {
   updateCompanyDetails,
   updateProjectDetails,
   rejectJoinCompanyRequest,
-  deleteEmployee,
+  deleteCompanyUser,
   acceptJoinProjectRequest,
   rejectJoinProjectRequest,
   deleteProjectUser,
@@ -28,7 +27,8 @@ import {
   addConfigType,
   deleteConfigType,
   getProject,
-  updateContacts
+  updateContacts,
+  inviteUserToCompany
 } from "../controllers/admin.js";
 import { isAuth } from "../lib/middlewares.js";
 import { toggleConfigTypeStatus } from "../controllers/config.js";
@@ -46,9 +46,9 @@ router.delete("/company/deactivate", deactivateCompany);
 router.post("/company/update", updateCompanyDetails);
 router.post("/company/accept-request", acceptJoinCompanyRequest);
 router.post("/company/reject-request", rejectJoinCompanyRequest);
-router.post("/company/delete-employee", deleteEmployee);
-router.post("/company/invite", sendCompanyInvite);
-router.get("/company/verify-invite", verifyCompanyInvite);
+router.post("/company/delete-user", deleteCompanyUser);
+// router.get("/company/verify-invite", verifyCompanyInvite);
+router.post("/company/invite", inviteUserToCompany);
 
 // FOR PROJECT OWNERS
 router.post("/add-project", addProject);

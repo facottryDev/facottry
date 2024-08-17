@@ -511,7 +511,7 @@ export const updateCompanyDetails = async (req, res) => {
 };
 
 // DELETE EMPLOYEE FROM COMPANY - COMPANY OWNER
-export const deleteEmployee = async (req, res) => {
+export const deleteCompanyUser = async (req, res) => {
   try {
     const owner = req.session.username || req.user.email;
     const { email } = req.body;
@@ -520,6 +520,8 @@ export const deleteEmployee = async (req, res) => {
       status: "active",
       owners: { $in: [owner] },
     });
+
+    console.log(company)
 
     // Check if company exists
     if (!company) {
@@ -1163,54 +1165,65 @@ export const leaveProject = async (req, res) => {
   }
 };
 
-// INVITE USER TO JOIN COMPANY USING INVITE LINK - COMPANY OWNER
-export const sendCompanyInvite = async (req, res) => {
+// INVITE USER TO JOIN COMPANY - COMPANY OWNER
+export const inviteUserToCompany = async (req, res) => {
+  const { email, role } = req.body;
+
   try {
     const owner = req.session.username || req.user.email;
-    const { employees } = req.body;
 
-    // Check if company exists for the owner
     const company = await Company.findOne({
       status: "active",
       owners: { $in: [owner] },
     });
 
+    // Check if company exists
     if (!company) {
-      return res.status(404).json({ message: "You don't own any company" });
+      return res.status(404).json({ message: "Company not found" });
     }
 
-    // Create array of employees from comma separated string
-    const employeesArray = employees.split(",").map((email) => email.trim());
-
-    const promises = employeesArray.map(async (email) => {
-      // Generate Invite for each employee
-      const inviteCode = generateID(company.name + "_invite_" + email);
-      const inviteLink = `${process.env.SERVER_URL}/admin/invite/company/${inviteCode}`;
-
-      company.activeInvites.push(inviteCode);
-      await company.save();
-
-      // Send Email
-      const mailOptions = {
-        from: " " + process.env.EMAIL,
-        to: email,
-        subject: `Invitation to join ${company.name}`,
-        html: `<p>You have been invited to join ${company.name}.</p>
-                <p>Click <a href="${inviteLink}">here</a> to join.</p>`,
-      };
-
-      // await sendMail(mailOptions);
+    // Check if user is already part of a company
+    const isAdmin = await Company.findOne({
+      status: "active",
+      $or: [{ owners: email }, { employees: email }],
     });
 
-    await Promise.all(promises);
+    if (isAdmin)
+      return res.status(400).json({
+        message: "User is already part of another company",
+      });
 
-    return res.status(200).json({
-      message: "Invitation sent successfully (MAIL DISABLED FOR DEMO)",
-    });
+    // Check if user is already invited
+    if (company.activeInvites.includes(email))
+      return res.status(400).json({ message: "User is already invited" });
+
+    // Send email to user
+    const inviteCode = generateID("flagship_" + company.name + "_" + role + '_' + email);
+    const inviteLink = `${process.env.CLIENT_URL}/invite/company/${encodeURIComponent(
+      inviteCode
+    )}`;
+
+    const mailOptions = {
+      from: " " + process.env.EMAIL,
+      to: email,
+      subject: `Invitation to join ${company.name}`,
+      html: `<p>You have been invited to join ${company.name}.</p>
+              <p>Click <a href="${inviteLink}">here</a> to join.</p>`,
+    };
+      
+    await sendMail(mailOptions);
+
+    // Update Company document
+    company.activeInvites.push(email);
+    await company.save();
+
+    res.status(200).json({ message: "Invitation sent successfully" });
   } catch (error) {
+    console.log(error.message);
     return res.status(500).send(error.message);
   }
-};
+
+}
 
 // VERIFY INVITE & JOIN COMPANY
 export const verifyCompanyInvite = async (req, res) => {
