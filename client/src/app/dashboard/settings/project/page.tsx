@@ -2,7 +2,7 @@
 import React from 'react'
 import Sidebar from "@/components/dashboard/Sidebar";
 import UserDropdown from "@/components/dashboard/UserDropdown"
-import ToggleSwitch from "@/components/global/ToggleTheme"
+import ThemeSwitch from "@/components/global/ToggleTheme"
 import { globalStore, userStore } from "@/lib/store"
 import Image from "next/image"
 import logo_2 from '@/assets/logo_2.svg'

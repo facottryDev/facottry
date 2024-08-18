@@ -28,7 +28,8 @@ import {
   deleteConfigType,
   getProject,
   updateContacts,
-  inviteUserToCompany
+  inviteUserToCompany,
+  verifyUserInvite
 } from "../controllers/admin.js";
 import { isAuth } from "../lib/middlewares.js";
 import { toggleConfigTypeStatus } from "../controllers/config.js";
@@ -49,6 +50,7 @@ router.post("/company/reject-request", rejectJoinCompanyRequest);
 router.post("/company/delete-user", deleteCompanyUser);
 // router.get("/company/verify-invite", verifyCompanyInvite);
 router.post("/company/invite", inviteUserToCompany);
+router.get("/company/verify", verifyUserInvite);
 
 // FOR PROJECT OWNERS
 router.post("/add-project", addProject);

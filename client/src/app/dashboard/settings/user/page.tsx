@@ -1,5 +1,5 @@
 'use client'
-import ToggleSwitch from "@/components/global/ToggleTheme";
+import ThemeSwitch from "@/components/global/ToggleTheme";
 import UserDropdown from "@/components/dashboard/UserDropdown";
 import AccountSettings from "./AccountSettings";
 import Sidebar from "@/components/dashboard/Sidebar";
@@ -76,7 +76,7 @@ const Settings = () => {
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <ToggleSwitch />
+                        <ThemeSwitch />
                         <UserDropdown />
                     </div>
                 </nav>

@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import hero_illustration from '@/assets/hero_illustration.svg'
 import Image from 'next/image'
@@ -11,7 +12,7 @@ export const Hero = ({ isLoggedin }: { isLoggedin: boolean }) => {
       <div className="sm:w-[40%] lg:w-[35%] space-y-4 mt-10 sm:mt-0">
         {/* Text */}
         <h1 className="text-5xl dark:text-white text-black font-bold font-lexend xl:text-6xl">
-          <p>FacOTTory,<span className=""> For All Your Needs</span></p>
+          <p>FacOTTry,<span className=""> For All Your Needs</span></p>
 
         </h1>
         <p className="text-body dark:text-slate-300 font-light text-slate-500">

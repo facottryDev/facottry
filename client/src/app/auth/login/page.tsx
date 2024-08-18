@@ -9,11 +9,13 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { useRouter } from 'next/navigation'
 import { axios_auth } from "@/lib/axios"
 import { toast } from "react-toastify"
+import { globalStore, userStore } from "@/lib/store"
 
 const LoginForm = () => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const rawQueryString = typeof window !== 'undefined' ? window.location.search : '';
 
     useEffect(() => {
         const isAuth = async () => {
@@ -40,7 +42,7 @@ const LoginForm = () => {
             });
             setIsLoading(false);
 
-            router.push('/dashboard');
+            return router.push('/dashboard/home' + rawQueryString);
         } catch (error: any) {
             toast.error(error.response.data.message);
             setIsLoading(false);

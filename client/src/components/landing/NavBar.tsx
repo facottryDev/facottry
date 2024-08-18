@@ -3,9 +3,9 @@ import Image from "next/image"
 import logo_2 from '@/assets/logo_2.svg'
 import logo_dark_2 from '@/assets/logo_dark_2.svg'
 import Link from "next/link"
-import ToggleSwitch from "../global/ToggleTheme"
+import ThemeSwitch from "../global/ToggleTheme"
 import { usePathname } from 'next/navigation'
-import Button from "../global/ButtonGradient"
+import Notifications from "../global/Notifications"
 
 const NavBar = ({ isLoggedin }: { isLoggedin: boolean; }) => {
     const pathname = usePathname();
@@ -41,7 +41,10 @@ const NavBar = ({ isLoggedin }: { isLoggedin: boolean; }) => {
                     </div>
                 ) : null}
                 <div className="flex space-x-4 items-center">
-                    <ToggleSwitch />
+                    <ThemeSwitch />
+                    {isLoggedin ? (
+                        <Notifications />
+                    ) : null}
 
                     {isLoggedin ? (
                         <div className="flex gap-4">

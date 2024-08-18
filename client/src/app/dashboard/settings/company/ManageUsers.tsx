@@ -175,20 +175,6 @@ const ManageUsers = (props: Props) => {
               } />
             </div>
 
-            <div className="w-full">
-              <label className="font-medium" htmlFor="newuserrole">Select Role</label>
-              <select
-                id="newuserrole"
-                name="newuserrole"
-                className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                onChange={
-                  (e) => setInviteData({ ...inviteData, role: e.target.value })
-                }>
-                <option value="owner">Owner</option>
-                <option value="employee">Employee</option>
-              </select>
-            </div>
-
             <button className="px-3 py-2 text-sm font-semibold text-white transition-all rounded-md shadow-sm bg-primary hover:bg-primary400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary600" type="submit">
               Invite
             </button>

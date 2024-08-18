@@ -1,4 +1,4 @@
-import ToggleSwitch from "@/components/global/ToggleTheme";
+import ThemeSwitch from "@/components/global/ToggleTheme";
 import UserDropdown from "@/components/dashboard/UserDropdown";
 import PricingCard from "@/components/dashboard/PricingCard";
 import Sidebar from "@/components/dashboard/Sidebar";
@@ -59,7 +59,7 @@ const Pricing = () => {
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <ToggleSwitch />
+                        <ThemeSwitch />
                         <UserDropdown />
                     </div>
                 </nav>

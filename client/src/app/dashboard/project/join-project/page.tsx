@@ -46,7 +46,7 @@ const LoginForm = () => {
     }, [])
 
     return (
-        <div className="flex flex-col items-center justify-center px-6 mx-auto h-screen ">
+        <div className="flex flex-col items-center justify-center px-6 mx-auto h-screen">
             {/* Logo */}
             <Link href='/'>
                 <Image src={logo_1} alt="logo" className="dark:hidden" width={100} height={100} />

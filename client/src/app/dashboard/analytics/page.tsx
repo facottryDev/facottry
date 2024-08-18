@@ -1,6 +1,6 @@
 'use client'
 import { PieChart } from "@/components/global/PieChart"
-import ToggleSwitch from "@/components/global/ToggleTheme"
+import ThemeSwitch from "@/components/global/ToggleTheme"
 import UserDropdown from "@/components/dashboard/UserDropdown"
 import Sidebar from "@/components/dashboard/Sidebar"
 import Filter from "@/components/dashboard/Filter"
@@ -38,7 +38,7 @@ const Analytics = () => {
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <ToggleSwitch />
+                        <ThemeSwitch />
                         <UserDropdown />
                     </div>
                 </nav>

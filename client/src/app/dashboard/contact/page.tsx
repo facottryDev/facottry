@@ -1,5 +1,5 @@
 import ContactForm from "@/components/landing/ContactForm";
-import ToggleSwitch from "@/components/global/ToggleTheme";
+import ThemeSwitch from "@/components/global/ToggleTheme";
 import UserDropdown from "@/components/dashboard/UserDropdown";
 import Sidebar from "@/components/dashboard/Sidebar";
 
@@ -14,7 +14,7 @@ const Pricing = () => {
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <ToggleSwitch />
+                        <ThemeSwitch />
                         <UserDropdown />
                     </div>
                 </nav>

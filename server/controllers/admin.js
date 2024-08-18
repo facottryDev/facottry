@@ -521,7 +521,7 @@ export const deleteCompanyUser = async (req, res) => {
       owners: { $in: [owner] },
     });
 
-    console.log(company)
+    console.log(company);
 
     // Check if company exists
     if (!company) {
@@ -1165,9 +1165,55 @@ export const leaveProject = async (req, res) => {
   }
 };
 
+export const verifyUserInvite = async (req, res) => {
+  const { inviteCode } = req.query;
+  const email = req.session.username || req.user.email;
+
+  try {
+    const company = await Company.findOne({
+      status: "active",
+      activeInvites: { $in: [inviteCode] },
+    });
+
+    if (!company) {
+      return res
+        .status(404)
+        .json({ message: "Invalid invite code" });
+    }
+
+    const invitedEmail = inviteCode.split("_")[2];
+    console.log(invitedEmail);
+    if (invitedEmail !== email) {
+      return res.status(400).json({ message: "Email Mismatch" });
+    }
+
+    // Check if user is already part of a company
+    const isAdmin = await Company.findOne({
+      status: "active",
+      $or: [{ owners: email }, { employees: email }],
+    });
+
+    if (isAdmin)
+      return res.status(400).json({
+        message: "You are already part of another company",
+      });
+
+    // Update Company document
+    company.employees.push(email);
+    company.activeInvites = company.activeInvites.filter(
+      (invite) => invite !== inviteCode
+    );
+    await company.save();
+
+    res.status(200).json({ message: "Joined company successfully" });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
 // INVITE USER TO JOIN COMPANY - COMPANY OWNER
 export const inviteUserToCompany = async (req, res) => {
-  const { email, role } = req.body;
+  const { email } = req.body;
 
   try {
     const owner = req.session.username || req.user.email;
@@ -1198,10 +1244,10 @@ export const inviteUserToCompany = async (req, res) => {
       return res.status(400).json({ message: "User is already invited" });
 
     // Send email to user
-    const inviteCode = generateID("flagship_" + company.name + "_" + role + '_' + email);
-    const inviteLink = `${process.env.CLIENT_URL}/invite/company/${encodeURIComponent(
-      inviteCode
-    )}`;
+    const inviteCode = generateID("flagship_" + company.name + "_" + email);
+    const inviteLink = `${
+      process.env.CLIENT_URL
+    }/invite/company/${encodeURIComponent(inviteCode)}`;
 
     const mailOptions = {
       from: " " + process.env.EMAIL,
@@ -1210,11 +1256,11 @@ export const inviteUserToCompany = async (req, res) => {
       html: `<p>You have been invited to join ${company.name}.</p>
               <p>Click <a href="${inviteLink}">here</a> to join.</p>`,
     };
-      
+
     await sendMail(mailOptions);
 
     // Update Company document
-    company.activeInvites.push(email);
+    company.activeInvites.push(inviteCode);
     await company.save();
 
     res.status(200).json({ message: "Invitation sent successfully" });
@@ -1222,8 +1268,7 @@ export const inviteUserToCompany = async (req, res) => {
     console.log(error.message);
     return res.status(500).send(error.message);
   }
-
-}
+};
 
 // VERIFY INVITE & JOIN COMPANY
 export const verifyCompanyInvite = async (req, res) => {
