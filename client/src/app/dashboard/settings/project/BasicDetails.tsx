@@ -2,18 +2,24 @@
 import { userStore } from '@/lib/store'
 import { axios_admin } from "@/lib/axios"
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 type Props = {}
 
 const BasicDetails = (props: Props) => {
     const company = userStore(state => state.company);
     const activeProject = userStore(state => state.activeProject);
+    const role = activeProject?.role;
 
     const updateProjectDetails = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const name = formData.get("name") as string || activeProject?.name;
         const type = formData.get("type") as string || activeProject?.type;
+
+        if(role !== 'owner') {
+            return toast.error('Access Denied');
+        }
 
         try {
             await axios_admin.post("/update-project", {
@@ -23,11 +29,11 @@ const BasicDetails = (props: Props) => {
                 type
             })
 
-            alert("Updated Successfully");
+            toast.success("Updated Successfully");
             window.location.reload();
         } catch (error: any) {
             console.error(error)
-            alert(error.response.data.message)
+            toast.error(error.response.data.message)
         }
     }
 
@@ -83,9 +89,10 @@ const BasicDetails = (props: Props) => {
                     <div className="flex items-center justify-end gap-x-4">
                         <button
                             type="submit"
-                            className="px-3 py-2 text-sm font-semibold text-white transition-all rounded-md shadow-sm bg-primary hover:bg-primary400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary600"
+                            disabled={role !== 'owner'}
+                            className="px-6 py-3 text-sm font-semibold text-white transition-all rounded-md shadow-sm bg-primary hover:bg-primary400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary600 disabled:bg-zinc-400 disabled:cursor-not-allowed"
                         >
-                            Save
+                            Save Changes
                         </button>
                     </div>
                 </form>

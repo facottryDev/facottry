@@ -40,6 +40,7 @@ const ProjectInvitePage = ({ params }: Props) => {
       } catch (error: any) {
         console.log(error.response.data);
         toast.error(error.response.data.message);
+        return router.push('/');
       }
     }
 

@@ -4,9 +4,14 @@ import { userStore } from '@/lib/store'
 import { axios_admin } from "@/lib/axios"
 
 export default function CompanyEmployeeSettings() {
-  const setCompany = userStore((state) => state.setCompany);
-  const setProjects = userStore((state) => state.setProjects);
-  const setActiveProject = userStore((state) => state.setActiveProject);
+  const { setCompany, setProjects, setActiveProject, company } = userStore((state) => ({
+    setCompany: state.setCompany,
+    setProjects: state.setProjects,
+    setActiveProject: state.setActiveProject,
+    company: state.company
+  }));
+
+  const role = company?.role;
 
   const leaveCompany = async () => {
     try {
@@ -55,18 +60,20 @@ export default function CompanyEmployeeSettings() {
           Leave Company
         </button>
 
-        <button
-          type="button"
-          className="flex items-center mt-4 text-sm font-semibold leading-6 text-red-600 dark:text-red-400 hover:underline"
-          onClick={() => {
-            if (window.confirm('All the projects under this company will be deactivated as well. Are you sure you want to deactivate the company? ')) {
-              deactivateCompany();
-            }
-          }}
-        >
-          <IoTrashBin className="w-5 h-5 mr-2" />
-          Deactivate Company
-        </button>
+        {role === 'owner' && (
+          <button
+            type="button"
+            className="flex items-center mt-4 text-sm font-semibold leading-6 text-red-600 dark:text-red-400 hover:underline"
+            onClick={() => {
+              if (window.confirm('All the projects under this company will be deactivated as well. Are you sure you want to deactivate the company? ')) {
+                deactivateCompany();
+              }
+            }}
+          >
+            <IoTrashBin className="w-5 h-5 mr-2" />
+            Deactivate Company
+          </button>
+        )}
       </div>
     </div>
   )

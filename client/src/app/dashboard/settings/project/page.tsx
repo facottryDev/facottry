@@ -17,12 +17,12 @@ import DashboardNav from "../../DashboardNav";
 type Props = {}
 
 const ownerTabs = ['Basic Details', 'Manage Users', 'Manage Invites', 'Critical Settings']
-const editorTabs = ['Basic']
-const viewerTabs = ['Basic']
+const viewerTabs = ['Basic Details', 'Critical Settings']
 
 const ProjectSettings = (props: Props) => {
     const activeProject = userStore(state => state.activeProject);
-    const roleTab = (activeProject?.role === 'owner') ? ownerTabs : (activeProject?.role === 'editor') ? editorTabs : viewerTabs;
+    const role = activeProject?.role;
+    const roleTab = (activeProject?.role === 'owner') ? ownerTabs : viewerTabs;
 
     const [selectedTab, setSelectedTab, sidebar, setSidebar] = globalStore(state => [state.projectSettingTab, state.setProjectSettingTab, state.sidebar, state.setSidebar]);
 
@@ -66,10 +66,19 @@ const ProjectSettings = (props: Props) => {
 
                 <hr className="w-full mt-2" />
 
-                {selectedTab === 'Basic Details' && <BasicDetails />}
-                {selectedTab === 'Manage Users' && <ManageUsers />}
-                {selectedTab === 'Manage Invites' && <JoinRequests />}
-                {selectedTab === 'Critical Settings' && <CriticalSettings />}
+                {role === 'owner' ? (
+                    <div>
+                        {selectedTab === 'Basic Details' && <BasicDetails />}
+                        {selectedTab === 'Manage Users' && <ManageUsers />}
+                        {selectedTab === 'Manage Invites' && <JoinRequests />}
+                        {selectedTab === 'Critical Settings' && <CriticalSettings />}
+                    </div>
+                ) : (
+                    <div>
+                        {selectedTab === 'Basic Details' && <BasicDetails />}
+                        {selectedTab === 'Critical Settings' && <CriticalSettings />}
+                    </div>
+                )}
             </div>
         </div>
     )

@@ -7,9 +7,14 @@ type Props = {}
 
 const BasicDetails = (props: Props) => {
   const company = userStore((state) => state.company);
+  const role = company?.role;
 
   const updateCompanyDetails = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if(role !== 'owner') {
+      return toast.error('Access Denied');
+    }
 
     try {
       const formData = new FormData(e.currentTarget)
@@ -96,14 +101,12 @@ const BasicDetails = (props: Props) => {
         </div>
 
         <div className="flex items-center mt-4 justify-end gap-x-4">
-          <button type="button" className="text-sm font-semibold leading-6 text-gray-900 dark:text-slate-200">
-            Cancel
-          </button>
           <button
             type="submit"
-            className="px-3 py-2 text-sm font-semibold text-white transition-all rounded-md shadow-sm bg-primary600 hover:bg-primary400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary700"
+            disabled={role !== 'owner'}
+            className="px-6 py-3 text-sm font-medium text-white transition-all rounded-md shadow-sm bg-primary600 hover:bg-primary400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary700 disabled:bg-zinc-400 disabled:cursor-not-allowed"
           >
-            Save
+            Save Changes
           </button>
         </div>
       </form>
