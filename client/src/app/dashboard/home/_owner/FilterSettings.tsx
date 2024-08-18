@@ -1,5 +1,5 @@
 'use client'
-import FilterEditorComponent from "./FilterEditorComponent"
+import FilterEditorComponent from "./ManageFilter"
 
 type Props = {}
 

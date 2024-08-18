@@ -24,7 +24,8 @@ export const SDKDemo = (props: Props) => {
         try {
             const mapping = await axios_scale.post('/get-mapping', {
                 projectID: activeProject?.projectID,
-                filter: scaleFilter
+                filter: scaleFilter,
+                noCache: true
             });
 
             setActiveMapping(mapping.data.data);

@@ -1,6 +1,6 @@
 'use client'
 import ConfigTypeComponent from "./ConfigTypeComponent"
-import FilterEditorComponent from "./FilterEditorComponent"
+import FilterEditorComponent from "./ManageFilter"
 
 type Props = {}
 

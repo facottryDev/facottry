@@ -1,5 +1,5 @@
 'use client'
-import ToggleSwitch from "@/components/global/ToggleTheme";
+import ThemeSwitch from "@/components/global/ToggleTheme";
 import UserDropdown from "@/components/dashboard/UserDropdown";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { useState } from "react"
@@ -88,7 +88,7 @@ const BuyFeatures = () => {
                     <h1 className="text-2xl font-bold">Buy Features</h1>
 
                     <div className="flex items-center gap-6">
-                        <ToggleSwitch />
+                        <ThemeSwitch />
                         <UserDropdown />
                     </div>
                 </nav>

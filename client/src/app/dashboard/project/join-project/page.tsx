@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation'
 import { axios_admin } from "@/lib/axios"
 import { useEffect } from "react"
 import { userStore } from "@/lib/store"
+import { toast } from "react-toastify"
 
-const LoginForm = () => {
+const JoinProjectPage = () => {
     const router = useRouter()
     const company = userStore(state => state.company)
 
@@ -22,10 +23,10 @@ const LoginForm = () => {
             const res = await axios_admin.post(`/join-project`, { projectID: projectid });
 
             console.log(res.data);
-            alert('Request sent successfully');
+            toast.success('Request sent successfully');
         } catch (error: any) {
             console.log(error.response)
-            alert(error.response.data.message)
+            toast.error(error.response.data.message)
         }
     }
 
@@ -46,7 +47,7 @@ const LoginForm = () => {
     }, [])
 
     return (
-        <div className="flex flex-col items-center justify-center px-6 mx-auto h-screen ">
+        <div className="flex flex-col items-center justify-center px-6 mx-auto h-screen">
             {/* Logo */}
             <Link href='/'>
                 <Image src={logo_1} alt="logo" className="dark:hidden" width={100} height={100} />
@@ -85,4 +86,4 @@ const LoginForm = () => {
     )
 }
 
-export default LoginForm
+export default JoinProjectPage

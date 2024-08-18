@@ -24,6 +24,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     return router.push("/dashboard/home");
                 } catch (error: any) {
                     console.log(error.response.data);
+                    if(error.response.data.code == 'NO_PROJECT') {
+                        setCompany(error.response.data.company);
+                        return router.push("/dashboard/project");
+                    }
                 }
 
                 setIsLoading(false);

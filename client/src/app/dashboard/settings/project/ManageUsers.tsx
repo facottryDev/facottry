@@ -3,6 +3,8 @@ import Modal from 'react-modal';
 import { useState } from "react";
 import { axios_admin } from "@/lib/axios"
 import { userStore } from "@/lib/store";
+import { IoClose } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 type Props = {}
 
@@ -13,16 +15,17 @@ const ManageUsers = (props: Props) => {
 
     const inviteUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+        const inviteLoader = toast.loading("Working...")
+
         try {
             const result = await axios_admin.post("/project/invite", {
                 ...inviteData, projectID: activeProject?.projectID
             });
-            alert(result.data.message);
+            toast.update(inviteLoader, { render: result.data.message, type: "success", isLoading: false, autoClose: 1000 });
             setInviteUserModal(false);
         } catch (error: any) {
             console.error(error);
-            alert(error.response.data.message);
+            toast.update(inviteLoader, { render: error.response.data.message, type: "error", isLoading: false, autoClose: 1000 });
         }
     }
 
@@ -35,7 +38,11 @@ const ManageUsers = (props: Props) => {
             window.location.reload();
         } catch (error: any) {
             console.error(error)
-            alert(error.response.data.message)
+            if (error.response) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("Something went wrong");
+            }
         }
     }
 
@@ -53,7 +60,7 @@ const ManageUsers = (props: Props) => {
     }
 
     return (
-        <div className="w-full border rounded-md mt-8">
+        <div className="w-full border rounded-md mt-8 text-sm">
             <div className="my-4">
                 <div className="flex px-4 w-full justify-between">
                     <label className="font-bold leading-6 text-gray-900 dark:text-slate-200">Manage Users</label>
@@ -66,56 +73,6 @@ const ManageUsers = (props: Props) => {
                         Invite User
                     </button>
                 </div>
-
-                {/* Invite User Dialog Box */}
-                <Modal
-                    isOpen={InviteUserModal}
-                    onRequestClose={() => setInviteUserModal(false)}
-                    contentLabel="Employee Role Selector"
-                    style={
-                        {
-                            overlay: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.75)'
-                            },
-                            content: {
-                                width: '50%',
-                                height: '32%',
-                                margin: 'auto',
-                                padding: '2rem',
-                                borderRadius: '10px',
-                                backgroundColor: 'white'
-                            }
-                        }
-                    }
-                >
-                    <form className="flex flex-col items-center gap-4" onSubmit={inviteUser}>
-                        <div className="w-full">
-                            <label className="font-medium" htmlFor="newuseremail"> Email </label>
-                            <input type="email" placeholder="demo@gmail.com" autoComplete='email' id="newuseremail" name="newuseremail" className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" onChange={
-                                (e) => setInviteData({ ...inviteData, email: e.target.value })
-                            } />
-                        </div>
-
-                        <div className="w-full">
-                            <label className="font-medium" htmlFor="newuserrole">Select Role</label>
-                            <select
-                                id="newuserrole"
-                                name="newuserrole"
-                                className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                                onChange={
-                                    (e) => setInviteData({ ...inviteData, role: e.target.value })
-                                }>
-                                <option value="owner">Owner</option>
-                                <option value="editor">Editor</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-                        </div>
-
-                        <button className="px-3 py-2 text-sm font-semibold text-white transition-all rounded-md shadow-sm bg-primary hover:bg-primary400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary600" type="submit">
-                            Invite
-                        </button>
-                    </form>
-                </Modal>
             </div>
 
             <div className="border bg-white p-4 items-center gap-2 justify-between min-h-[50vh] overflow-y-scroll">
@@ -237,6 +194,52 @@ const ManageUsers = (props: Props) => {
                     </div>
                 ))}
             </div>
+
+            <Modal
+                isOpen={InviteUserModal}
+                onRequestClose={() => setInviteUserModal(false)}
+                contentLabel="Invite User To Company"
+                style={
+                    {
+                        overlay: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.75)'
+                        },
+                        content: {
+                            width: '50%',
+                            height: 'fit-content',
+                            margin: 'auto',
+                            padding: '2rem',
+                            borderRadius: '10px',
+                            backgroundColor: 'white'
+                        }
+                    }
+                }
+            >
+                <div className="text-sm">
+                    <div className="mb-4 flex items-center justify-between">
+                        <h1 className="text-lg font-bold">Invite User</h1>
+
+                        <button
+                            onClick={() => setInviteUserModal(false)}
+                        >
+                            <IoClose fontSize={'1.2rem'} />
+                        </button>
+                    </div>
+
+                    <form className="flex flex-col items-center gap-4 text-sm" onSubmit={inviteUser}>
+                        <div className="w-full">
+                            <label className="font-medium" htmlFor="newuseremail"> Email </label>
+                            <input type="email" placeholder="demo@gmail.com" autoComplete='email' id="newuseremail" name="newuseremail" className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" onChange={
+                                (e) => setInviteData({ ...inviteData, email: e.target.value })
+                            } />
+                        </div>
+
+                        <button className="px-3 py-2 text-sm font-semibold text-white transition-all rounded-md shadow-sm bg-primary hover:bg-primary400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary600" type="submit">
+                            Invite
+                        </button>
+                    </form>
+                </div>
+            </Modal>
         </div>
     )
 }

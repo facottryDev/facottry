@@ -7,7 +7,7 @@ import Modal from 'react-modal';
 import { IoClose, IoPencilSharp } from "react-icons/io5";
 import { Editor } from "@monaco-editor/react";
 import { toast } from "react-toastify";
-import { MdDeleteSweep, MdEditNote, MdInfo, MdInfoOutline } from "react-icons/md";
+import { MdDeleteSweep, MdEditNote, MdInfoOutline } from "react-icons/md";
 
 type Props = {
     configList: config[] | undefined;
@@ -449,7 +449,7 @@ const ConfigTableComponent = (props: Props) => {
                                     height="50vh"
                                     width="100%"
                                     defaultLanguage="json"
-                                    theme="vs-dark"
+                                    theme="vs-light"
                                     defaultValue={`{\n"key": "value"\n}`}
                                     onChange={(value) => setEditorValue(value)}
                                     onValidate={(markers) => {

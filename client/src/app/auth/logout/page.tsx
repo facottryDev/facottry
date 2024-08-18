@@ -7,8 +7,6 @@ import { Loader } from "@/components/global/Loader"
 
 const Logout = () => {
     const router = useRouter();
-    const [setCompany, setProjects, setActiveProject, setUser] = userStore(state => [state.setCompany, state.setProjects, state.setActiveProject, state.setUser]);
-    const [setActiveFilter, setScaleFilter] = activeFilterStore(state => [state.setActiveFilter, state.setScaleFilter]);
     const [setNotibar] = globalStore(state => [state.setNotibar]);
 
     useEffect(() => {
@@ -16,12 +14,11 @@ const Logout = () => {
             try {
                 await axios_auth.get('/logout');
 
-                setProjects([]);
-                setActiveProject(null);
-                setUser(null);
-                setCompany(null);
-                setActiveFilter({});
-                setScaleFilter({});
+                var global = localStorage.getItem('global');
+                var theme = localStorage.getItem('theme');
+                localStorage.clear();
+                localStorage.setItem('global', global || '');
+                localStorage.setItem('theme', theme || '');
                 setNotibar(true);
 
                 router.push('/auth/login');

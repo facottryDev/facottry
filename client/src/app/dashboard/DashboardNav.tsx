@@ -1,9 +1,9 @@
 import React from 'react'
-import ToggleSwitch from "@/components/global/ToggleTheme"
+import ThemeSwitch from "@/components/global/ToggleTheme"
 import UserDropdown from "@/components/dashboard/UserDropdown"
 import { globalStore } from "@/lib/store"
 import { GiHamburgerMenu } from "react-icons/gi";
-import Link from "next/link";
+import Notifications from "@/components/global/Notifications";
 
 type Props = {
     title: string
@@ -25,7 +25,8 @@ const DashboardNav = ({ title }: Props) => {
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
-                <ToggleSwitch />
+                <ThemeSwitch />
+                <Notifications />
                 <UserDropdown />
             </div>
         </nav>

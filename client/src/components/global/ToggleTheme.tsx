@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
 import { BsFillSunFill, BsFillMoonFill } from 'react-icons/bs'
 
-export default function ToggleSwitch() {
+export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
 

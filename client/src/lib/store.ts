@@ -1,19 +1,18 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type FilterStore = {
+type activeFilterStore = {
   activeFilter: Filter;
   scaleFilter: Filter;
   setScaleFilter: (item: Filter) => void;
   setActiveFilter: (item: Filter) => void;
 };
 
-
 export const activeFilterStore = create(
-  persist<FilterStore>(
+  persist<activeFilterStore>(
     (set) => ({
       activeFilter: [],
-      scaleFilter:[],
+      scaleFilter: [],
       setActiveFilter: (item) => set({ activeFilter: item }),
       setScaleFilter: (item) => set({ scaleFilter: item }),
     }),
@@ -33,18 +32,20 @@ type UserStore = {
 };
 
 export const userStore = create(
-  persist<UserStore>((set) => ({
-    user: null,
-    company: null,
-    projects: [],
-    activeProject: null,
+  persist<UserStore>(
+    (set) => ({
+      user: null,
+      company: null,
+      projects: [],
+      activeProject: null,
 
-    setUser: (user) => set({ user }),
-    setCompany: (company) => set({ company }),
-    setProjects: (projects) => set({ projects }),
-    setActiveProject: (activeProject) => set({ activeProject }),
-  }),
-  { name: "user" })
+      setUser: (user) => set({ user }),
+      setCompany: (company) => set({ company }),
+      setProjects: (projects) => set({ projects }),
+      setActiveProject: (activeProject) => set({ activeProject }),
+    }),
+    { name: "user" }
+  )
 );
 
 type GlobalStore = {
@@ -55,6 +56,11 @@ type GlobalStore = {
   projectSettingTab: string;
   notibar: boolean;
   scaleData: scaleData | null;
+  invite: {
+    inviteCode: string;
+    type: string;
+  } | null;
+  setInvite: (inviteCode: { inviteCode: string; type: string }) => void;
   setScaleData: (scaleData: scaleData) => void;
   setNotibar: (notibar: boolean) => void;
   setProjectSettingTab: (projectSettingTab: string) => void;
@@ -64,19 +70,29 @@ type GlobalStore = {
   setSidebar: (sidebar: boolean) => void;
 };
 
-export const globalStore = create(persist<GlobalStore>((set) => ({
-  sidebar: true,
-  sideDetailsCollapsed: true,
-  dashboardTab: 'Manage Filters',
-  playgroundTab: 'SDK Demo',
-  projectSettingTab: 'Basic Details',
-  notibar: true,
-  scaleData: null,
-  setScaleData: (scaleData: scaleData) => set({ scaleData }),
-  setNotibar: (notibar: boolean) => set({ notibar }),
-  setProjectSettingTab: (projectSettingTab: string) => set({ projectSettingTab }),
-  setPlaygroundTab: (playgroundTab: string) => set({ playgroundTab }),
-  setDashboardTab: (dashboardTab: string) => set({ dashboardTab }),
-  setDetailsCollapsed: (sideDetailsCollapsed: boolean) => set({ sideDetailsCollapsed }),
-  setSidebar: (sidebar) => set({ sidebar }),
-}), { name: "global" }));
+export const globalStore = create(
+  persist<GlobalStore>(
+    (set) => ({
+      sidebar: true,
+      sideDetailsCollapsed: true,
+      dashboardTab: "Manage Filters",
+      playgroundTab: "SDK Demo",
+      projectSettingTab: "Basic Details",
+      notibar: true,
+      scaleData: null,
+      invite: null,
+      setInvite: (invite: { inviteCode: string; type: string }) =>
+        set({ invite }),
+      setScaleData: (scaleData: scaleData) => set({ scaleData }),
+      setNotibar: (notibar: boolean) => set({ notibar }),
+      setProjectSettingTab: (projectSettingTab: string) =>
+        set({ projectSettingTab }),
+      setPlaygroundTab: (playgroundTab: string) => set({ playgroundTab }),
+      setDashboardTab: (dashboardTab: string) => set({ dashboardTab }),
+      setDetailsCollapsed: (sideDetailsCollapsed: boolean) =>
+        set({ sideDetailsCollapsed }),
+      setSidebar: (sidebar) => set({ sidebar }),
+    }),
+    { name: "global" }
+  )
+);
