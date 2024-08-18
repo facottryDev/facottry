@@ -17,16 +17,17 @@ const ManageUsers = (props: Props) => {
 
   const inviteUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const inviteLoader = toast.loading("Working...");
 
     try {
       const result = await axios_admin.post("/company/invite", {
         ...inviteData, projectID: activeProject?.projectID
       });
-      toast(result.data.message);
+      toast.update(inviteLoader, { render: result.data.message, type: "success", isLoading: false, autoClose: 1000 });
       setInviteUserModal(false);
     } catch (error: any) {
       console.error(error);
-      toast.error(error.response.data.message);
+      toast.update(inviteLoader, { render: error.response.data.message, type: "error", isLoading: false, autoClose: 1000 });
     }
   }
 
@@ -103,11 +104,7 @@ const ManageUsers = (props: Props) => {
                     </select>
                   </td>
 
-                  <td className="border-b border-gray-200 text-sm">
-                    <button className="ml-2 p-2 rounded-full bg-primary600 text-white hover:bg-primary700 transition-all">
-                      <MdEditNote fontSize={18} />
-                    </button>
-
+                  <td className="border-b border-gray-200 text-sm pl-3">
                     <button className="ml-2 p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
                       if (window.confirm("Are you sure you want to delete this user?")) {
                         deleteUser(owner)();
@@ -142,10 +139,6 @@ const ManageUsers = (props: Props) => {
                   </td>
 
                   <td className="border-b border-gray-200 text-sm">
-                    <button className="ml-2 p-2 rounded-full bg-primary600 text-white hover:bg-primary700 transition-all">
-                      <MdEditNote fontSize={18} />
-                    </button>
-
                     <button className="ml-2 p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
                       if (window.confirm("Are you sure you want to delete this user?")) {
                         deleteUser(employee)();

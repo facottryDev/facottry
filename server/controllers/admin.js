@@ -1245,7 +1245,7 @@ export const inviteUserToCompany = async (req, res) => {
       return res.status(400).json({ message: "User is already invited" });
 
     // Send email to user
-    const inviteCode = generateID("flagship_" + company.name + "_" + email);
+    const inviteCode = generateID(`flagship_${email}_company_${company.name}`);
     const inviteLink = `${
       process.env.CLIENT_URL
     }/invite/company/${encodeURIComponent(inviteCode)}`;
@@ -1267,7 +1267,9 @@ export const inviteUserToCompany = async (req, res) => {
     res.status(200).json({ message: "Invitation sent successfully" });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).send(error.message);
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
@@ -1286,7 +1288,7 @@ export const verifyCompanyInvite = async (req, res) => {
       return res.status(404).json({ message: "Invalid invite code" });
     }
 
-    const invitedEmail = inviteCode.split("_")[2];
+    const invitedEmail = inviteCode.split("_")[1];
     console.log(invitedEmail);
     if (invitedEmail !== email) {
       return res.status(400).json({ message: "Email Mismatch" });
@@ -1315,6 +1317,37 @@ export const verifyCompanyInvite = async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
+
+// CANCEL COMPANY INVITE - COMPANY OWNER
+export const cancelCompanyInvite = async (req, res) => {
+  const { invite } = req.body;
+  const owner = req.session.username || req.user.email;
+
+  try {
+    const company = await Company.findOne({
+      status: "active",
+      owners: { $in: [owner] },
+    });
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    if (!company.activeInvites.includes(invite))
+      return res.status(404).json({ message: "Invite not found" });
+
+    company.activeInvites = company.activeInvites.filter(
+      (activeInvite) => activeInvite !== invite
+    );
+    await company.save();
+
+    res.status(200).json({ message: "Invite cancelled successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message
+    });
+  }
+}
 
 // DELETE ADMIN ACCOUNT BY CALLING LEAVE COMPANY & LEAVE PROJECT
 export const deleteAdmin = async (req, res) => {
@@ -1715,7 +1748,7 @@ export const inviteUserToProject = async (req, res) => {
       return res.status(400).json({ message: "User is already invited" });
 
     // Send email to user
-    const inviteCode = generateID(`flagship_${email}`);
+    const inviteCode = generateID(`flagship_${email}_${project.name}`);
     const inviteLink = `${
       process.env.CLIENT_URL
     }/invite/project/${encodeURIComponent(inviteCode)}`;
