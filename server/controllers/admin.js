@@ -1846,3 +1846,34 @@ export const verifyProjectInvite = async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
+
+// CANCEL PROJECT INVITE - PROJECT OWNER
+export const cancelProjectInvite = async (req, res) => {
+  const { invite } = req.body;
+  const owner = req.session.username || req.user.email;
+
+  try {
+    const project = await Project.findOne({
+      status: "active",
+      owners: { $in: [owner] },
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    if (!project.activeInvites.includes(invite))
+      return res.status(404).json({ message: "Invite not found" });
+
+    project.activeInvites = project.activeInvites.filter(
+      (activeInvite) => activeInvite !== invite
+    );
+    await project.save();
+
+    res.status(200).json({ message: "Invite cancelled successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message
+    });
+  }
+}

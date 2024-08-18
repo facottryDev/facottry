@@ -32,6 +32,7 @@ import {
   inviteUserToProject,
   verifyProjectInvite,
   cancelCompanyInvite,
+  cancelProjectInvite
 } from "../controllers/admin.js";
 import { isAuth } from "../lib/middlewares.js";
 import { toggleConfigTypeStatus } from "../controllers/config.js";
@@ -55,7 +56,6 @@ router.post("/company/invite", inviteUserToCompany);
 router.get("/company/verify", verifyCompanyInvite);
 router.post("/company/cancel-invite", cancelCompanyInvite);
 
-
 // FOR PROJECT OWNERS
 router.post("/add-project", addProject);
 router.post("/update-project", updateProjectDetails);
@@ -67,6 +67,7 @@ router.post('/project/change-access', changeAccessProject);
 router.post('/project/clone', cloneProject);
 router.post("/project/invite", inviteUserToProject);
 router.get("/project/verify", verifyProjectInvite);
+router.post("/project/cancel-invite", cancelProjectInvite);
 
 router.post('/project/config-type/add', addConfigType);
 router.delete('/project/config-type/delete', deleteConfigType);

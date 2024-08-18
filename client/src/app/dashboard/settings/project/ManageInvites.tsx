@@ -3,6 +3,7 @@ import { userStore } from '@/lib/store'
 import Modal from 'react-modal';
 import { useState } from "react";
 import { axios_admin } from "@/lib/axios";
+import { toast } from "react-toastify";
 
 type Props = {}
 
@@ -10,6 +11,8 @@ const ManageInvites = (props: Props) => {
   const activeProject = userStore(state => state.activeProject);
   const [role, setRole] = useState("viewer");
   const [AcceptRequestModal, setAcceptRequestModal] = useState(false);
+
+  console.log(activeProject?.activeInvites);
 
   const handleAcceptRequest = (request: string, role: string) => async () => {
     try {
@@ -34,6 +37,19 @@ const ManageInvites = (props: Props) => {
     } catch (error: any) {
       console.error(error)
       alert(error.response.data.message)
+    }
+  }
+
+  const cancelInvite = (invite: string) => async () => {
+    try {
+      const result = await axios_admin.post("/project/cancel-invite", {
+        invite
+      });
+      toast.success(result.data.message);
+      window.location.reload();
+    } catch (error: any) {
+      console.error(error)
+      toast.error(error.response.data.message)
     }
   }
 
@@ -128,12 +144,17 @@ const ManageInvites = (props: Props) => {
           {activeProject?.activeInvites.map((invite, index) => (
             <div key={index} className="flex justify-between">
               <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
-                {index + 1}. {invite}
+                {index + 1}. {invite.split('_')[1]}
               </h2>
 
               <button
                 type="button"
                 className="flex items-center text-sm font-semibold leading-6 text-red-600 dark:text-red-400 hover:underline"
+                onClick={() => {
+                  if (window.confirm('Are you sure?')) {
+                    cancelInvite(invite)();
+                  }
+                }}
               >
                 Cancel
               </button>

@@ -15,9 +15,9 @@ const ManageUsers = (props: Props) => {
 
     const inviteUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const inviteLoader = toast.loading("Working...")
 
         try {
-            const inviteLoader = toast.loading("Working...")
             const result = await axios_admin.post("/project/invite", {
                 ...inviteData, projectID: activeProject?.projectID
             });
@@ -25,7 +25,7 @@ const ManageUsers = (props: Props) => {
             setInviteUserModal(false);
         } catch (error: any) {
             console.error(error);
-            toast.error(error.response.data.message);
+            toast.update(inviteLoader, { render: error.response.data.message, type: "error", isLoading: false, autoClose: 1000 });
         }
     }
 
