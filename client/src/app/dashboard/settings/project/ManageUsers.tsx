@@ -4,6 +4,7 @@ import { useState } from "react";
 import { axios_admin } from "@/lib/axios"
 import { userStore } from "@/lib/store";
 import { IoClose } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 type Props = {}
 
@@ -16,14 +17,15 @@ const ManageUsers = (props: Props) => {
         e.preventDefault();
 
         try {
+            const inviteLoader = toast.loading("Working...")
             const result = await axios_admin.post("/project/invite", {
                 ...inviteData, projectID: activeProject?.projectID
             });
-            alert(result.data.message);
+            toast.update(inviteLoader, { render: result.data.message, type: "success", isLoading: false, autoClose: 1000 });
             setInviteUserModal(false);
         } catch (error: any) {
             console.error(error);
-            alert(error.response.data.message);
+            toast.error(error.response.data.message);
         }
     }
 
@@ -36,7 +38,11 @@ const ManageUsers = (props: Props) => {
             window.location.reload();
         } catch (error: any) {
             console.error(error)
-            alert(error.response.data.message)
+            if (error.response) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("Something went wrong");
+            }
         }
     }
 
@@ -226,21 +232,6 @@ const ManageUsers = (props: Props) => {
                             <input type="email" placeholder="demo@gmail.com" autoComplete='email' id="newuseremail" name="newuseremail" className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" onChange={
                                 (e) => setInviteData({ ...inviteData, email: e.target.value })
                             } />
-                        </div>
-
-                        <div className="w-full">
-                            <label className="font-medium" htmlFor="newuserrole">Select Role</label>
-                            <select
-                                id="newuserrole"
-                                name="newuserrole"
-                                className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                                onChange={
-                                    (e) => setInviteData({ ...inviteData, role: e.target.value })
-                                }>
-                                <option value="owner">Owner</option>
-                                <option value="editor">Editor</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
                         </div>
 
                         <button className="px-3 py-2 text-sm font-semibold text-white transition-all rounded-md shadow-sm bg-primary hover:bg-primary400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary600" type="submit">

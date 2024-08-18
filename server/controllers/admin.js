@@ -750,7 +750,9 @@ export const deleteProjectUser = async (req, res) => {
 
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
@@ -1165,52 +1167,6 @@ export const leaveProject = async (req, res) => {
   }
 };
 
-export const verifyUserInvite = async (req, res) => {
-  const { inviteCode } = req.query;
-  const email = req.session.username || req.user.email;
-
-  try {
-    const company = await Company.findOne({
-      status: "active",
-      activeInvites: { $in: [inviteCode] },
-    });
-
-    if (!company) {
-      return res
-        .status(404)
-        .json({ message: "Invalid invite code" });
-    }
-
-    const invitedEmail = inviteCode.split("_")[2];
-    console.log(invitedEmail);
-    if (invitedEmail !== email) {
-      return res.status(400).json({ message: "Email Mismatch" });
-    }
-
-    // Check if user is already part of a company
-    const isAdmin = await Company.findOne({
-      status: "active",
-      $or: [{ owners: email }, { employees: email }],
-    });
-
-    if (isAdmin)
-      return res.status(400).json({
-        message: "You are already part of another company",
-      });
-
-    // Update Company document
-    company.employees.push(email);
-    company.activeInvites = company.activeInvites.filter(
-      (invite) => invite !== inviteCode
-    );
-    await company.save();
-
-    res.status(200).json({ message: "Joined company successfully" });
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
-};
-
 // INVITE USER TO JOIN COMPANY - COMPANY OWNER
 export const inviteUserToCompany = async (req, res) => {
   const { email } = req.body;
@@ -1270,18 +1226,25 @@ export const inviteUserToCompany = async (req, res) => {
   }
 };
 
-// VERIFY INVITE & JOIN COMPANY
+// VERIFY COMPANY INVITE - SYSTEM
 export const verifyCompanyInvite = async (req, res) => {
-  try {
-    const { inviteCode } = req.query;
+  const { inviteCode } = req.query;
+  const email = req.session.username || req.user.email;
 
+  try {
     const company = await Company.findOne({
       status: "active",
       activeInvites: { $in: [inviteCode] },
     });
 
     if (!company) {
-      return res.status(404).json({ message: "Invalid invite link" });
+      return res.status(404).json({ message: "Invalid invite code" });
+    }
+
+    const invitedEmail = inviteCode.split("_")[2];
+    console.log(invitedEmail);
+    if (invitedEmail !== email) {
+      return res.status(400).json({ message: "Email Mismatch" });
     }
 
     // Check if user is already part of a company
@@ -1292,88 +1255,17 @@ export const verifyCompanyInvite = async (req, res) => {
 
     if (isAdmin)
       return res.status(400).json({
-        message: "You are already part of a company",
-        companyID: isAdmin.companyID,
-        role: isAdmin.owners.includes(email) ? "owner" : "employee",
+        message: "You are already part of another company",
       });
 
     // Update Company document
     company.employees.push(email);
+    company.activeInvites = company.activeInvites.filter(
+      (invite) => invite !== inviteCode
+    );
+    await company.save();
 
     res.status(200).json({ message: "Joined company successfully" });
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
-};
-
-// SEND PROJECT INVITE LINK TO USER - PROJECT OWNER
-export const sendProjectInvite = async (req, res) => {
-  try {
-    const owner = req.session.username || req.user.email;
-    const { email, projectID, role } = req.body;
-
-    const project = await Project.findOne({
-      status: "active",
-      projectID,
-      owners: { $in: [owner] },
-    });
-
-    // Check if project exists
-    if (!project) {
-      return res
-        .status(401)
-        .json({ message: "You are not the owner of this project" });
-    }
-
-    const isOwner = project.owners.includes(email);
-    const isEditor = project.editors.includes(email);
-    const isViewer = project.viewers.includes(email);
-
-    // Check if user is already part of the project
-    if (isOwner || isEditor || isViewer) {
-      return res.status(400).json({
-        message: "User is already a member of this project",
-        role: isOwner ? "owner" : isEditor ? "editor" : "viewer",
-      });
-    }
-
-    // Check if email exists in any other company
-    const company = await Company.findOne({
-      status: "active",
-      $or: [{ owners: email }, { employees: email }],
-    });
-
-    if (company && company.companyID !== project.companyID) {
-      return res.status(400).json({
-        message: "User is already part of another company",
-      });
-    }
-
-    // Send email to user
-    const inviteCode = generateID(project.name + "_invite_" + email);
-    const inviteLink = `${process.env.SERVER_URL}/invite/${encodeURIComponent(
-      inviteCode
-    )}`;
-
-    const mailOptions = {
-      from: " " + process.env.EMAIL,
-      to: email,
-      subject: `Invitation to join ${project.name}`,
-      html: `<p>You have been invited to join ${project.name}.</p>
-              <p>Click <a href="${inviteLink}">here</a> to join.</p>`,
-    };
-
-    await sendMail(mailOptions);
-
-    // Update project document
-    project.activeInvites.push(email);
-    return res.json({ message: `${inviteLink}` });
-
-    // Send Email
-    res.status(200).json({
-      message: "Invitation sent successfully (MAIL DISABLED FOR DEMO)",
-      inviteLink,
-    });
   } catch (error) {
     return res.status(500).send(error.message);
   }
@@ -1736,5 +1628,143 @@ export const getProject = async (req, res) => {
     res.status(200).json(project);
   } catch (error) {
     return res.status(500).json(error);
+  }
+};
+
+// INVITE USER TO JOIN PROJECT - PROJECT OWNER
+export const inviteUserToProject = async (req, res) => {
+  const { email, projectID } = req.body;
+
+  try {
+    const owner = req.session.username || req.user.email;
+
+    // Check if project exists
+    const project = await Project.findOne({
+      status: "active",
+      projectID,
+      owners: { $in: [owner] },
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // Check if user is already part of the project
+    if (
+      project.owners.includes(email) ||
+      project.editors.includes(email) ||
+      project.viewers.includes(email)
+    ) {
+      return res.status(400).json({
+        message: "User is already part of this project",
+        role: project.owners.includes(email)
+          ? "owner"
+          : project.editors.includes(email)
+          ? "editor"
+          : "viewer",
+      });
+    }
+
+    // Check if user is already invited
+    if (project.activeInvites.includes(email))
+      return res.status(400).json({ message: "User is already invited" });
+
+    // Send email to user
+    const inviteCode = generateID(`flagship_${email}`);
+    const inviteLink = `${
+      process.env.CLIENT_URL
+    }/invite/project/${encodeURIComponent(inviteCode)}`;
+
+    const mailOptions = {
+      from: " " + process.env.EMAIL,
+      to: email,
+      subject: `Invitation to join ${project.name}`,
+      html: `<p>You have been invited to join ${project.name}.</p>
+              <p>Click <a href="${inviteLink}">here</a> to join.</p>`,
+    };
+
+    await sendMail(mailOptions);
+
+    // Update Project document
+    project.activeInvites.push(inviteCode);
+    await project.save();
+
+    res.status(200).json({ message: "Invitation sent successfully" });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send(error.message);
+  }
+};
+
+// VERIFY PROJECT INVITE - SYSTEM
+export const verifyProjectInvite = async (req, res) => {
+  const { inviteCode } = req.query;
+  const email = req.session.username || req.user.email;
+
+  try {
+    const project = await Project.findOne({
+      status: "active",
+      activeInvites: { $in: [inviteCode] },
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: "Invalid invite code" });
+    }
+
+    const invitedEmail = inviteCode.split("_")[1];
+    if (invitedEmail !== email) {
+      return res.status(400).json({ message: "Email Mismatch" });
+    }
+
+    // Check if user is already part of the project
+    if (
+      project.owners.includes(email) ||
+      project.editors.includes(email) ||
+      project.viewers.includes(email)
+    ) {
+      return res.status(400).json({
+        message: "You are already part of this project",
+        role: project.owners.includes(email)
+          ? "owner"
+          : project.editors.includes(email)
+          ? "editor"
+          : "viewer",
+      });
+    }
+
+    // Check user's company
+    const company = await Company.findOne({
+      status: "active",
+      $or: [{ owners: email }, { employees: email }],
+    });
+
+    if (company && company.companyID !== project.companyID) {
+      return res.status(400).json({ message: "You are already a part of a different company" });
+    }
+
+    if(!company) {
+      const projectCompany = await Company.findOne({
+        status: "active",
+        companyID: project.companyID
+      });
+
+      if(projectCompany) {
+        projectCompany.employees.push(email);
+        await projectCompany.save();
+      } else {
+        return res.status(404).json({ message: "Project Company not found" });
+      }
+    }
+
+    // Update Project document
+    project.viewers.push(email);
+    project.activeInvites = project.activeInvites.filter(
+      (invite) => invite !== inviteCode
+    );
+    await project.save();
+
+    res.status(200).json({ message: "Joined project successfully" });
+  } catch (error) {
+    return res.status(500).send(error.message);
   }
 };

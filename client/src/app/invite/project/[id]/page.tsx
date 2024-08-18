@@ -12,7 +12,7 @@ type Props = {
   }
 }
 
-const CompanyInvitePage = ({ params }: Props) => {
+const ProjectInvitePage = ({ params }: Props) => {
   const [user] = userStore(state => [state.user]);
   const router = useRouter();
 
@@ -25,17 +25,17 @@ const CompanyInvitePage = ({ params }: Props) => {
         }
 
         if (!user) {
-          return router.push("/auth/login?redirect=/invite/company/" + params.id);
+          return router.push("/auth/login?redirect=/invite/project/" + params.id);
         } else {
           const inviteCode = decodeURIComponent(params.id);
-          const result = await axios_admin.get(`/company/verify`, {
+          const result = await axios_admin.get(`/project/verify`, {
             params: {
               inviteCode
             }
           });
 
           toast.success(result.data.message);
-          router.push('/dashboard/home')
+          return router.push('/dashboard/home');
         }
       } catch (error: any) {
         console.log(error.response.data);
@@ -49,4 +49,4 @@ const CompanyInvitePage = ({ params }: Props) => {
   return <Loader />
 }
 
-export default CompanyInvitePage
+export default ProjectInvitePage
