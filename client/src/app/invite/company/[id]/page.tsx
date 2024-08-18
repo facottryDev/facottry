@@ -19,7 +19,7 @@ const CompanyInvitePage = ({ params }: Props) => {
   useEffect(() => {
     const inviteFlow = async () => {
       try {
-        if(!params.id) {
+        if (!params.id) {
           console.log('No invite code found');
           return router.push('/');
         }
@@ -35,11 +35,12 @@ const CompanyInvitePage = ({ params }: Props) => {
           });
 
           toast.success(result.data.message);
-          router.push('/dashboard/home')
+          return router.push('/dashboard/home')
         }
       } catch (error: any) {
         console.log(error.response.data);
         toast.error(error.response.data.message);
+        return router.push('/')
       }
     }
 

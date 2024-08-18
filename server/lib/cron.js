@@ -20,7 +20,7 @@ import customConfigArchives from "../models/configs/customConfigArchive.js";
 // CRON JOB TO SHIFT INACTIVE USERS TO ARCHIVE
 export const archiveCronJob = () => {
   cron.schedule(
-    "0 0 */7 * *",
+    "0 0 * * *",
     async () => {
       try {
         console.log(`Cron Job Started ${new Date()}`);
@@ -74,6 +74,4 @@ export const archiveCronJob = () => {
       timezone: "Asia/Kolkata",
     }
   );
-
-  console.log(`Archive Jobs Queued at ${new Date()}`);
 };

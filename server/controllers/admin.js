@@ -822,7 +822,7 @@ export const changeAccessCompany = async (req, res) => {
       return res.status(404).json({ message: "Company not found" });
     }
 
-    console.log(company.owners.includes(email))
+    console.log(company.owners.includes(email));
 
     // Check if user exists in the company
     if (!company.employees.includes(email) && !company.owners.includes(email)) {
@@ -838,7 +838,9 @@ export const changeAccessCompany = async (req, res) => {
 
     // Update Company document
     company.owners = company.owners.filter((owner) => owner !== email);
-    company.employees = company.employees.filter((employee) => employee !== email);
+    company.employees = company.employees.filter(
+      (employee) => employee !== email
+    );
 
     role === "owner" && company.owners.push(email);
     role === "employee" && company.employees.push(email);
@@ -849,7 +851,7 @@ export const changeAccessCompany = async (req, res) => {
   } catch (error) {
     return res.status(500).send(error.message);
   }
-}
+};
 
 // CREATE A JOIN REQUEST TO COMPANY - USER
 export const createJoinCompanyRequest = async (req, res) => {
@@ -1064,26 +1066,59 @@ export const leaveCompany = async (req, res) => {
       });
     }
 
+    // If a project under the company has only one owner, deactivate the project
+    const projects = await Project.find({
+      status: "active",
+      companyID: company.companyID,
+    });
+
+    for (let project of projects) {
+      // if email is the only owner of project, make the editor or viewer owner else deactivate
+      if (project.owners.length === 1 && project.owners.includes(email)) {
+        if (project.editors.length > 0) {
+          project.owners = project.editors;
+          project.editors = [];
+        } else if (project.viewers.length > 0) {
+          project.owners = project.viewers;
+          project.viewers = [];
+        } else {
+          project.status = "inactive";
+
+          // Update the status of all appConfigs under the project
+          await AppConfig.updateMany(
+            { status: "active", projectID: project.projectID },
+            { status: "inactive" }
+          );
+
+          // Update the status of all playerConfigs under the project
+          await PlayerConfig.updateMany(
+            { status: "active", projectID: project.projectID },
+            { status: "inactive" }
+          );
+
+          // Update the status of all customConfigs under the project
+          await CustomConfig.updateMany(
+            { status: "active", projectID: project.projectID },
+            { status: "inactive" }
+          );
+
+          // Update the status of all masters under the project
+          await Master.updateMany(
+            { status: "active", projectID: project.projectID },
+            { status: "inactive" }
+          );
+        }
+        
+        await project.save();
+      }
+    }
+
     // Update Company document
     company.owners = company.owners.filter((owner) => owner !== email);
     company.employees = company.employees.filter(
       (employee) => employee !== email
     );
     await company.save();
-
-    // Update projects of the user
-    await Project.updateMany(
-      { status: "active", companyID: company.companyID },
-      {
-        $pull: {
-          owners: email,
-          editors: email,
-          viewers: email,
-          joinRequests: email,
-          activeInvites: email,
-        },
-      }
-    );
 
     res.status(200).json({ message: "Success!" });
   } catch (error) {
@@ -1344,10 +1379,10 @@ export const cancelCompanyInvite = async (req, res) => {
     res.status(200).json({ message: "Invite cancelled successfully" });
   } catch (error) {
     return res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
-}
+};
 
 // DELETE ADMIN ACCOUNT BY CALLING LEAVE COMPANY & LEAVE PROJECT
 export const deleteAdmin = async (req, res) => {
@@ -1817,16 +1852,18 @@ export const verifyProjectInvite = async (req, res) => {
     });
 
     if (company && company.companyID !== project.companyID) {
-      return res.status(400).json({ message: "You are already a part of a different company" });
+      return res
+        .status(400)
+        .json({ message: "You are already a part of a different company" });
     }
 
-    if(!company) {
+    if (!company) {
       const projectCompany = await Company.findOne({
         status: "active",
-        companyID: project.companyID
+        companyID: project.companyID,
       });
 
-      if(projectCompany) {
+      if (projectCompany) {
         projectCompany.employees.push(email);
         await projectCompany.save();
       } else {
@@ -1873,7 +1910,7 @@ export const cancelProjectInvite = async (req, res) => {
     res.status(200).json({ message: "Invite cancelled successfully" });
   } catch (error) {
     return res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
-}
+};
