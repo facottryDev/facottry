@@ -757,7 +757,7 @@ export const deleteProjectUser = async (req, res) => {
 };
 
 // CHANGE ACCESS RIGHT OF USER IN PROJECT - PROJECT OWNER
-export const changeAccess = async (req, res) => {
+export const changeAccessProject = async (req, res) => {
   try {
     const owner = req.session.username || req.user.email;
     const { email, projectID, role } = req.body;
@@ -805,6 +805,51 @@ export const changeAccess = async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
+
+// CHANGE ACCESS RIGHT OF USER IN COMPANY - COMPANY OWNER
+export const changeAccessCompany = async (req, res) => {
+  try {
+    const owner = req.session.username || req.user.email;
+    const { email, role } = req.body;
+
+    const company = await Company.findOne({
+      status: "active",
+      owners: { $in: [owner] },
+    });
+
+    // Check if company exists
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    console.log(company.owners.includes(email))
+
+    // Check if user exists in the company
+    if (!company.employees.includes(email) && !company.owners.includes(email)) {
+      return res.status(404).json({ message: "User not found in company" });
+    }
+
+    if (company.owners.includes(email) && company.owners.length === 1) {
+      return res.status(400).json({
+        message:
+          "You are the only owner of this company. Make someone else owner before changing.",
+      });
+    }
+
+    // Update Company document
+    company.owners = company.owners.filter((owner) => owner !== email);
+    company.employees = company.employees.filter((employee) => employee !== email);
+
+    role === "owner" && company.owners.push(email);
+    role === "employee" && company.employees.push(email);
+
+    await company.save();
+
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
 
 // CREATE A JOIN REQUEST TO COMPANY - USER
 export const createJoinCompanyRequest = async (req, res) => {

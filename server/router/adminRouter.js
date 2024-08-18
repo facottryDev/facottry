@@ -18,7 +18,8 @@ import {
   acceptJoinProjectRequest,
   rejectJoinProjectRequest,
   deleteProjectUser,
-  changeAccess,
+  changeAccessProject,
+  changeAccessCompany,
   deleteFilter,
   addFilter,
   updateFilter,
@@ -47,6 +48,7 @@ router.delete("/company/deactivate", deactivateCompany);
 router.post("/company/update", updateCompanyDetails);
 router.post("/company/accept-request", acceptJoinCompanyRequest);
 router.post("/company/reject-request", rejectJoinCompanyRequest);
+router.post('/company/change-access', changeAccessCompany);
 router.post("/company/delete-user", deleteCompanyUser);
 router.post("/company/invite", inviteUserToCompany);
 router.get("/company/verify", verifyCompanyInvite);
@@ -58,7 +60,7 @@ router.post("/project/deactivate", deactivateProject);
 router.post("/project/accept-request", acceptJoinProjectRequest);
 router.post("/project/reject-request", rejectJoinProjectRequest);
 router.post("/project/delete-user", deleteProjectUser);
-router.post('/project/change-access', changeAccess);
+router.post('/project/change-access', changeAccessProject);
 router.post('/project/clone', cloneProject);
 router.post("/project/invite", inviteUserToProject);
 router.get("/project/verify", verifyProjectInvite);

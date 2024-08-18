@@ -44,15 +44,15 @@ const ManageUsers = (props: Props) => {
   }
 
   const changeAccess = (email: string, e: React.ChangeEvent<HTMLSelectElement>) => async () => {
+    const changeAccessLoader = toast.loading("Working...");
     try {
-      await axios_admin.post("/company/change-access", {
+      const result = await axios_admin.post("/company/change-access", {
         email, role: e.target.value, projectID: activeProject?.projectID
       })
-      toast("Access Changed Successfully");
-      window.location.reload();
+      toast.update(changeAccessLoader, { render: result.data.message, type: "success", isLoading: false, autoClose: 1000 });
     } catch (error: any) {
-      console.error(error)
-      toast.error(error.response.data.message)
+      console.log(error.response.data);
+      toast.update(changeAccessLoader, { render: error.response.data.message, type: "error", isLoading: false, autoClose: 1000 });
     }
   }
 
@@ -87,7 +87,20 @@ const ManageUsers = (props: Props) => {
                   </td>
 
                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Owner</p>
+                    <select
+                      id={owner}
+                      name={owner}
+                      className="p-2 border bg-bggray rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm w-28"
+                      defaultValue={"owner"}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        if (window.confirm('Are you sure?')) {
+                          changeAccess(owner, e)();
+                        }
+                      }}
+                    >
+                      <option value="owner">Owner</option>
+                      <option value="employee">Employee</option>
+                    </select>
                   </td>
 
                   <td className="border-b border-gray-200 text-sm">
@@ -112,7 +125,20 @@ const ManageUsers = (props: Props) => {
                   </td>
 
                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Employee</p>
+                    <select
+                      id={employee}
+                      name={employee}
+                      className="p-2 border bg-bggray rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm w-28"
+                      defaultValue={"employee"}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        if (window.confirm('Are you sure?')) {
+                          changeAccess(employee, e)();
+                        }
+                      }}
+                    >
+                      <option value="owner">Owner</option>
+                      <option value="employee">Employee</option>
+                    </select>
                   </td>
 
                   <td className="border-b border-gray-200 text-sm">
