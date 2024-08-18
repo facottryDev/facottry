@@ -138,7 +138,7 @@ const ManageUsers = (props: Props) => {
                     </select>
                   </td>
 
-                  <td className="border-b border-gray-200 text-sm">
+                  <td className="border-b border-gray-200 text-sm pl-3">
                     <button className="ml-2 p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
                       if (window.confirm("Are you sure you want to delete this user?")) {
                         deleteUser(employee)();

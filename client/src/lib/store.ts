@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type FilterStore = {
+type activeFilterStore = {
   activeFilter: Filter;
   scaleFilter: Filter;
   setScaleFilter: (item: Filter) => void;
@@ -9,7 +9,7 @@ type FilterStore = {
 };
 
 export const activeFilterStore = create(
-  persist<FilterStore>(
+  persist<activeFilterStore>(
     (set) => ({
       activeFilter: [],
       scaleFilter: [],

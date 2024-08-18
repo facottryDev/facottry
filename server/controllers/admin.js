@@ -897,7 +897,9 @@ export const createJoinCompanyRequest = async (req, res) => {
 export const acceptJoinCompanyRequest = async (req, res) => {
   try {
     const owner = req.session.username || req.user.email;
-    const { email } = req.body;
+    const { email, role } = req.body;
+
+    console.log(role)
 
     const company = await Company.findOne({
       status: "active",
@@ -926,7 +928,10 @@ export const acceptJoinCompanyRequest = async (req, res) => {
     }
 
     // Update Company document
-    company.employees.push(email);
+    role === "owner"
+      ? company.owners.push(email)
+      : company.employees.push(email);
+
     company.joinRequests = company.joinRequests.filter(
       (request) => request !== email
     );
@@ -1108,7 +1113,7 @@ export const leaveCompany = async (req, res) => {
             { status: "inactive" }
           );
         }
-        
+
         await project.save();
       }
     }

@@ -14,14 +14,10 @@ const options = [
         message: 'You have been invited to join APNECK_DEMO',
         href: '#',
     },
-    {
-        title: 'Project Invite',
-        message: 'You have been invited to join a NETFLIX_DEMO',
-        href: '#',
-    },
 ]
 
 export default function Notifications() {
+    return null;
     return (
         <div>
             <Menu as="div" className="relative inline-block text-left flex-shrink-0 border border-black dark:border-white px-2 py-2 rounded-full text-black hover:bg-zinc-800 hover:text-white transition dark:text-slate-200 dark:hover:bg-zinc-700">

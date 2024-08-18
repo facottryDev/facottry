@@ -10,7 +10,7 @@ type Props = {}
 const ManageInvites = (props: Props) => {
   const company = userStore((state) => state.company);
   const activeProject = userStore(state => state.activeProject);
-  const [role, setRole] = useState("viewer");
+  const [role, setRole] = useState("employee");
   const [AcceptRequestModal, setAcceptRequestModal] = useState(false);
 
   const handleAcceptRequest = (request: string, role: string) => async () => {
@@ -18,21 +18,21 @@ const ManageInvites = (props: Props) => {
       await axios_admin.post("/company/accept-request", {
         email: request, role
       })
-      toast("Request Accepted Successfully");
+      toast.success("Request Accepted Successfully");
       window.location.reload();
     } catch (error: any) {
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
     }
   }
 
   const handleRejectRequest = (request: string) => async () => {
     try {
       const result = await axios_admin.post("/company/reject-request", { email: request });
-      alert(result.data.message);
+      toast.success(result.data.message);
       window.location.reload();
     } catch (error: any) {
       console.error(error)
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
     }
   }
 
@@ -41,7 +41,7 @@ const ManageInvites = (props: Props) => {
       const result = await axios_admin.post("/company/cancel-invite", {
         invite
       });
-      toast(result.data.message);
+      toast.success(result.data.message);
       window.location.reload();
     } catch (error: any) {
       console.error(error)
@@ -84,7 +84,7 @@ const ManageInvites = (props: Props) => {
                       },
                       content: {
                         width: '50%',
-                        height: '30%',
+                        height: 'fit-content',
                         margin: 'auto',
                         padding: '2rem',
                         borderRadius: '10px',
@@ -98,10 +98,14 @@ const ManageInvites = (props: Props) => {
 
                     <div className="w-full">
                       <label className="font-medium" htmlFor="projectrole">Select Role</label>
-                      <select id="projectrole" className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" onChange={(e) => setRole(e.target.value)}>
+                      <select
+                        id="projectrole"
+                        name="projectrole"
+                        className="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                        defaultValue={role}
+                        onChange={(e) => setRole(e.target.value)}>
                         <option value="owner">Owner</option>
-                        <option value="editor">Editor</option>
-                        <option value="viewer">Viewer</option>
+                        <option value="employee">Employee</option>
                       </select>
                     </div>
 
