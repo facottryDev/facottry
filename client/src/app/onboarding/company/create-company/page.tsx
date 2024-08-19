@@ -25,8 +25,11 @@ const LoginForm = () => {
             toast(res.data.message);
             router.push('/dashboard/home');
         } catch (error: any) {
-            console.log(error.response)
-            toast(error.response.data.message)
+            if(error.response) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An error occurred. Please try again later.");
+            }
         }
     }
 

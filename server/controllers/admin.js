@@ -6,6 +6,7 @@ import PlayerConfig from "../models/configs/playerConfig.js";
 import CustomConfig from "../models/configs/customConfig.js";
 import Master from "../models/scale/master.js";
 import Contact from "../models/admin/contact.js";
+import mongoose from "mongoose";
 
 // UPDATE CONTACT MESSAGES
 export const updateContacts = async (req, res) => {
@@ -107,6 +108,38 @@ export const getAdmin = async (req, res) => {
   }
 };
 
+const createDemoProjects = async (companyID, email) => {
+  try {
+    const defaultProjects = await Project.find({
+      status: "active",
+      projectID: { $regex: /demo/i },
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+    });
+
+    const defaultAppConfigs = await AppConfig.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    const defaultPlayerConfigs = await PlayerConfig.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    const defaultMappings = await Master.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    return { code: "SUCCESS", message: "Demo projects created successfully" };
+  } catch (error) {
+    return { code: "ERROR", message: "Cloning Failed", error: error.message };
+  }
+}; // NOT READY
+
 // ADD COMPANY - COMPANY OWNER
 export const addCompany = async (req, res) => {
   try {
@@ -137,6 +170,15 @@ export const addCompany = async (req, res) => {
     });
 
     const company = await newCompany.save();
+    // await createDemoProjects(companyID, email);
+
+    // if (demoResult.code === "ERROR") {
+    //   console.log({ error: demoResult.error });
+    //   return res.status(500).json({
+    //     message: "Demo projects creation failed",
+    //     error: demoResult.error,
+    //   });
+    // }
 
     const companyDetails = {
       companyID: company.companyID,
