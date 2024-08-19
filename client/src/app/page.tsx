@@ -52,10 +52,10 @@ const LandingPage = () => {
           <Hero isLoggedin={isLoggedin} />
         </section>
       </div>
-      
-      <section id="demo">
-          <Demo />
-        </section>
+
+      <section id="demo" className="">
+        <Demo />
+      </section>
 
       <section id="contact" className="mt-10 py-8 px-8">
         <ContactForm />

@@ -11,11 +11,16 @@ export const Hero = ({ isLoggedin }: { isLoggedin: boolean }) => {
       <div className="sm:w-[40%] lg:w-[35%] space-y-4 mt-10 sm:mt-0">
         {/* Text */}
         <h1 className="text-5xl dark:text-white text-black font-bold font-lexend xl:text-6xl">
-          <p>FacOTTory,<span className=""> For All Your Needs</span></p>
+          <div>
+            <div className="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent pb-2 bg-clip-text">Flagship,
+            </div>
+            <div className=""> For All Your Development Needs
+            </div>
+          </div>
 
         </h1>
         <p className="text-body dark:text-slate-300 font-light text-slate-500">
-          A complete Feature-flag management solution for streamlining your application development.
+          A complete feature-flag management solution for streamlining your application development.
         </p>
 
         {/* Button */}
