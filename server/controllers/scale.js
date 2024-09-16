@@ -44,7 +44,13 @@ export const scaleAuth = (req, res, next) => {
 // GET MAPPING FROM FILTER PARAMS
 export const getMapping = async (req, res) => {
   try {
-    const { projectID, filter, noCache } = req.body;
+    const {
+      projectID,
+      filter,
+      noCache,
+      resetCacheforFilter,
+      resetCacheforProject,
+    } = req.body;
 
     switch (true) {
       case !projectID:
@@ -57,17 +63,26 @@ export const getMapping = async (req, res) => {
         return;
     }
 
-    // const filterString = JSON.stringify(filter);
-    // const cacheKey = `mapping:${projectID}:${filterString}`;
-    // const cachedData = await redisClient.get(cacheKey);
+    const filterString = JSON.stringify(filter);
+    const cacheKey = `mapping:${projectID}:${filterString}`;
+    const cachedData = await redisClient.get(cacheKey);
 
-    // if (!noCache && cachedData) {
-    //   const cachedResponse = JSON.parse(cachedData);
-    //   cachedResponse.cacheStatus = true;
-    //   res.status(200).json(cachedResponse);
-    //   setImmediate(async () => await loggerFunction(req, cachedResponse));
-    //   return;
-    // }
+    // Serve Cache
+    if(resetCacheforFilter) {
+      await redisClient.DEL(cacheKey);
+      console.log("Cache reset for Filter");
+    } else if (resetCacheforProject) {
+      const keys = await redisClient.keys(`mapping:${projectID}:*`);
+      await redisClient.DEL(keys);
+      console.log("Cache reset for Project");
+    } else if (!noCache && cachedData) {
+      const cachedResponse = JSON.parse(cachedData);
+      cachedResponse.cacheStatus = true;
+      res.status(200).json(cachedResponse);
+      setImmediate(async () => await loggerFunction(req, cachedResponse));
+      console.log("Cache Hit");
+      return;
+    }
 
     const master = await Master.findOne(
       {
@@ -101,8 +116,8 @@ export const getMapping = async (req, res) => {
       res.status(200).json(noMappingResponse);
       setImmediate(async () => {
         await loggerFunction(req, noMappingResponse);
-        // await redisClient.set(cacheKey, JSON.stringify(noMappingResponse));
-        // await redisClient.expire(cacheKey, 3600); 
+        await redisClient.set(cacheKey, JSON.stringify(noMappingResponse));
+        await redisClient.expire(cacheKey, 3600);
       });
       return;
     }
@@ -137,13 +152,12 @@ export const getMapping = async (req, res) => {
     res.status(200).json(successResponse);
     setImmediate(async () => {
       await loggerFunction(req, successResponse);
-      // await redisClient.set(cacheKey, JSON.stringify(successResponse));
-      // await redisClient.expire(cacheKey, 3600);
+      await redisClient.set(cacheKey, JSON.stringify(successResponse));
+      await redisClient.expire(cacheKey, 3600);
     });
   } catch (error) {
-    console.log(error.message);
     const errorResponse = { message: error.message };
-    res.status(500).send(errorResponse);
+    res.status(500).json(errorResponse);
     setImmediate(async () => await loggerFunction(req, errorResponse));
   }
 };
@@ -229,7 +243,7 @@ const loggerFunction = async (req, resObj) => {
       console.log({ message: "Analytics service URL not found" });
     }
   } catch (error) {
-    console.log({ error: error.message, code: "LOGGER_FUNCTION" });
+    // console.log({ error: error.message, code: "LOGGER_FUNCTION" });
   }
 };
 
