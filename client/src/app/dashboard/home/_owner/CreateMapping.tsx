@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 import { useEffect, useState } from "react"
-import { axios_config } from "@/lib/axios"
+import { axios_config, axios_scale } from "@/lib/axios"
 import { userStore, activeFilterStore } from "@/lib/store";
 import Filter from "@/components/dashboard/Filter"
 import ConfigSelectorComponent from "./ConfigSelectorComponent";
@@ -42,6 +42,10 @@ const CreateMappings = (props: Props) => {
         getConfigs();
     }, [activeProject])
 
+    useEffect(() => {
+        setSelectedConfigs({});
+    }, [activeFilter])
+
     // Function to handle update of mapping
     const handleUpdateMapping = async () => {
         const data = {
@@ -71,10 +75,23 @@ const CreateMappings = (props: Props) => {
                 <section className="w-full border rounded-md mt-8">
                     <div onClick={() => toggleExpansion('app')} className="flex w-full px-10 justify-between items-center cursor-pointer">
                         <h1 className="text-lg font-bold text-center my-4">App Config</h1>
-                        <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={() => toggleExpansion('app')}>{
-                                isExpanded.includes('app') ? 'Collapse' : 'Expand'
+                        <div className="flex gap-2">
+                            <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedConfigs((prev: any) => {
+                                    return {
+                                        ...prev,
+                                        app: null
+                                    }
+                                })
+                            }}>
+                                Clear Selection
+                            </button>
+                            <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={() => toggleExpansion('app')}>{
+                                !isExpanded.includes('app') ? 'Expand' : 'Collapse'
                             }
-                        </button>
+                            </button>
+                        </div>
                     </div>
                     {!isExpanded.includes('app') ? null : (
                         <ConfigSelectorComponent
@@ -89,10 +106,24 @@ const CreateMappings = (props: Props) => {
                 <section className="w-full border rounded-md mt-8">
                     <div onClick={() => toggleExpansion('player')} className="flex w-full px-10 justify-between items-center cursor-pointer">
                         <h1 className="text-lg font-bold text-center my-4">Player Config</h1>
-                        <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={() => toggleExpansion('player')}>{
+                        <div className="flex gap-2">
+                            <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedConfigs((prev: any) => {
+                                    return {
+                                        ...prev,
+                                        player: null
+                                    }
+                                })
+                            }}>
+                                Clear Selection
+                            </button>
+
+                            <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={() => toggleExpansion('player')}>{
                                 !isExpanded.includes('player') ? 'Expand' : 'Collapse'
                             }
-                        </button>
+                            </button>
+                        </div>
                     </div>
                     {!isExpanded.includes('player') ? null : (
                         <ConfigSelectorComponent
@@ -109,10 +140,23 @@ const CreateMappings = (props: Props) => {
                         <section key={index} className="w-full border rounded-md mt-8">
                             <div onClick={() => toggleExpansion(configType.name)} className="flex w-full px-10 justify-between items-center cursor-pointer">
                                 <h1 className="text-lg font-bold text-center my-4">{configType.name}</h1>
-                                <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={() => toggleExpansion(configType.name)}>{
+                                <div className="gap-2 flex">
+                                    <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedConfigs((prev: any) => {
+                                            return {
+                                                ...prev,
+                                                [configType.name]: null
+                                            }
+                                        })
+                                    }}>
+                                        Clear Selection
+                                    </button>
+                                    <button className="font-medium border my-4 p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={() => toggleExpansion(configType.name)}>{
                                         !isExpanded.includes(configType.name) ? 'Expand' : 'Collapse'
                                     }
-                                </button>
+                                    </button>
+                                </div>
                             </div>
                             {!isExpanded.includes(configType.name) ? null : (
                                 <ConfigSelectorComponent
