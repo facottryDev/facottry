@@ -5,9 +5,10 @@ import { userStore } from "@/lib/store";
 import { fetchConfigs } from "@/lib/fetch"
 import Modal from 'react-modal';
 import { IoClose, IoPencilSharp } from "react-icons/io5";
-import { Editor } from "@monaco-editor/react";
 import { toast } from "react-toastify";
 import { MdDeleteSweep, MdEditNote, MdInfoOutline } from "react-icons/md";
+import { JsonEditor } from 'json-edit-react'
+import { useTheme } from "next-themes";
 
 type Props = {
     configList: config[] | undefined;
@@ -16,12 +17,14 @@ type Props = {
 }
 
 const ConfigTableComponent = (props: Props) => {
+    // const [editorMarker, setEditorMarker] = useState<any>([]);
+    
     const activeProject = userStore(state => state.activeProject);
     const [configModal, setconfigModal] = useState('');
     const [detailsModal, setDetailsModal] = useState('');
-    const [editorValue, setEditorValue] = useState<any>('');
-    const [editorMarker, setEditorMarker] = useState<any>([]);
+    const [editorValue, setEditorValue] = useState<any>({});
     const [isEditable, setIsEditable] = useState(false);
+    const { theme, setTheme } = useTheme();
 
     const handleDelete = async (configID: string) => {
         try {
@@ -45,18 +48,11 @@ const ConfigTableComponent = (props: Props) => {
         const params = editorValue;
 
         try {
-            JSON.parse(params);
-        } catch (error) {
-            toast.error('Invalid JSON format');
-            return;
-        }
-
-        try {
             await axios_config.post(`/update`, {
                 configID,
                 name,
                 desc,
-                params: JSON.parse(params)
+                params,
             });
             toast.success("Config updated successfully");
             fetchConfigs(activeProject?.projectID);
@@ -109,19 +105,12 @@ const ConfigTableComponent = (props: Props) => {
         e.preventDefault();
 
         try {
-            JSON.parse(editorValue);
-        } catch (error) {
-            toast.error('Invalid JSON format');
-            return;
-        }
-
-        try {
             const data = {
                 projectID: activeProject?.projectID,
                 name: e.target.ConfigName.value,
                 desc: e.target.ConfigDesc.value,
                 type: props.type,
-                params: JSON.parse(editorValue)
+                params: editorValue
             }
 
             if (!data.projectID) return toast('No active project found!');
@@ -241,7 +230,9 @@ const ConfigTableComponent = (props: Props) => {
                                             <div className="flex">
                                                 <button className="ml-2 p-2 rounded-full bg-primary600 text-white hover:bg-primary700 transition-all" onClick={
                                                     () => {
-                                                        setconfigModal(config.configID)
+                                                        setconfigModal(config.configID);
+                                                        console.log(config)
+                                                        setEditorValue(config.params);
                                                     }
                                                 }>
                                                     <MdEditNote fontSize={18} />
@@ -264,6 +255,7 @@ const ConfigTableComponent = (props: Props) => {
                                                     setconfigModal("");
                                                     setEditorMarker([]);
                                                     setEditorValue('');
+                                                    setIsEditable(false);
                                                 }}
                                                 contentLabel="Edit Config Modal"
                                                 style={
@@ -298,6 +290,7 @@ const ConfigTableComponent = (props: Props) => {
                                                                 setconfigModal('');
                                                                 setEditorMarker([]);
                                                                 setEditorValue('');
+                                                                setIsEditable(false);
                                                             }}>
                                                                 <IoClose />
                                                             </button>
@@ -322,40 +315,42 @@ const ConfigTableComponent = (props: Props) => {
                                                             <div className="hidden sm:block mx-8 bg-gray-200 w-px h-auto"></div>
 
                                                             {/* Right side */}
-                                                            <div className="w-full h-full flex flex-col mt-2 md:mt-0">
-                                                                <label className="font-semibold mb-1">Params (JSON)*</label>
-                                                                <Editor
-                                                                    height='100%'
-                                                                    width="100%"
-                                                                    defaultLanguage="json"
-                                                                    defaultValue={JSON.stringify(config.params, null, 4)}
-                                                                    theme="light"
-                                                                    onMount={(editor) => {
-                                                                        setEditorValue(JSON.stringify(config.params, null, 4));
-                                                                    }
-                                                                    }
-                                                                    onChange={(value) => setEditorValue(value)}
-                                                                    onValidate={(markers) => {
-                                                                        setEditorMarker(markers);
-                                                                    }}
-                                                                />
+                                                            <div className="w-full shadow-sm border p-4 rounded-lg h-full flex flex-col mt-2 md:mt-0">
+                                                                <label className="font-semibold mb-1">JSON Params*</label>
 
-                                                                {/* Validation Errors */}
-                                                                <div>
-                                                                    {editorMarker.length > 0 && (
-                                                                        <div className="mt-2 p-2 bg-red-100 border-l-4 border-red-500 text-red-700 transition-all">
-                                                                            <ul>
-                                                                                {editorMarker.map((marker: any, index: number) => {
-                                                                                    return (
-                                                                                        <li key={index} className="text-sm list-disc list-inside">
-                                                                                            Line {marker.startLineNumber}, Col {marker.startColumn}: {marker.message}
-                                                                                        </li>
-                                                                                    );
-                                                                                })}
-                                                                            </ul>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
+                                                                <JsonEditor
+                                                                    data={editorValue}
+                                                                    restrictEdit={!isEditable}
+                                                                    restrictAdd={!isEditable}
+                                                                    restrictDelete={!isEditable}
+                                                                    restrictTypeSelection={!isEditable}
+                                                                    collapse={1}
+                                                                    rootName={config.name}
+                                                                    showErrorMessages={true}
+                                                                    setData={
+                                                                        (data: any) => {
+                                                                            setEditorValue(data);
+                                                                        }
+                                                                    }
+                                                                    theme={
+                                                                        theme === "dark"
+                                                                            ? [
+                                                                                'githubDark',
+                                                                                {
+                                                                                    container: {
+                                                                                        backgroundColor: '#09090b'
+                                                                                    }
+                                                                                },
+                                                                            ] : [
+                                                                                'githubLight',
+                                                                                {
+                                                                                    container: {
+                                                                                        backgroundColor: '#ffffff'
+                                                                                    }
+                                                                                },
+                                                                            ]
+                                                                    }
+                                                                />
                                                             </div>
                                                         </div>
 
@@ -384,7 +379,12 @@ const ConfigTableComponent = (props: Props) => {
             </div>
 
             <button onClick={
-                () => setconfigModal('new')
+                () => {
+                    setconfigModal('new');
+                    setEditorValue({
+                        "key": "value"
+                    });
+                }
             } className="font-medium border my-4 p-2 rounded-md shadow-sm hover:bg-gray-100 transition-all">
                 Create New Config
             </button>
@@ -394,7 +394,7 @@ const ConfigTableComponent = (props: Props) => {
                 onRequestClose={() => {
                     setconfigModal("");
                     setEditorMarker([]);
-                    setEditorValue('');
+                    setEditorValue({});
                 }}
                 contentLabel="Add Config Modal"
                 style={
@@ -422,14 +422,14 @@ const ConfigTableComponent = (props: Props) => {
                         <button className="p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
                             setconfigModal("");
                             setEditorMarker([]);
-                            setEditorValue('');
+                            setEditorValue({});
                         }}>
                             <IoClose />
                         </button>
                     </div>
 
                     <form className="flex w-full flex-col bg-white text-sm" onSubmit={handleCreate}>
-                        <div className="flex p-4 flex-col md:flex-row w-full">
+                        <div className="flex p-4 flex-col md:flex-row w-full h-[70vh] overflow-y-scroll">
                             {/* Left side */}
                             <div className="flex flex-col min-w-[200px]">
                                 <label htmlFor="ConfigName" className="mb-1 font-semibold">Name</label>
@@ -443,9 +443,9 @@ const ConfigTableComponent = (props: Props) => {
                             <div className="hidden md:block mx-8 bg-gray-200 w-px h-auto"></div>
 
                             {/* Right side */}
-                            <div className="w-full flex flex-col mt-2 md:mt-0">
-                                <label className="font-semibold mb-1">Params (JSON)</label>
-                                <Editor
+                            <div className="w-full shadow-sm border p-4 rounded-lg flex flex-col mt-2 md:mt-0">
+                                <label className="font-semibold mb-1">JSON Params</label>
+                                {/* <Editor
                                     height="50vh"
                                     width="100%"
                                     defaultLanguage="json"
@@ -455,10 +455,40 @@ const ConfigTableComponent = (props: Props) => {
                                     onValidate={(markers) => {
                                         setEditorMarker(markers);
                                     }}
+                                /> */}
+
+                                <JsonEditor
+                                    data={editorValue}
+                                    collapse={1}
+                                    rootName={"config"}
+                                    showErrorMessages={true}
+                                    setData={
+                                        (data: any) => {
+                                            setEditorValue(data);
+                                        }
+                                    }
+                                    theme={
+                                        theme === "dark"
+                                            ? [
+                                                'githubDark',
+                                                {
+                                                    container: {
+                                                        backgroundColor: '#09090b'
+                                                    }
+                                                },
+                                            ] : [
+                                                'githubLight',
+                                                {
+                                                    container: {
+                                                        backgroundColor: '#ffffff'
+                                                    }
+                                                },
+                                            ]
+                                    }
                                 />
 
                                 {/* Validation Errors */}
-                                <div>
+                                {/* <div>
                                     {editorMarker.length > 0 && (
                                         <div className="mt-2 p-2 bg-red-100 border-l-4 border-red-500 text-red-700 transition-all">
                                             <ul>
@@ -472,7 +502,7 @@ const ConfigTableComponent = (props: Props) => {
                                             </ul>
                                         </div>
                                     )}
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
