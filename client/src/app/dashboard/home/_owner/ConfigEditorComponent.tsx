@@ -18,7 +18,7 @@ type Props = {
 
 const ConfigTableComponent = (props: Props) => {
     // const [editorMarker, setEditorMarker] = useState<any>([]);
-    
+
     const activeProject = userStore(state => state.activeProject);
     const [configModal, setconfigModal] = useState('');
     const [detailsModal, setDetailsModal] = useState('');
@@ -253,7 +253,6 @@ const ConfigTableComponent = (props: Props) => {
                                                 isOpen={configModal === config.configID}
                                                 onRequestClose={() => {
                                                     setconfigModal("");
-                                                    setEditorMarker([]);
                                                     setEditorValue('');
                                                     setIsEditable(false);
                                                 }}
@@ -288,7 +287,6 @@ const ConfigTableComponent = (props: Props) => {
                                                             </button>
                                                             <button className="p-2 rounded-full bg-primary900 hover:bg-black text-white transition-all" onClick={() => {
                                                                 setconfigModal('');
-                                                                setEditorMarker([]);
                                                                 setEditorValue('');
                                                                 setIsEditable(false);
                                                             }}>
@@ -393,7 +391,6 @@ const ConfigTableComponent = (props: Props) => {
                 isOpen={configModal === 'new'}
                 onRequestClose={() => {
                     setconfigModal("");
-                    setEditorMarker([]);
                     setEditorValue({});
                 }}
                 contentLabel="Add Config Modal"
@@ -421,7 +418,6 @@ const ConfigTableComponent = (props: Props) => {
                         <h1 className="font-bold text-lg">Create New Config</h1>
                         <button className="p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
                             setconfigModal("");
-                            setEditorMarker([]);
                             setEditorValue({});
                         }}>
                             <IoClose />
