@@ -30,6 +30,7 @@ const Sidebar = () => {
       console.log(result);
 
       toast.success('Project cloned successfully');
+      window.location.reload();
     } catch (error) {
       console.log(error);
       toast.error('Failed to clone project');      
@@ -101,7 +102,9 @@ const Sidebar = () => {
 
         <button 
         className="mt-4 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 text-sm text-center hover:bg-gray-100 dark:bg-transparent dark:hover:bg-zinc-800"
-        onClick={handleProjectClone}
+        onClick={() => {
+          window.confirm('Are you sure you want to clone ' + activeProject?.name + '?') && handleProjectClone();
+        }}
         >
           Clone Project
         </button>
