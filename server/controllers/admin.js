@@ -1983,3 +1983,48 @@ export const cancelProjectInvite = async (req, res) => {
     });
   }
 };
+
+// export const cloneCompany = async (req, res) => {
+//   try {
+//     const owner = req.session.username || req.user.email;
+//     const { companyID } = req.body;
+
+//     const company = await Company.findOne({
+//       status: "active",
+//       companyID,
+//       owners: { $in: [owner] },
+//     });
+
+//     if (!company) {
+//       return res.status(404).json({ message: "Company not found" });
+//     }
+
+//     const newName = company.name + "_CLONE";
+
+//     // Clone company
+//     const clonedCompany = new Company({
+//       companyID: generateID(newName),
+//       name: newName,
+//       owners: [owner],
+//       employees: company.employees,
+//       status: "active",
+//     });
+
+//     await clonedCompany.save();
+
+//     // Call Clone Project for each project of the company
+//     const projects = await Project.find({ status: "active", companyID });
+
+//     const promises = projects.map(async (project) => {
+//       const body = { projectID: project.projectID };
+//       await cloneProject({ body }, res);
+//     });
+
+//     await Promise.all(promises);
+
+//     res.status(200).json({ message: "Company cloned successfully" });
+//   } catch (error) {
+//     console.log(error.message);
+//     return res.status(500).send(error.message);
+//   }
+// };
