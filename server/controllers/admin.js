@@ -6,7 +6,7 @@ import PlayerConfig from "../models/configs/playerConfig.js";
 import CustomConfig from "../models/configs/customConfig.js";
 import Master from "../models/scale/master.js";
 import Contact from "../models/admin/contact.js";
-import mongoose from "mongoose";
+import Admin from "../models/admin/admin.js";
 
 // UPDATE CONTACT MESSAGES
 export const updateContacts = async (req, res) => {
@@ -108,38 +108,6 @@ export const getAdmin = async (req, res) => {
   }
 };
 
-const createDemoProjects = async (companyID, email) => {
-  try {
-    const defaultProjects = await Project.find({
-      status: "active",
-      projectID: { $regex: /demo/i },
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-    });
-
-    const defaultAppConfigs = await AppConfig.find({
-      status: "active",
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-      projectID: { $regex: /demo/i },
-    });
-
-    const defaultPlayerConfigs = await PlayerConfig.find({
-      status: "active",
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-      projectID: { $regex: /demo/i },
-    });
-
-    const defaultMappings = await Master.find({
-      status: "active",
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-      projectID: { $regex: /demo/i },
-    });
-
-    return { code: "SUCCESS", message: "Demo projects created successfully" };
-  } catch (error) {
-    return { code: "ERROR", message: "Cloning Failed", error: error.message };
-  }
-}; // NOT READY
-
 // ADD COMPANY - COMPANY OWNER
 export const addCompany = async (req, res) => {
   try {
@@ -170,6 +138,30 @@ export const addCompany = async (req, res) => {
     });
 
     const company = await newCompany.save();
+
+    // Check if admin user exists
+    const admin = await Admin.findOne({
+      status: "active",
+      email,
+      role: "admin",
+    });
+
+    if (admin) {
+      if (admin.companyID !== company.companyID) {
+        admin.companyID = company.companyID;
+        await admin.save();
+      }
+    } else {
+      const admin = new Admin({
+        email: email,
+        status: "active",
+        companyID: company.companyID,
+        role: "admin",
+      });
+
+      await admin.save();
+    }
+
     // await createDemoProjects(companyID, email);
 
     // if (demoResult.code === "ERROR") {
@@ -979,6 +971,29 @@ export const acceptJoinCompanyRequest = async (req, res) => {
     );
     await company.save();
 
+    // Check if admin user exists
+    const admin = await Admin.findOne({
+      status: "active",
+      email,
+      role: "admin",
+    });
+
+    if (admin) {
+      if (admin.companyID !== company.companyID) {
+        admin.companyID = company.companyID;
+        await admin.save();
+      }
+    } else {
+      const admin = new Admin({
+        email: email,
+        status: "active",
+        companyID: company.companyID,
+        role: "admin",
+      });
+
+      await admin.save();
+    }
+
     // Remove all join requests from user
     await Company.updateMany(
       { status: "active", joinRequests: { $in: [email] } },
@@ -1166,6 +1181,9 @@ export const leaveCompany = async (req, res) => {
       (employee) => employee !== email
     );
     await company.save();
+
+    // Update Admin's company
+    await Admin.updateOne({ status: "active", email }, { companyID: "" });
 
     res.status(200).json({ message: "Success!" });
   } catch (error) {
@@ -1393,6 +1411,29 @@ export const verifyCompanyInvite = async (req, res) => {
       (invite) => invite !== inviteCode
     );
     await company.save();
+
+    // Check if admin user exists
+    const admin = await Admin.findOne({
+      status: "active",
+      email,
+      role: "admin",
+    });
+
+    if (admin) {
+      if (admin.companyID !== company.companyID) {
+        admin.companyID = company.companyID;
+        await admin.save();
+      }
+    } else {
+      const admin = new Admin({
+        email: email,
+        status: "active",
+        companyID: company.companyID,
+        role: "admin",
+      });
+
+      await admin.save();
+    }
 
     res.status(200).json({ message: "Joined company successfully" });
   } catch (error) {
@@ -1947,6 +1988,29 @@ export const verifyProjectInvite = async (req, res) => {
     );
     await project.save();
 
+    // Check if admin user exists
+    const admin = await Admin.findOne({
+      status: "active",
+      email,
+      role: "admin",
+    });
+
+    if (admin) {
+      if (admin.companyID !== company.companyID) {
+        admin.companyID = company.companyID;
+        await admin.save();
+      }
+    } else {
+      const admin = new Admin({
+        email: email,
+        status: "active",
+        companyID: company.companyID,
+        role: "admin",
+      });
+
+      await admin.save();
+    }
+
     res.status(200).json({ message: "Joined project successfully" });
   } catch (error) {
     return res.status(500).send(error.message);
@@ -1983,6 +2047,38 @@ export const cancelProjectInvite = async (req, res) => {
     });
   }
 };
+
+const createDemoProjects = async (companyID, email) => {
+  try {
+    const defaultProjects = await Project.find({
+      status: "active",
+      projectID: { $regex: /demo/i },
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+    });
+
+    const defaultAppConfigs = await AppConfig.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    const defaultPlayerConfigs = await PlayerConfig.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    const defaultMappings = await Master.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    return { code: "SUCCESS", message: "Demo projects created successfully" };
+  } catch (error) {
+    return { code: "ERROR", message: "Cloning Failed", error: error.message };
+  }
+}; // NOT READY
 
 // export const cloneCompany = async (req, res) => {
 //   try {
