@@ -139,7 +139,7 @@ const ConfigTableComponent = (props: Props) => {
     return (
         <section className="text-sm flex flex-col items-center justify-center dark:text-white dark:bg-darkblue300">
             <div className="w-full border bg-white">
-                <div className="overflow-y-auto h-80">
+                <div className="overflow-y-auto h-fit">
                     <table className="min-w-full leading-normal">
                         <thead className="sticky top-0">
                             <tr>
