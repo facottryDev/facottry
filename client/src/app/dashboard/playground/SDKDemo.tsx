@@ -22,13 +22,13 @@ export const SDKDemo = (props: Props) => {
         if (!activeProject) return;
 
         try {
-            const mapping = await axios_scale.post('/get-mapping', {
+            const result = await axios_scale.post('/get-mapping', {
                 projectID: activeProject?.projectID,
                 filter: scaleFilter,
                 noCache: true
             });
 
-            setActiveMapping(mapping.data.data);
+            setActiveMapping(result.data.data);
         } catch (error: any) {
             console.log(error.response.data);
         }

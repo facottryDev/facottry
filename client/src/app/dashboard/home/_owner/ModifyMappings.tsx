@@ -5,8 +5,9 @@ import { axios_config } from "@/lib/axios"
 import React from 'react'
 import { IoPencil, IoTrashBin } from "react-icons/io5";
 import Filter from "@/components/dashboard/Filter";
-import { MdDeleteSweep, MdEditNote, MdGridView } from "react-icons/md";
+import { MdDeleteSweep, MdEditNote, MdGridView, MdOutlinePlayCircleFilled } from "react-icons/md";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 type Props = {}
 
@@ -14,8 +15,9 @@ type Props = {}
 const ModifyMapping = (props: Props) => {
     const [allMappings, setAllMappings] = useState<any>();
     const activeProject = userStore(state => state.activeProject);
-    const [activeFilter, setActiveFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter]);
+    const [activeFilter, setActiveFilter, setScaleFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter, state.setScaleFilter]);
     const [setDashboardTab] = globalStore(state => [state.setDashboardTab]);
+    const router = useRouter();
 
     const handleEditMapping = (mapping: any) => {
         if (mapping) {
@@ -64,6 +66,14 @@ const ModifyMapping = (props: Props) => {
         }
     }
 
+    const handleGoToPlayground = (mapping: any) => {
+        if (mapping) {
+            console.log(mapping.filter)
+            setScaleFilter(mapping.filter);
+            router.push('/dashboard/playground');
+        }
+    }
+
     useEffect(() => {
         getAllMappings();
     }, [activeProject, activeFilter])
@@ -99,11 +109,15 @@ const ModifyMapping = (props: Props) => {
                                         ))}
                                     </td>
                                     <td className="border-b border-gray-200 text-sm">
-                                        <button className="ml-2 p-2 rounded-full bg-primary600 text-white hover:bg-primary700 transition-all" onClick={() => handleEditMapping(mapping)}>
+                                        <button title="View in Playground" className="ml-2 p-2 rounded-full bg-primary600 text-white hover:bg-primary700 transition-all" onClick={() => handleGoToPlayground(mapping)}>
+                                            <MdOutlinePlayCircleFilled fontSize={18} />
+                                        </button>
+
+                                        <button title="Edit Mapping" className="ml-2 p-2 rounded-full bg-primary600 text-white hover:bg-primary700 transition-all" onClick={() => handleEditMapping(mapping)}>
                                             <MdEditNote fontSize={18} />
                                         </button>
 
-                                        <button className="ml-2 p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
+                                        <button title="Delete Mapping" className="ml-2 p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
                                             if (window.confirm('Are you sure?')) {
                                                 handleDeleteMapping(mapping);
                                             }
