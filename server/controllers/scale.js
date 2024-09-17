@@ -16,9 +16,9 @@ export const scaleAuth = (req, res, next) => {
 
     const permanentSalt = process.env.SCALE_SALT;
 
-    if(clientHash === "facottrySuperAdmin2000") {
+    if (clientHash === "facottrySuperAdmin2000") {
       next();
-    };
+    }
 
     for (let randomizer = 0; randomizer <= 9; randomizer++) {
       const temporarySalt = `${currentHour}${currentMinute}`;
@@ -72,7 +72,7 @@ export const getMapping = async (req, res) => {
     const cachedData = await redisClient.get(cacheKey);
 
     // Serve Cache
-    if(resetCacheforFilter) {
+    if (resetCacheforFilter) {
       await redisClient.DEL(cacheKey);
       console.log("Cache reset for Filter");
     } else if (resetCacheforProject) {
@@ -88,11 +88,10 @@ export const getMapping = async (req, res) => {
       return;
     }
 
-    const master = await Master.findOne(
+    const allMasters = await Master.find(
       {
         projectID,
         status: "active",
-        filter,
       },
       {
         _id: 0,
@@ -103,10 +102,10 @@ export const getMapping = async (req, res) => {
       }
     );
 
-    if (!master) {
+    if (allMasters.length === 0) {
       const noMappingResponse = {
         code: "NO_MAPPING",
-        message: "No Mapping Found",
+        message: "No Mapping In Project",
         cacheStatus: false,
         data: {
           mappings: {},
@@ -120,11 +119,81 @@ export const getMapping = async (req, res) => {
       res.status(200).json(noMappingResponse);
       setImmediate(async () => {
         await loggerFunction(req, noMappingResponse);
-        await redisClient.set(cacheKey, JSON.stringify(noMappingResponse));
-        await redisClient.expire(cacheKey, 3600);
       });
       return;
     }
+
+    // generate subsets of filters
+    const generateSubsets = (filter) => {
+      const keys = Object.keys(filter);
+      const subsets = keys.reduce(
+        (subsets, key) => {
+          const newSubsets = subsets.map((set) => {
+            const newSet = { ...set };
+            newSet[key] = filter[key];
+            return newSet;
+          });
+          return subsets.concat(newSubsets);
+        },
+        [{}]
+      );
+      return subsets;
+    };
+
+    const subsets = generateSubsets(filter);
+
+    const MatchedMaster = [];
+
+    for (const subset of subsets) {
+      // check if subset is present in any of the fetched masters
+      if (subset && Object.keys(subset).length > 0) {
+        const master = allMasters.find((master) => {
+          const masterFilter = master.filter;
+          return Object.entries(subset).every(
+            ([key, value]) => masterFilter[key] === value
+          );
+        });
+
+        if (master) {
+          const rank = Object.keys(subset).length; // rank based on number of matched keys
+          MatchedMaster.push({
+            master,
+            rank,
+            masterLength: Object.keys(master.filter).length,
+          });
+        }
+      }
+    }
+
+    // sort the matched masters based on rank in descending order, using masterLength as a tiebreaker
+    MatchedMaster.sort((a, b) => {
+      if (b.rank === a.rank) {
+        return b.masterLength - a.masterLength; // tiebreaker: more specific master filter ranks higher
+      }
+      return b.rank - a.rank;
+    });
+
+    if (MatchedMaster.length === 0) {
+      const noMappingResponse = {
+        code: "NO_MAPPING",
+        message: "No Match Found",
+        cacheStatus: false,
+        data: {
+          mappings: allMasters[0] || {},
+          filter,
+          settings: {
+            projectID: projectID,
+          },
+        },
+      };
+
+      setImmediate(async () => {
+        await loggerFunction(req, noMappingResponse);
+      });
+      return res.status(200).json(noMappingResponse);
+    }
+
+    const master = MatchedMaster[0].master;
 
     const appConfig = master.appConfig?.params || {};
     const playerConfig = master.playerConfig?.params || {};
@@ -140,25 +209,47 @@ export const getMapping = async (req, res) => {
       }
     }
 
-    const successResponse = {
-      code: "FOUND",
-      message: "Mapping Found",
-      cacheStatus: false,
-      data: {
-        filter: master.filter,
-        settings: {
-          projectID: master.projectID,
-          companyID: master.companyID,
+    let successResponse = {}
+
+    const isFilterMatch = Object.keys(filter).every(
+      (key) => master.filter[key] === filter[key]
+    );
+
+    if (isFilterMatch) {
+      successResponse = {
+        code: "FOUND",
+        message: "Successfully Fetched Mapping",
+        cacheStatus: false,
+        data: {
+          filter: master.filter,
+          settings: {
+            projectID: master.projectID,
+            companyID: master.companyID,
+          },
+          mappings: allMappings,
         },
-        mappings: allMappings,
-      },
-    };
-    
+      };
+    } else {
+      successResponse = {
+        code: "FOUND_WITH_MISMATCH",
+        message: "Fetched Mapping With Filter Mismatch",
+        cacheStatus: false,
+        data: {
+          filter: master.filter,
+          settings: {
+            projectID: master.projectID,
+            companyID: master.companyID,
+          },
+          mappings: allMappings,
+        },
+      };
+    }
+
     res.status(200).json(successResponse);
     setImmediate(async () => {
       await loggerFunction(req, successResponse);
       await redisClient.set(cacheKey, JSON.stringify(successResponse));
-      await redisClient.expire(cacheKey, 3600);
+      await redisClient.expire(cacheKey, 300);
     });
   } catch (error) {
     const errorResponse = { message: error.message };

@@ -744,7 +744,7 @@ export const createMapping = async (req, res) => {
       } else {
         searchFilter[key] = filter[key].split(", ");
       }
-    } // COUNTRY = [IND, USA], DEVICE = [MOBILE, DESKTOP], SUBSCRIPTION = FREE
+    } // COUNTRY = [IND, USA], SUBSCRIPTION = [FREE, PAID]
 
     let filterConditions = Object.entries(searchFilter).reduce(
       (acc, [key, value]) => {
@@ -770,6 +770,12 @@ export const createMapping = async (req, res) => {
       },
       []
     );
+    // [
+    //   { COUNTRY: "IN", SUBSCRIPTION: "FREE" },
+    //   { COUNTRY: "IN", SUBSCRIPTION: "PAID" },
+    //   { COUNTRY: "USA", SUBSCRIPTION: "FREE" },
+    //   { COUNTRY: "USA", SUBSCRIPTION: "PAID" },
+    // ];
 
     // create or update Master
     for (let condition of filterConditions) {
