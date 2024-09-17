@@ -2,7 +2,7 @@ import Master from "../models/scale/master.js";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
-import axios from "axios";
+import axios, { all } from "axios";
 import { redisClient } from "../server.js";
 
 // SCALE AUTHENTICATION
@@ -174,16 +174,21 @@ export const getMapping = async (req, res) => {
     });
 
     if (MatchedMaster.length === 0) {
+      const mappings = {
+        appConfig: allMasters[0].appConfig?.params || {},
+        playerConfig: allMasters[0].playerConfig?.params || {},
+      }
+
       const noMappingResponse = {
         code: "NO_MAPPING",
-        message: "No Match Found",
+        message: "Serving Default Mapping",
         cacheStatus: false,
         data: {
-          mappings: allMasters[0] || {},
-          filter,
+          filter: allMasters[0].filter,
           settings: {
             projectID: projectID,
           },
+          mappings,
         },
       };
 
@@ -198,14 +203,14 @@ export const getMapping = async (req, res) => {
     const appConfig = master.appConfig?.params || {};
     const playerConfig = master.playerConfig?.params || {};
 
-    const allMappings = {
+    const mappings = {
       appConfig,
       playerConfig,
     };
 
     if (master.customConfig) {
       for (const key in master.customConfig) {
-        allMappings[key] = master.customConfig[key].params;
+        mappings[key] = master.customConfig[key].params;
       }
     }
 
@@ -226,7 +231,7 @@ export const getMapping = async (req, res) => {
             projectID: master.projectID,
             companyID: master.companyID,
           },
-          mappings: allMappings,
+          mappings,
         },
       };
     } else {
@@ -240,7 +245,7 @@ export const getMapping = async (req, res) => {
             projectID: master.projectID,
             companyID: master.companyID,
           },
-          mappings: allMappings,
+          mappings,
         },
       };
     }
