@@ -64,40 +64,20 @@ const ConfigTableComponent = (props: Props) => {
         }
     }
 
-    const handleClone = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        const form = e.currentTarget.form;
+    const handleClone = async (config: any) => {
+        const configID = config.configID;
 
-        if (form) {
-            const formData = new FormData(form);
-
-            const configID = formData.get('configID');
-            const name = formData.get('ConfigName');
-            const desc = formData.get('ConfigDesc');
-            const params = formData.get('ConfigParams') as string;
-
-            try {
-                JSON.parse(params);
-            } catch (error) {
-                toast.error('Invalid JSON format for Params');
-                return;
-            }
-
-            try {
-                await axios_config.post(`/clone`, {
-                    configID,
-                    name,
-                    desc,
-                    params: JSON.parse(params)
-                });
-                toast.success("Config cloned successfully");
-                fetchConfigs(activeProject?.projectID);
-                props.getConfigs();
-                setconfigModal("");
-            } catch (error: any) {
-                console.log(error);
-                toast.error(error.response.data.message);
-            }
+        try {
+            await axios_config.post(`/clone`, {
+                configID
+            });
+            toast.success("Config cloned successfully");
+            fetchConfigs(activeProject?.projectID);
+            props.getConfigs();
+            setconfigModal("");
+        } catch (error: any) {
+            console.log(error.response.data);
+            toast.error(error.response.data?.message);
         }
     }
 
@@ -354,8 +334,8 @@ const ConfigTableComponent = (props: Props) => {
 
                                                         <div className="flex w-full gap-2 justify-end px-4">
                                                             <button type="button" className="font-medium text-center text-sm border py-2 px-5 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={
-                                                                (e) => {
-                                                                    window.confirm('Are you sure?') && handleClone(e);
+                                                                () => {
+                                                                    window.confirm('Are you sure?') && handleClone(config);
                                                                 }
                                                             }>Clone Config</button>
                                                             <button

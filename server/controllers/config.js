@@ -5,10 +5,10 @@ import CustomConfig from "../models/configs/customConfig.js";
 import Master from "../models/scale/master.js";
 import { generateID } from "../lib/helpers.js";
 
-// CREATE NEW APP CONFIG - PROJECT OWNER / EDITOR
-export const addAppConfig = async (req, res) => {
+// ADD APP / PLAYER CONFIG - PROJECT OWNER / EDITOR
+export const addConfig = async (req, res) => {
   try {
-    const { projectID, name, desc, params } = req.body;
+    const { projectID, name, desc, params, type } = req.body;
     const owner = req.session.username || req.user.email;
 
     switch (true) {
@@ -18,6 +18,8 @@ export const addAppConfig = async (req, res) => {
         return res.status(400).json({ message: "Name is required" });
       case !params || Object.keys(params).length === 0:
         return res.status(400).json({ message: "Params are required" });
+      case !type:
+        return res.status(400).json({ message: "Type is required" });
     }
 
     // Check if Project exists & user is authorized
@@ -28,93 +30,102 @@ export const addAppConfig = async (req, res) => {
         return res.status(404).json({ message: "Project not found" });
       case !project.owners.includes(owner) && !project.editors.includes(owner):
         return res.status(403).json({ message: "Unauthorized" });
+      case !project.configTypes.find((configType) => configType.name === type):
+        return res.status(400).json({ message: "Invalid Config Type" });
     }
 
-    // Check if AppConfig already exists
-    const appConfig = await AppConfig.findOne({
-      status: "active",
-      projectID,
-      params,
-    });
-
-    if (appConfig) {
-      return res.status(409).json({
-        message: "AppConfig already exists",
-        appConfigId: appConfig.configID,
+    if (type === "app") {
+      const appConfig = await AppConfig.findOne({
+        status: "active",
+        projectID,
+        $or: [{ name }, { params }],
       });
+
+      if (appConfig) {
+        return res.status(409).json({
+          message: "a config already exists with same name or params",
+          name: appConfig.name,
+          configID: appConfig.configID,
+        });
+      }
+
+      const newAppConfig = new AppConfig({
+        configID: generateID(`app_${project.name}`),
+        projectID,
+        companyID: project.companyID,
+        name,
+        type,
+        desc,
+        params,
+        createdBy: owner,
+        lastModifiedBy: owner,
+      });
+
+      await newAppConfig.save();
+    } else if (type === "player") {
+      const playerConfig = await PlayerConfig.findOne({
+        status: "active",
+        projectID,
+        $or: [{ name }, { params }],
+      });
+
+      if (playerConfig) {
+        return res.status(409).json({
+          message: "a config already exists with same name or params",
+          name: playerConfig.name,
+          configID: playerConfig.configID,
+        });
+      }
+
+      const newPlayerConfig = new PlayerConfig({
+        configID: generateID(`player_${project.name}`),
+        projectID,
+        companyID: project.companyID,
+        name,
+        type,
+        desc,
+        params,
+        createdBy: owner,
+        lastModifiedBy: owner,
+      });
+
+      await newPlayerConfig.save();
+    } else {
+      const customConfig = await CustomConfig.findOne({
+        status: "active",
+        projectID,
+        type,
+        $or: [{ name }, { params }],
+      });
+
+      if (customConfig) {
+        return res.status(409).json({
+          message: "a config already exists with same name or params",
+          configId: customConfig.configID,
+          name: customConfig.name,
+          type: customConfig.type,
+        });
+      }
+
+      const newCustomConfig = new CustomConfig({
+        configID: generateID(`${type}_${project.name}`),
+        projectID,
+        companyID: project.companyID,
+        name,
+        type,
+        desc,
+        params,
+        createdBy: owner,
+        lastModifiedBy: owner,
+      });
+
+      await newCustomConfig.save();
     }
 
-    // Create new AppConfig
-    const newAppConfig = new AppConfig({
-      configID: generateID(`AC_${project.name}`),
-      projectID,
-      companyID: project.companyID,
-      name,
-      desc,
-      params,
-    });
-    await newAppConfig.save();
-
-    res
-      .status(200)
-      .json({ message: "Success", appConfigId: newAppConfig.configID });
+    res.status(201).json({ message: "Success" });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json(error);
-  }
-};
-
-// CREATE NEW PLAYER CONFIG - PROJECT OWNER / EDITOR
-export const addPlayerConfig = async (req, res) => {
-  try {
-    const { projectID, params, name, desc } = req.body;
-    const owner = req.session.username || req.user.email;
-
-    // Check if Project exists & Authorized
-    const project = await Project.findOne({ status: "active", projectID });
-
-    switch (true) {
-      case !project:
-        return res.status(404).json({ message: "Project not found" });
-      case !project.owners.includes(owner) && !project.editors.includes(owner):
-        return res.status(403).json({ message: "Unauthorized" });
-    }
-
-    // Check if PlayerConfig already exists
-    const playerConfig = await PlayerConfig.findOne({
-      status: "active",
-      projectID,
-      params,
-    });
-    if (playerConfig) {
-      return res.status(409).json({
-        message: "PlayerConfig already exists",
-        playerConfigId: playerConfig.configID,
-      });
-    }
-
-    // Create new PlayerConfig
-    const newPlayerConfig = new PlayerConfig({
-      configID: generateID(`PC_${project.name}`),
-      projectID,
-      companyID: project.companyID,
-      name,
-      desc,
-      params,
-    });
-    await newPlayerConfig.save();
-
-    res
-      .status(201)
-      .json({ message: "Success", playerConfigId: newPlayerConfig.configID });
-  } catch (error) {
-    if (error.details) {
-      return res
-        .status(400)
-        .json(error.details.map((detail) => detail.message).join(", "));
-    }
-
-    return res.status(500).send(error.message);
   }
 };
 
@@ -319,7 +330,7 @@ export const modifyConfig = async (req, res) => {
 // CLONE CONFIG - PROJECT OWNER / EDITOR
 export const cloneConfig = async (req, res) => {
   try {
-    const { configID, name, desc, params } = req.body;
+    const { configID } = req.body;
     const user = req.session.username || req.user.email;
 
     if (configID.startsWith("app") || configID.startsWith("ac")) {
@@ -342,9 +353,9 @@ export const cloneConfig = async (req, res) => {
         configID: generateID(`app_${project.name}`),
         projectID: appConfig.projectID,
         companyID: appConfig.companyID,
-        desc: desc || appConfig.desc,
-        name: name + "_copy" || appConfig.name + "_copy",
-        params: params || appConfig.params,
+        desc: appConfig.desc,
+        name: appConfig.name + "_clone",
+        params: appConfig.params,
         createdBy: user,
         lastModifiedBy: user,
       });
@@ -372,9 +383,9 @@ export const cloneConfig = async (req, res) => {
         configID: generateID(`player_${project.name}`),
         projectID: playerConfig.projectID,
         companyID: playerConfig.companyID,
-        desc: desc || playerConfig.desc,
-        name: name || playerConfig.name,
-        params: params || playerConfig.params,
+        desc: playerConfig.desc,
+        name: playerConfig.name + "_clone",
+        params: playerConfig.params,
         createdBy: user,
         lastModifiedBy: user,
       });
@@ -402,9 +413,9 @@ export const cloneConfig = async (req, res) => {
         configID: generateID(`${customConfig.type}_${project.name}`),
         projectID: customConfig.projectID,
         companyID: customConfig.companyID,
-        desc: desc || customConfig.desc,
-        name: name || customConfig.name,
-        params: params || customConfig.params,
+        desc: customConfig.desc,
+        name: customConfig.name + "_clone",
+        params: customConfig.params,
         createdBy: user,
         lastModifiedBy: user,
       });
@@ -414,70 +425,6 @@ export const cloneConfig = async (req, res) => {
     return res.status(200).json({ message: "Success" });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).send(error.message);
-  }
-};
-
-// GET ALL APP CONFIGS - PROJECT OWNER / EDITOR / VIEWER
-export const getAllAppConfigs = async (req, res) => {
-  try {
-    const { projectID } = req.query;
-    const user = req.session.username || req.user.email;
-
-    // Check if Project exists & Authorized
-    const project = await Project.findOne(
-      { status: "active", projectID },
-      { owners: 1, editors: 1, viewers: 1, _id: 0 }
-    );
-
-    switch (true) {
-      case !project:
-        return res.status(404).json({ message: "Project not found" });
-      case !project.owners.includes(user) &&
-        !project.editors.includes(user) &&
-        !project.viewers.includes(user):
-        return res.status(403).json({ message: "Unauthorized" });
-    }
-
-    const result = await AppConfig.find(
-      { status: "active", projectID },
-      { _id: 0, __v: 0 }
-    );
-
-    res.status(200).json(result);
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
-};
-
-// GET ALL PLAYER CONFIGS - PROJECT OWNER / EDITOR / VIEWER
-export const getAllPlayerConfigs = async (req, res) => {
-  try {
-    const { projectID } = req.query;
-    const user = req.session.username || req.user.email;
-
-    // Check if Project exists & Authorized
-    const project = await Project.findOne(
-      { status: "active", projectID },
-      { owners: 1, editors: 1, viewers: 1, _id: 0 }
-    );
-
-    switch (true) {
-      case !project:
-        return res.status(404).json({ message: "Project not found" });
-      case !project.owners.includes(user) &&
-        !project.editors.includes(user) &&
-        !project.viewers.includes(user):
-        return res.status(403).json({ message: "Unauthorized" });
-    }
-
-    const result = await PlayerConfig.find(
-      { status: "active", projectID },
-      { _id: 0, __v: 0 }
-    );
-
-    res.status(200).json(result);
-  } catch (error) {
     return res.status(500).send(error.message);
   }
 };
@@ -525,129 +472,6 @@ export const getAllConfigs = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).send(error.message);
-  }
-};
-
-export const addConfig = async (req, res) => {
-  try {
-    const { projectID, name, desc, params, type } = req.body;
-    const owner = req.session.username || req.user.email;
-
-    switch (true) {
-      case !projectID:
-        return res.status(400).json({ message: "ProjectID is required" });
-      case !name:
-        return res.status(400).json({ message: "Name is required" });
-      case !params || Object.keys(params).length === 0:
-        return res.status(400).json({ message: "Params are required" });
-      case !type:
-        return res.status(400).json({ message: "Type is required" });
-    }
-
-    // Check if Project exists & user is authorized
-    const project = await Project.findOne({ status: "active", projectID });
-
-    switch (true) {
-      case !project:
-        return res.status(404).json({ message: "Project not found" });
-      case !project.owners.includes(owner) && !project.editors.includes(owner):
-        return res.status(403).json({ message: "Unauthorized" });
-      case !project.configTypes.find((configType) => configType.name === type):
-        return res.status(400).json({ message: "Invalid Config Type" });
-    }
-
-    if (type === "app") {
-      const appConfig = await AppConfig.findOne({
-        status: "active",
-        projectID,
-        $or: [{ name }, { params }],
-      });
-
-      if (appConfig) {
-        return res.status(409).json({
-          message: "a config already exists with same name or params",
-          name: appConfig.name,
-          configID: appConfig.configID,
-        });
-      }
-
-      const newAppConfig = new AppConfig({
-        configID: generateID(`app_${project.name}`),
-        projectID,
-        companyID: project.companyID,
-        name,
-        type,
-        desc,
-        params,
-        createdBy: owner,
-        lastModifiedBy: owner,
-      });
-
-      await newAppConfig.save();
-    } else if (type === "player") {
-      const playerConfig = await PlayerConfig.findOne({
-        status: "active",
-        projectID,
-        $or: [{ name }, { params }],
-      });
-
-      if (playerConfig) {
-        return res.status(409).json({
-          message: "a config already exists with same name or params",
-          name: playerConfig.name,
-          configID: playerConfig.configID,
-        });
-      }
-
-      const newPlayerConfig = new PlayerConfig({
-        configID: generateID(`player_${project.name}`),
-        projectID,
-        companyID: project.companyID,
-        name,
-        type,
-        desc,
-        params,
-        createdBy: owner,
-        lastModifiedBy: owner,
-      });
-
-      await newPlayerConfig.save();
-    } else {
-      const customConfig = await CustomConfig.findOne({
-        status: "active",
-        projectID,
-        type,
-        $or: [{ name }, { params }],
-      });
-
-      if (customConfig) {
-        return res.status(409).json({
-          message: "a config already exists with same name or params",
-          configId: customConfig.configID,
-          name: customConfig.name,
-          type: customConfig.type,
-        });
-      }
-
-      const newCustomConfig = new CustomConfig({
-        configID: generateID(`${type}_${project.name}`),
-        projectID,
-        companyID: project.companyID,
-        name,
-        type,
-        desc,
-        params,
-        createdBy: owner,
-        lastModifiedBy: owner,
-      });
-
-      await newCustomConfig.save();
-    }
-
-    res.status(201).json({ message: "Success" });
-  } catch (error) {
-    console.log(error.message);
-    return res.status(500).json(error);
   }
 };
 
