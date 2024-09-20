@@ -11,6 +11,7 @@ const ContactForm = () => {
             const data = {
                 email: e.currentTarget.email.value,
                 subject: e.currentTarget.subject.value,
+                phone: e.currentTarget.phone.value,
                 message: e.currentTarget.message.value
             }
 
@@ -20,10 +21,18 @@ const ContactForm = () => {
                 return;
             }
 
-            const response = await axios_admin.post('/update-contact', data);
+            if (data.phone.length > 0) {
+                const phone_regex = /^[0-9]{10}$/;
+                if (!phone_regex.test(data.phone)) {
+                    toast.error('Invalid phone number');
+                    return;
+                }
+            }
+
+            await axios_admin.post('/update-contact', data);
             toast.success('Sent successfully');
         } catch (error: any) {
-            console.log(error.message);
+            console.log(error);
             toast.error('Failed to send message');
         }
 
@@ -41,6 +50,10 @@ const ContactForm = () => {
                 <div>
                     <label htmlFor="subject" className="block mb-2 text-sm font-medium text-gray-900 dark:text-zinc-200">Subject</label>
                     <input type="text" id="subject" className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-zinc-300 dark:placeholder:text-zinc-600" placeholder="What is this related to?" required />
+                </div>
+                <div>
+                    <label htmlFor="phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-zinc-200">Phone number (Optional)</label>
+                    <input type="tel" id="phone" className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-zinc-300 dark:placeholder:text-zinc-600" placeholder="How can we reach you?" />
                 </div>
                 <div className="sm:col-span-2">
                     <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-900 dark:text-zinc-200">Your message</label>

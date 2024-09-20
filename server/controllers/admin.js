@@ -11,7 +11,7 @@ import Admin from "../models/admin/admin.js";
 // UPDATE CONTACT MESSAGES
 export const updateContacts = async (req, res) => {
   try {
-    const { email, subject, message } = req.body;
+    const { email, subject, message, phone } = req.body;
 
     // check if email exists
     const contact = await Contact.findOne({
@@ -21,11 +21,27 @@ export const updateContacts = async (req, res) => {
     if (!contact) {
       const newContact = new Contact({
         email,
+        phone,
         messages: [{ subject, message }],
       });
 
       await newContact.save();
-      return res.status(200).json({ message: "Message sent successfully" });
+
+      res.status(200).json({ message: "Message sent successfully" });
+
+      const mailOptions = {
+        to: "facottry.dev@gmail.com",
+        subject: "New Message - Flagment",
+        text: `You have received a new message from ${email}.\n\nSubject: ${subject}\n\nMessage: ${message}`,
+      };
+
+      setImmediate(async () => {
+        try {
+          await sendMail(mailOptions);
+        } catch (error) {
+          console.error("Error sending email:", error);
+        }
+      });
     } else {
       contact.messages.push({ subject, message });
       await contact.save();

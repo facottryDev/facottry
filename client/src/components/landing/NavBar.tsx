@@ -30,7 +30,7 @@ const NavBar = ({ isLoggedin }: { isLoggedin: boolean; }) => {
                         className="hidden dark:block"
                     />
                     <p className="hidden sm:block font-extrabold text-2xl dark:text-slate-200 text-black">
-                        Fac<span className="text-primary dark:text-primary600">OTT</span>ry
+                        <span className="text-primary dark:text-primary600">Flag</span>ment
                     </p>
                 </Link>
                 {pathname === '/' ? (
