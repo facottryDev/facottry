@@ -4,7 +4,6 @@ import { axios_auth, axios_scale } from "@/lib/axios"
 import ContactForm from "@/components/landing/ContactForm"
 import NavBar from "@/components/landing/NavBar"
 import { Hero } from "@/components/landing/Hero"
-import Notibar from "@/components/global/Notibar"
 import { globalStore } from "@/lib/store"
 import Demo from "@/components/landing/Demo"
 

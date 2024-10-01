@@ -2,7 +2,7 @@
 import { userStore } from '@/lib/store'
 import { axios_admin } from "@/lib/axios"
 import { toast } from "react-toastify"
-import { MdDeleteSweep, MdEditNote } from "react-icons/md"
+import { MdDeleteSweep } from "react-icons/md"
 import { useState } from "react"
 import Modal from 'react-modal';
 import { IoClose } from "react-icons/io5"
