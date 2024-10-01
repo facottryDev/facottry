@@ -154,7 +154,6 @@ const ManageUsers = (props: Props) => {
         </div>
       </div>
 
-
       <Modal
         isOpen={InviteUserModal}
         onRequestClose={() => setInviteUserModal(false)}

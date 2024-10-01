@@ -11,8 +11,6 @@ const AboutPage = () => {
     const [data, setData] = React.useState<string>();
     const [scaleData] = globalStore((state) => [state.scaleData]);
 
-    console.log(scaleData)
-
     useEffect(() => {
         setData(scaleData?.about);
     }, [scaleData])

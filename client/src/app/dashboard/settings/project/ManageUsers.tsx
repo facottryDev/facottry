@@ -65,9 +65,8 @@ const ManageUsers = (props: {}) => {
                     <label className="font-bold leading-6 text-gray-900 dark:text-slate-200">Manage Users</label>
 
                     <button
-                        type="button"
-                        className="flex items-center text-sm font-semibold leading-6 text-primary hover:underline"
                         onClick={() => setInviteUserModal(true)}
+                        className="border font-medium p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all cursor-pointer"
                     >
                         Invite User
                     </button>
