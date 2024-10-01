@@ -38,14 +38,13 @@ const FilterEditorComponent = (props: Props) => {
             const data = Object.fromEntries(formData.entries());
 
             const filter = {
-                name: String(data.filterName).toUpperCase(),
+                name: String(data.filterName),
                 values: Array.from(new Set(
                     String(data.filterValues)
-                        .toUpperCase()
                         .split(',')
-                        .map((value: string) => value.trim())
+                        .map((value: string) => value.trim().toLowerCase())
                 )),
-                default: String(data.filterDefault).toUpperCase(),
+                default: String(data.filterDefault).toLowerCase(),
             };
 
             const result = await axios_admin.post("/filter/add", { filter, projectID: activeProject?.projectID });
@@ -66,14 +65,13 @@ const FilterEditorComponent = (props: Props) => {
             const data = Object.fromEntries(formData.entries());
 
             const filter = {
-                name: String(data.filterName).toUpperCase(),
+                name: String(data.filterName),
                 values: Array.from(new Set(
                     String(data.filterValues)
-                        .toUpperCase()
                         .split(',')
-                        .map((value: string) => value.trim())
+                        .map((value: string) => value.trim().toLowerCase())
                 )),
-                default: String(data.filterDefault).toUpperCase(),
+                default: String(data.filterDefault).toLowerCase(),
             };
 
             const result = await axios_admin.post("/filter/update", { filter, projectID: activeProject?.projectID });

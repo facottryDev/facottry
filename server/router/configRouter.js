@@ -1,11 +1,7 @@
 import { Router } from "express";
 import {
-  addAppConfig,
-  addPlayerConfig,
   createMapping,
   deleteMapping,
-  getAllAppConfigs,
-  getAllPlayerConfigs,
   deleteConfig,
   modifyConfig,
   cloneConfig,
@@ -27,12 +23,6 @@ router.post("/clone", cloneConfig);
 router.post("/create-mapping", createMapping);
 router.post("/delete-mapping", deleteMapping);
 router.post("/mapping/all", getAllMappings);
-
-// LEGACY
-router.post("/add-app-config", addAppConfig);
-router.post("/add-player-config", addPlayerConfig);
-router.get("/get-app-configs", getAllAppConfigs);
-router.get("/get-player-configs", getAllPlayerConfigs);
 
 router.get("/", (req, res) => {
   res.status(200).json({ message: "Config Router" });

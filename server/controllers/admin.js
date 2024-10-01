@@ -6,12 +6,12 @@ import PlayerConfig from "../models/configs/playerConfig.js";
 import CustomConfig from "../models/configs/customConfig.js";
 import Master from "../models/scale/master.js";
 import Contact from "../models/admin/contact.js";
-import mongoose from "mongoose";
+import Admin from "../models/admin/admin.js";
 
 // UPDATE CONTACT MESSAGES
 export const updateContacts = async (req, res) => {
   try {
-    const { email, subject, message } = req.body;
+    const { email, subject, message, phone } = req.body;
 
     // check if email exists
     const contact = await Contact.findOne({
@@ -21,11 +21,27 @@ export const updateContacts = async (req, res) => {
     if (!contact) {
       const newContact = new Contact({
         email,
+        phone,
         messages: [{ subject, message }],
       });
 
       await newContact.save();
-      return res.status(200).json({ message: "Message sent successfully" });
+
+      res.status(200).json({ message: "Message sent successfully" });
+
+      const mailOptions = {
+        to: "facottry.dev@gmail.com",
+        subject: "New Message - Flagment",
+        text: `You have received a new message from ${email}.\n\nSubject: ${subject}\n\nMessage: ${message}`,
+      };
+
+      setImmediate(async () => {
+        try {
+          await sendMail(mailOptions);
+        } catch (error) {
+          console.error("Error sending email:", error);
+        }
+      });
     } else {
       contact.messages.push({ subject, message });
       await contact.save();
@@ -108,38 +124,6 @@ export const getAdmin = async (req, res) => {
   }
 };
 
-const createDemoProjects = async (companyID, email) => {
-  try {
-    const defaultProjects = await Project.find({
-      status: "active",
-      projectID: { $regex: /demo/i },
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-    });
-
-    const defaultAppConfigs = await AppConfig.find({
-      status: "active",
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-      projectID: { $regex: /demo/i },
-    });
-
-    const defaultPlayerConfigs = await PlayerConfig.find({
-      status: "active",
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-      projectID: { $regex: /demo/i },
-    });
-
-    const defaultMappings = await Master.find({
-      status: "active",
-      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
-      projectID: { $regex: /demo/i },
-    });
-
-    return { code: "SUCCESS", message: "Demo projects created successfully" };
-  } catch (error) {
-    return { code: "ERROR", message: "Cloning Failed", error: error.message };
-  }
-}; // NOT READY
-
 // ADD COMPANY - COMPANY OWNER
 export const addCompany = async (req, res) => {
   try {
@@ -170,6 +154,30 @@ export const addCompany = async (req, res) => {
     });
 
     const company = await newCompany.save();
+
+    // Check if admin user exists
+    const admin = await Admin.findOne({
+      status: "active",
+      email,
+      role: "admin",
+    });
+
+    if (admin) {
+      if (admin.companyID !== company.companyID) {
+        admin.companyID = company.companyID;
+        await admin.save();
+      }
+    } else {
+      const admin = new Admin({
+        email: email,
+        status: "active",
+        companyID: company.companyID,
+        role: "admin",
+      });
+
+      await admin.save();
+    }
+
     // await createDemoProjects(companyID, email);
 
     // if (demoResult.code === "ERROR") {
@@ -941,7 +949,7 @@ export const acceptJoinCompanyRequest = async (req, res) => {
     const owner = req.session.username || req.user.email;
     const { email, role } = req.body;
 
-    console.log(role)
+    console.log(role);
 
     const company = await Company.findOne({
       status: "active",
@@ -978,6 +986,29 @@ export const acceptJoinCompanyRequest = async (req, res) => {
       (request) => request !== email
     );
     await company.save();
+
+    // Check if admin user exists
+    const admin = await Admin.findOne({
+      status: "active",
+      email,
+      role: "admin",
+    });
+
+    if (admin) {
+      if (admin.companyID !== company.companyID) {
+        admin.companyID = company.companyID;
+        await admin.save();
+      }
+    } else {
+      const admin = new Admin({
+        email: email,
+        status: "active",
+        companyID: company.companyID,
+        role: "admin",
+      });
+
+      await admin.save();
+    }
 
     // Remove all join requests from user
     await Company.updateMany(
@@ -1166,6 +1197,9 @@ export const leaveCompany = async (req, res) => {
       (employee) => employee !== email
     );
     await company.save();
+
+    // Update Admin's company
+    await Admin.updateOne({ status: "active", email }, { companyID: "" });
 
     res.status(200).json({ message: "Success!" });
   } catch (error) {
@@ -1394,6 +1428,29 @@ export const verifyCompanyInvite = async (req, res) => {
     );
     await company.save();
 
+    // Check if admin user exists
+    const admin = await Admin.findOne({
+      status: "active",
+      email,
+      role: "admin",
+    });
+
+    if (admin) {
+      if (admin.companyID !== company.companyID) {
+        admin.companyID = company.companyID;
+        await admin.save();
+      }
+    } else {
+      const admin = new Admin({
+        email: email,
+        status: "active",
+        companyID: company.companyID,
+        role: "admin",
+      });
+
+      await admin.save();
+    }
+
     res.status(200).json({ message: "Joined company successfully" });
   } catch (error) {
     return res.status(500).send(error.message);
@@ -1589,7 +1646,7 @@ export const deleteFilter = async (req, res) => {
 export const cloneProject = async (req, res) => {
   try {
     const owner = req.session.username || req.user.email;
-    const { projectID, name } = req.body;
+    const { projectID } = req.body;
 
     const project = await Project.findOne({
       status: "active",
@@ -1597,28 +1654,16 @@ export const cloneProject = async (req, res) => {
       owners: { $in: [owner] },
     });
 
-    // Check if project exists
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    // Check if project with same name exists
-    const projectExists = await Project.findOne({
-      status: "active",
-      companyID: project.companyID,
-      name,
-    });
-
-    if (projectExists) {
-      return res.status(409).json({
-        message: "A project with same name already exists in the company",
-      });
-    }
+    const newName = project.name + "_CLONE";
 
     // Clone project
     const clonedProject = new Project({
-      projectID: generateID(name),
-      name,
+      projectID: generateID(newName),
+      name: newName,
       type: project.type,
       companyID: project.companyID,
       owners: [owner],
@@ -1627,53 +1672,87 @@ export const cloneProject = async (req, res) => {
 
     await clonedProject.save();
 
-    // Clone appConfigs, playerConfigs and masters from the original project
+    // Clone appConfigs
     const appConfigs = await AppConfig.find({
       status: "active",
       projectID,
     });
 
-    const playerConfigs = await PlayerConfig.find({
-      status: "active",
-      projectID,
-    });
-
-    const masters = await Master.find({
-      status: "active",
-      projectID,
-    });
-
     const promises = appConfigs.map(async (appConfig) => {
+      const { _id, configID, ...rest } = appConfig.toObject();
       const clonedAppConfig = new AppConfig({
-        ...appConfig.toObject(),
+        ...rest,
+        configID: generateID(`app_${clonedProject.name}`),
         projectID: clonedProject.projectID,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastModifiedBy: owner,
       });
       await clonedAppConfig.save();
     });
 
     await Promise.all(promises);
 
+    // Clone playerConfigs
+    const playerConfigs = await PlayerConfig.find({
+      status: "active",
+      projectID,
+    });
+
     const promises2 = playerConfigs.map(async (playerConfig) => {
+      const { _id, configID, ...rest } = playerConfig.toObject();
       const clonedPlayerConfig = new PlayerConfig({
-        ...playerConfig.toObject(),
+        ...rest,
+        configID: generateID(`player_${clonedProject.name}`),
         projectID: clonedProject.projectID,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastModifiedBy: owner,
       });
       await clonedPlayerConfig.save();
     });
 
     await Promise.all(promises2);
 
-    const promises3 = masters.map(async (master) => {
-      const clonedMaster = new Master({
-        ...master.toObject(),
+    // Clone customConfigs
+    const customConfigs = await CustomConfig.find({
+      status: "active",
+      projectID,
+    });
+
+    const promises3 = customConfigs.map(async (customConfig) => {
+      const { _id, configID, ...rest } = customConfig.toObject();
+      const clonedCustomConfig = new CustomConfig({
+        ...rest,
+        configID: generateID(`${customConfig.type}_${clonedProject.name}`),
         projectID: clonedProject.projectID,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastModifiedBy: owner,
       });
-      await clonedMaster.save();
+      await clonedCustomConfig.save();
     });
 
     await Promise.all(promises3);
+
+    // Clone masters
+    // const masters = await Master.find({
+    //   status: "active",
+    //   projectID,
+    // });
+
+    // const promises3 = masters.map(async (master) => {
+    //   const clonedMaster = new Master({
+    //     ...master.toObject(),
+    //     projectID: clonedProject.projectID,
+    //   });
+    //   await clonedMaster.save();
+    // });
+
+    // await Promise.all(promises3);
     res.status(200).json({ message: "Project cloned successfully" });
   } catch (error) {
+    console.log(error.message);
     return res.status(500).send(error.message);
   }
 };
@@ -1925,6 +2004,29 @@ export const verifyProjectInvite = async (req, res) => {
     );
     await project.save();
 
+    // Check if admin user exists
+    const admin = await Admin.findOne({
+      status: "active",
+      email,
+      role: "admin",
+    });
+
+    if (admin) {
+      if (admin.companyID !== company.companyID) {
+        admin.companyID = company.companyID;
+        await admin.save();
+      }
+    } else {
+      const admin = new Admin({
+        email: email,
+        status: "active",
+        companyID: company.companyID,
+        role: "admin",
+      });
+
+      await admin.save();
+    }
+
     res.status(200).json({ message: "Joined project successfully" });
   } catch (error) {
     return res.status(500).send(error.message);
@@ -1961,3 +2063,80 @@ export const cancelProjectInvite = async (req, res) => {
     });
   }
 };
+
+const createDemoProjects = async (companyID, email) => {
+  try {
+    const defaultProjects = await Project.find({
+      status: "active",
+      projectID: { $regex: /demo/i },
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+    });
+
+    const defaultAppConfigs = await AppConfig.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    const defaultPlayerConfigs = await PlayerConfig.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    const defaultMappings = await Master.find({
+      status: "active",
+      companyID: process.env.DEFAULT_FACOTTRY_COMPANYID,
+      projectID: { $regex: /demo/i },
+    });
+
+    return { code: "SUCCESS", message: "Demo projects created successfully" };
+  } catch (error) {
+    return { code: "ERROR", message: "Cloning Failed", error: error.message };
+  }
+}; // NOT READY
+
+// export const cloneCompany = async (req, res) => {
+//   try {
+//     const owner = req.session.username || req.user.email;
+//     const { companyID } = req.body;
+
+//     const company = await Company.findOne({
+//       status: "active",
+//       companyID,
+//       owners: { $in: [owner] },
+//     });
+
+//     if (!company) {
+//       return res.status(404).json({ message: "Company not found" });
+//     }
+
+//     const newName = company.name + "_CLONE";
+
+//     // Clone company
+//     const clonedCompany = new Company({
+//       companyID: generateID(newName),
+//       name: newName,
+//       owners: [owner],
+//       employees: company.employees,
+//       status: "active",
+//     });
+
+//     await clonedCompany.save();
+
+//     // Call Clone Project for each project of the company
+//     const projects = await Project.find({ status: "active", companyID });
+
+//     const promises = projects.map(async (project) => {
+//       const body = { projectID: project.projectID };
+//       await cloneProject({ body }, res);
+//     });
+
+//     await Promise.all(promises);
+
+//     res.status(200).json({ message: "Company cloned successfully" });
+//   } catch (error) {
+//     console.log(error.message);
+//     return res.status(500).send(error.message);
+//   }
+// };

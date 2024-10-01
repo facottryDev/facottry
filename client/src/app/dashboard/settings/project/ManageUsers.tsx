@@ -5,10 +5,9 @@ import { axios_admin } from "@/lib/axios"
 import { userStore } from "@/lib/store";
 import { IoClose } from "react-icons/io5";
 import { toast } from "react-toastify";
+import { MdDeleteSweep } from "react-icons/md";
 
-type Props = {}
-
-const ManageUsers = (props: Props) => {
+const ManageUsers = (props: {}) => {
     const [InviteUserModal, setInviteUserModal] = useState(false);
     const [inviteData, setInviteData] = useState({ email: "", role: "owner" });
     const activeProject = userStore(state => state.activeProject);
@@ -66,16 +65,140 @@ const ManageUsers = (props: Props) => {
                     <label className="font-bold leading-6 text-gray-900 dark:text-slate-200">Manage Users</label>
 
                     <button
-                        type="button"
-                        className="flex items-center text-sm font-semibold leading-6 text-primary hover:underline"
                         onClick={() => setInviteUserModal(true)}
+                        className="border font-medium p-2 px-3 rounded-md shadow-sm hover:bg-gray-100 transition-all cursor-pointer"
                     >
                         Invite User
                     </button>
                 </div>
             </div>
 
-            <div className="border bg-white p-4 items-center gap-2 justify-between min-h-[50vh] overflow-y-scroll">
+            <div className="w-full">
+                <table className="table-auto w-full border-t">
+                    <thead>
+                        <tr>
+                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
+                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white">
+                        {activeProject?.owners.map((user: any, index: number) => (
+                            <tr key={index}>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <p className="text-gray-900 whitespace-no-wrap">{user}</p>
+                                </td>
+
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <select
+                                        id={user}
+                                        name={user}
+                                        className="p-2 border bg-bggray rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm w-28"
+                                        defaultValue={"owner"}
+                                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                            if (window.confirm('Are you sure?')) {
+                                                changeAccess(user, e)();
+                                            }
+                                        }}
+                                    >
+                                        <option value="owner">Owner</option>
+                                        <option value="editor">Editor</option>
+                                        <option value="viewer">Viewer</option>
+                                    </select>
+                                </td>
+
+                                <td className="border-b border-gray-200 text-sm pl-3">
+                                    <button className="ml-2 p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this user?")) {
+                                            deleteUser(user)();
+                                        }
+                                    }}>
+                                        <MdDeleteSweep fontSize={18} />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+
+                        {activeProject?.editors.map((user: any, index: number) => (
+                            <tr key={index}>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <p className="text-gray-900 whitespace-no-wrap">{user}</p>
+                                </td>
+
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <select
+                                        id={user}
+                                        name={user}
+                                        className="p-2 border bg-bggray rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm w-28"
+                                        defaultValue={"editor"}
+                                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                            if (window.confirm('Are you sure?')) {
+                                                changeAccess(user, e)();
+                                            }
+                                        }}
+                                    >
+                                        <option value="owner">Owner</option>
+                                        <option value="editor">Editor</option>
+                                        <option value="viewer">Viewer</option>
+                                    </select>
+                                </td>
+
+                                <td className="border-b border-gray-200 text-sm pl-3">
+                                    <button className="ml-2 p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this user?")) {
+                                            deleteUser(user)();
+                                        }
+                                    }}>
+                                        <MdDeleteSweep fontSize={18} />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+
+                        {activeProject?.viewers.map((user: any, index: number) => (
+                            <tr key={index}>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <p className="text-gray-900 whitespace-no-wrap">{user}</p>
+                                </td>
+
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <select
+                                        id={user}
+                                        name={user}
+                                        className="p-2 border bg-bggray rounded-md shadow-sm focus:outline-none  focus:border-gray-400 cursor-pointer transition-all sm:text-sm w-28"
+                                        defaultValue={"viewer"}
+                                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                            if (window.confirm('Are you sure?')) {
+                                                changeAccess(user, e)();
+                                            }
+                                        }}
+                                    >
+                                        <option value="owner">Owner</option>
+                                        <option value="editor">Editor</option>
+                                        <option value="viewer">Viewer</option>
+                                    </select>
+                                </td>
+
+                                <td className="border-b border-gray-200 text-sm pl-3">
+                                    <button className="ml-2 p-2 rounded-full bg-primary900 hover:bg-primary700 text-white transition-all" onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this user?")) {
+                                            deleteUser(user)();
+                                        }
+                                    }}>
+                                        <MdDeleteSweep fontSize={18} />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+
+
+                    </tbody>
+                </table>
+            </div>
+
+
+
+            {/* <div className="border bg-white p-4 items-center gap-2 justify-between min-h-[50vh] overflow-y-scroll">
                 {activeProject?.owners.map((item, index) => (
                     <div key={index} className="flex justify-between items-center">
                         <h2 className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-200">
@@ -193,7 +316,7 @@ const ManageUsers = (props: Props) => {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div> */}
 
             <Modal
                 isOpen={InviteUserModal}

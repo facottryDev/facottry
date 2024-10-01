@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'FacOTTry',
+  title: 'Flagment',
   description: 'Build your OTT platform with ease',
 }
 
@@ -37,7 +37,7 @@ export default function RootLayout({
           pauseOnFocusLoss
           draggable
           pauseOnHover
-          theme="dark"
+          theme="light"
         />
       </body>
     </html>

@@ -20,7 +20,7 @@ const ConfigSelectorComponent = (props: Props) => {
 
     return (
         <div className="w-full">
-            <div className="overflow-y-auto h-96">
+            <div className="overflow-y-auto h-fit">
                 <table className="min-w-full leading-normal">
                     <thead className="sticky top-0 border-t">
                         <tr>

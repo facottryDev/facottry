@@ -11,6 +11,8 @@ import makeAnimated from 'react-select/animated';
 import { AiOutlineProject } from "react-icons/ai";
 import { CgOrganisation } from "react-icons/cg";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
+import { axios_admin } from "@/lib/axios";
+import { toast } from "react-toastify";
 
 // Main Sidebar Component
 const Sidebar = () => {
@@ -19,6 +21,21 @@ const Sidebar = () => {
   const [activeFilter, setActiveFilter, scaleFilter, setScaleFilter] = activeFilterStore(state => [state.activeFilter, state.setActiveFilter, state.scaleFilter, state.setScaleFilter]);
 
   const { sidebar, setSidebar, sideDetailsCollapsed: sidebarCollapsed, setDetailsCollapsed: setSidebarCollapsed } = globalStore(state => ({ sidebar: state.sidebar, setSidebar: state.setSidebar, sideDetailsCollapsed: state.sideDetailsCollapsed, setDetailsCollapsed: state.setDetailsCollapsed }));
+
+  const handleProjectClone = async () => {
+    if (!activeProject) return;
+
+    try {
+      const result = await axios_admin.post('/project/clone', { projectID: activeProject.projectID });
+      console.log(result);
+
+      toast.success('Project cloned successfully');
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to clone project');      
+    }
+  }
 
   const handleProjectChange = (selectedOption: any) => {
     const project = allProjects.find((item) => item.projectID === selectedOption.value) || null;
@@ -55,7 +72,7 @@ const Sidebar = () => {
           className="hidden dark:block"
         />
         <p className="font-extrabold text-2xl text-black dark:text-white">
-          Fac<span className="text-primary">OTT</span>ry
+          <span className="text-primary">Flag</span>ment
         </p>
       </Link>
 
@@ -82,6 +99,15 @@ const Sidebar = () => {
         <Link href="/dashboard/project" className="mt-4 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 text-sm text-center hover:bg-gray-100 dark:bg-transparent dark:hover:bg-zinc-800">
           Add Project
         </Link>
+
+        <button 
+        className="mt-4 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 text-sm text-center hover:bg-gray-100 dark:bg-transparent dark:hover:bg-zinc-800"
+        onClick={() => {
+          window.confirm('Are you sure you want to clone ' + activeProject?.name + '?') && handleProjectClone();
+        }}
+        >
+          Clone Project
+        </button>
 
         <div className={`flex flex-col mt-6 rounded-md text-sm items-center justify-cente text-white transition-all ${sidebarCollapsed ? 'bg-primary900 px-4 pt-2' : 'bg-primary800 p-4'
           }`}>
