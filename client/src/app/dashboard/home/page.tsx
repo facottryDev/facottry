@@ -17,7 +17,6 @@ const viewerTabs = ['View Configs', 'View Mappings']
 
 const Dashboard = () => {
   const [selectedTab, setSelectedTab] = globalStore(state => [state.dashboardTab, state.setDashboardTab]);
-
   const activeProject = userStore(state => state.activeProject);
   const userRole = activeProject?.role;
 

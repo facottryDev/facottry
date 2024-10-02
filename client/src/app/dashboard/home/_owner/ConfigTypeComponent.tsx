@@ -134,7 +134,7 @@ const ConfigTypeComponent = (props: Props) => {
             <button className="font-medium text-center text-sm border my-4 p-2 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={() =>
                 setAddConfigTypeModal(true)
             }>
-                Create New Config Type
+                Create New Type
             </button>
 
             <Modal

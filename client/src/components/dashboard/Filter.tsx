@@ -1,4 +1,5 @@
 import { activeFilterStore, userStore } from "@/lib/store";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import React from 'react'
 import { IoPencilSharp } from "react-icons/io5";
 import Select from 'react-select'
@@ -15,6 +16,7 @@ const Filter = ({}: Props) => {
     const [selectedValue, setSelectedValue] = React.useState(activeFilter);
     const [isFilterEditable, setIsFilterEditable] = React.useState(true);
     const [isCollapsed, setIsCollapsed] = React.useState(false);
+    const [parent] = useAutoAnimate();
 
     const handleChange = (selectedOptions: any, { name }: any) => {
         const allSelected = selectedOptions.some((option: { value: string; }) => option.value === "ALL");
@@ -37,7 +39,7 @@ const Filter = ({}: Props) => {
         <div className="w-fit text-sm min-w-[300px] sm:min-w-[500px] lg:min-w-[600px] border rounded-md mt-8">
             <div className="flex justify-between items-center px-5">
                 <h1 className="text-lg font-bold text-center my-4">Select Filters</h1>
-                <div className="flex items-center justify-center gap-4">
+                <div ref={parent} className="flex items-center justify-center gap-4">
                     {isCollapsed === false &&
                         <button className="p-2 rounded-full  text-white bg-primary600 hover:bg-primary700 transition-all" onClick={() =>
                             setIsFilterEditable(prev => !prev)

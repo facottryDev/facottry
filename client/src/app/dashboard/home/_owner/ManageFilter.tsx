@@ -5,7 +5,7 @@ import { axios_admin } from "@/lib/axios"
 import Modal from 'react-modal';
 import { useState } from "react";
 import { toast } from 'react-toastify';
-
+ 
 type Props = {}
 
 const FilterEditorComponent = (props: Props) => {
@@ -197,7 +197,7 @@ const FilterEditorComponent = (props: Props) => {
                 </div>
             </div>
 
-            <button className="font-medium  text-white text-center text-sm border my-4 p-2 rounded-md shadow-sm bg-primary600 hover:bg-primary700 transition-all" onClick={() =>
+            <button className="font-medium text-center text-sm border my-4 p-2 rounded-md shadow-sm hover:bg-gray-100 transition-all" onClick={() =>
                 setAddFilterModal(true)
             }>
                 Create New Filter

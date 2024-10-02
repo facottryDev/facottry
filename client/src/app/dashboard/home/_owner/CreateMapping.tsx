@@ -6,6 +6,7 @@ import { userStore, activeFilterStore } from "@/lib/store";
 import Filter from "@/components/dashboard/Filter"
 import ConfigSelectorComponent from "./ConfigSelectorComponent";
 import { toast } from "react-toastify";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type Props = {}
 
@@ -15,6 +16,7 @@ const CreateMappings = (props: Props) => {
     const [selectedConfigs, setSelectedConfigs] = useState<any>({});
     const [company] = userStore(state => [state.company]);
     const [isExpanded, setIsExpanded] = useState<string[]>([]);
+    const [parent] = useAutoAnimate();
 
     const activeProject = userStore(state => state.activeProject);
 
@@ -72,7 +74,7 @@ const CreateMappings = (props: Props) => {
             <Filter />
 
             <div className="mt-4 flex flex-col justify-around w-full">
-                <section className="w-full border rounded-md mt-8">
+                <section ref={parent} className="w-full border rounded-md mt-8">
                     <div onClick={() => toggleExpansion('app')} className="flex w-full px-10 justify-between items-center cursor-pointer">
                         <h1 className="text-lg font-bold text-center my-4">App Config</h1>
                         <div className="flex gap-2">
@@ -103,7 +105,7 @@ const CreateMappings = (props: Props) => {
                     )}
                 </section>
 
-                <section className="w-full border rounded-md mt-8">
+                <section ref={parent} className="w-full border rounded-md mt-8">
                     <div onClick={() => toggleExpansion('player')} className="flex w-full px-10 justify-between items-center cursor-pointer">
                         <h1 className="text-lg font-bold text-center my-4">Player Config</h1>
                         <div className="flex gap-2">
@@ -137,7 +139,7 @@ const CreateMappings = (props: Props) => {
 
                 {configs?.configTypes.map((configType, index) => (
                     configType.name !== 'app' && configType.name !== 'player' && configType.status === 'active' && (
-                        <section key={index} className="w-full border rounded-md mt-8">
+                        <section ref={parent} key={index} className="w-full border rounded-md mt-8">
                             <div onClick={() => toggleExpansion(configType.name)} className="flex w-full px-10 justify-between items-center cursor-pointer">
                                 <h1 className="text-lg font-bold text-center my-4">{configType.name}</h1>
                                 <div className="gap-2 flex">
