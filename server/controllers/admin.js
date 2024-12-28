@@ -31,7 +31,7 @@ export const updateContacts = async (req, res) => {
 
       const mailOptions = {
         to: "facottry.dev@gmail.com",
-        subject: "New Message - Flagment",
+        subject: "New Message - Flagmate",
         text: `You have received a new message from ${email}.\n\nSubject: ${subject}\n\nMessage: ${message}`,
       };
 
@@ -1361,7 +1361,7 @@ export const inviteUserToCompany = async (req, res) => {
       return res.status(400).json({ message: "User is already invited" });
 
     // Send email to user
-    const inviteCode = generateID(`flagship_${email}_company_${company.name}`);
+    const inviteCode = generateID(`flagmate_${email}_company_${company.name}`);
     const inviteLink = `${
       process.env.CLIENT_URL
     }/invite/company/${encodeURIComponent(inviteCode)}`;
@@ -1909,7 +1909,7 @@ export const inviteUserToProject = async (req, res) => {
       return res.status(400).json({ message: "User is already invited" });
 
     // Send email to user
-    const inviteCode = generateID(`flagship_${email}_${project.name}`);
+    const inviteCode = generateID(`flagmate_${email}_${project.name}`);
     const inviteLink = `${
       process.env.CLIENT_URL
     }/invite/project/${encodeURIComponent(inviteCode)}`;

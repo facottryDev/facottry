@@ -72,7 +72,7 @@ const Sidebar = () => {
           className="hidden dark:block"
         />
         <p className="font-extrabold text-2xl text-black dark:text-white">
-          <span className="text-primary">Flag</span>ment
+          <span className="text-primary">Flag</span>mate
         </p>
       </Link>
 
