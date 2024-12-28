@@ -48,6 +48,7 @@ const corsOptions = {
           "https://facottry-streamo.onrender.com",
           "https://facottry-landing-site.web.app",
           "https://facottry-zee5.onrender.com",
+          "https://web.flagmate.co"
         ]
       : [
           "http://localhost:3000",
